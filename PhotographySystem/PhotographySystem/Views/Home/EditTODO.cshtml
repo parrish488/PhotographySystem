@@ -1,0 +1,24 @@
+﻿@{
+  ViewBag.Title = "Edit TODO";
+}
+
+
+<h1>Select a list to edit</h1>
+
+@using (Html.BeginForm())
+{
+  <fieldset>
+    <div>
+      @*@Html.ListBoxFor(@Model, new SelectList(@Model))*@
+      @using (Html.BeginForm())
+      { 
+        <div>
+          @*@Html.ListBoxFor(@Model, new SelectList(@Model))*@
+        </div>
+        <input type="submit" value="Edit" />
+      }
+    </div>
+
+    <input type="submit" value="Save" />
+  </fieldset>
+}

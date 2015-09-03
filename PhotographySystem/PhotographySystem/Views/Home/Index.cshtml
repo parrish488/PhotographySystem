@@ -1,0 +1,21 @@
+﻿@using MvcTODO.Models
+@model List<MvcTODO.Models.TODOList>
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>Picture HQ</h1>
+</div>
+
+<h3>Upcoming Events:</h3>
+
+@foreach (var item in @Model)
+{
+  foreach (var todo in item.ListItems)
+  {
+    <h4>@todo</h4>
+  }
+
+}
