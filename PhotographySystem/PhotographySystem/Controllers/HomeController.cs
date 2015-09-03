@@ -22,16 +22,16 @@ namespace MvcTODO.Controllers
     }
 
     [HttpGet]
-    public ActionResult AddTODO()
+    public ActionResult Clients()
     {
-      ViewBag.Message = "Add TODO List.";
+      ViewBag.Message = "View Clients";
       
       MvcTODO.Models.TODOList todo = new Models.TODOList();
 
       return View(todo);
     }
 
-    public ActionResult AddTODO(MvcTODO.Models.TODOList todo, IEnumerable<string> UserValues)
+    public ActionResult Clients(MvcTODO.Models.TODOList todo, IEnumerable<string> UserValues)
     {
       todo.ListItems.AddRange(UserValues.ToList());
 
@@ -48,7 +48,7 @@ namespace MvcTODO.Controllers
     }
 
     [HttpGet]
-    public ActionResult DeleteTODO()
+    public ActionResult Milage()
     {
       var list = HttpContext.Session["list"] as List<MvcTODO.Models.TODOList>;
 
@@ -63,7 +63,7 @@ namespace MvcTODO.Controllers
     }
 
     [HttpPost]
-    public ActionResult DeleteTODO(List<int> selectedIds)
+    public ActionResult Milage(List<int> selectedIds)
     {
       var list = HttpContext.Session["list"] as List<MvcTODO.Models.TODOList>;
       if (selectedIds != null)
@@ -79,9 +79,9 @@ namespace MvcTODO.Controllers
       return Redirect("/");
     }
 
-    public ActionResult EditTODO()
+    public ActionResult Finance()
     {
-      ViewBag.Message = "Edit TODO List.";
+      ViewBag.Message = "Financial Reports";
 
       return View();
     }
