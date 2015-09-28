@@ -1,0 +1,58 @@
+﻿@model PhotgraphyMVC.Models.Billing
+
+@{
+    ViewBag.Title = "Bill Details";
+}
+
+<h2>Bill Details</h2>
+
+<div>
+    <h4>Billing</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Client.FirstName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Client.FirstName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ClientEvent.EventType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ClientEvent.EventType)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Subtotal)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Subtotal)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SalesTax)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SalesTax)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Total)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Total)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.BillingID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

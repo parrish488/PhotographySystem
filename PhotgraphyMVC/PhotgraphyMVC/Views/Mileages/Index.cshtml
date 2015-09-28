@@ -1,0 +1,63 @@
+﻿@model IEnumerable<PhotgraphyMVC.Models.Mileage>
+
+@{
+    ViewBag.Title = "Mileage";
+}
+
+<h2>Current Mileage</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Client.FirstName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Client.LastName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ClientEvent.EventType)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ClientEvent.EventDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MilesDriven)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Source)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Client.FirstName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Client.LastName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ClientEvent.EventType)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ClientEvent.EventDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MilesDriven)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Source)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.MileageID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.MileageID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.MileageID })
+        </td>
+    </tr>
+}
+
+</table>

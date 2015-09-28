@@ -1,0 +1,23 @@
+﻿@{
+    ViewBag.Title = "Dashboard";
+}
+
+<div class="jumbotron">
+    <img alt="Brand" src="../../Alissa Paige Photography Color.png" />
+    <h1>Upcoming Events</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <h2>Clients</h2>
+    </div>
+    <div class="col-md-4">
+        <h2>Mileage</h2>
+        <h4>@Html.ActionLink("Enter New Mileage", "Create", "Mileages")</h4>
+    </div>
+    <div class="col-md-4">
+        <h2>Billing</h2>
+        <h4>Total Sales Tax: </h4>
+        <h4>Total Takeaway: </h4>
+    </div>
+</div>
