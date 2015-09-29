@@ -181,6 +181,7 @@
     <Compile Include="Models\Billing.cs" />
     <Compile Include="Models\Client.cs" />
     <Compile Include="Models\Event.cs" />
+    <Compile Include="Models\HomeData.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Mileage.cs" />

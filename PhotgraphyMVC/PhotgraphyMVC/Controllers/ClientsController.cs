@@ -15,9 +15,30 @@ namespace PhotgraphyMVC.Controllers
         private PhotographerContext db = new PhotographerContext();
 
         // GET: Clients
-        public ActionResult Index()
+        public ActionResult Index(string sortOrder)
         {
-            return View(db.Clients.ToList());
+            ViewBag.LastNameSortParm = String.IsNullOrEmpty(sortOrder) ? "last_name_desc" : "";
+            ViewBag.FirstNameSortParm = String.IsNullOrEmpty(sortOrder) ? "first_name_desc" : "first_name";
+
+            List<Client> clients = new List<Client>();
+
+            switch (sortOrder)
+            {
+                case "first_name":
+                    clients = db.Clients.OrderBy(c => c.FirstName).ToList();
+                    break;
+                case "first_name_desc":
+                    clients = db.Clients.OrderByDescending(c => c.FirstName).ToList();
+                    break;
+                case "last_name_desc":
+                    clients = db.Clients.OrderByDescending(c => c.LastName).ToList();
+                    break;
+                default:
+                    clients = db.Clients.OrderBy(c => c.LastName).ToList();
+                    break;
+            }
+
+            return View(clients);
         }
 
         // GET: Clients/Details/5

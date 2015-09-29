@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PhotgraphyMVC.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,9 +9,29 @@ namespace PhotgraphyMVC.Controllers
 {
     public class HomeController : Controller
     {
+        private PhotographerContext db = new PhotographerContext();
+
         public ActionResult Index()
         {
-            return View();
+            HomeData data = new HomeData();
+
+            foreach (Billing bill in db.Billing)
+            {
+                data.TotalSalesTax += bill.SalesTax;
+                data.TotalEarnings += bill.Subtotal;
+            }
+
+            foreach (Event evnt in db.Events)
+            {
+                if (evnt.EventDate >= DateTime.Now && evnt.EventDate < DateTime.Now.AddDays(30))
+                {
+                    data.UpcomingEvents.Add(evnt);
+                }
+            }
+
+            data.UpcomingEvents =  data.UpcomingEvents.OrderBy(x => x.EventDate).ToList();
+
+            return View(data);
         }
 
         public ActionResult About()

@@ -1,15 +1,20 @@
-﻿@{
+﻿@model PhotgraphyMVC.Models.HomeData
+@{
     ViewBag.Title = "Dashboard";
 }
 
 <div class="jumbotron">
-    <img alt="Brand" src="../../Alissa Paige Photography Color.png" />
-    <h1>Upcoming Events</h1>
+    <h2>Upcoming Events:</h2>
+    @foreach (PhotgraphyMVC.Models.Event evnt in Model.UpcomingEvents)
+    {
+        <h4>@evnt.EventDate.ToShortDateString(): @evnt.Client.FullName - @evnt.EventType</h4>
+    }
 </div>
 
 <div class="row">
     <div class="col-md-4">
         <h2>Clients</h2>
+        <h4>@Html.ActionLink("Enter New Client", "Create", "Clients")</h4>
     </div>
     <div class="col-md-4">
         <h2>Mileage</h2>
@@ -17,7 +22,7 @@
     </div>
     <div class="col-md-4">
         <h2>Billing</h2>
-        <h4>Total Sales Tax: </h4>
-        <h4>Total Takeaway: </h4>
+        <h4>Total Sales Tax: $@Model.TotalSalesTax</h4>
+        <h4>Total Takeaway: $@Model.TotalEarnings</h4>
     </div>
 </div>
