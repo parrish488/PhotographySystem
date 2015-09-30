@@ -54,7 +54,7 @@ namespace PhotgraphyMVC.Controllers
             if (ModelState.IsValid)
             {
                 // Calculate sales tax
-                decimal subtotal = billing.Total / 2.0m;
+                decimal subtotal = billing.Total - (billing.Total * .1m);
                 decimal salesTax = subtotal * .066m;
 
                 while (subtotal + salesTax != billing.Total)
@@ -62,7 +62,7 @@ namespace PhotgraphyMVC.Controllers
                     subtotal += .01m;
                     salesTax = subtotal * .066m;
                     string taxString = string.Format("{0:C}", salesTax);
-                    salesTax = Decimal.Parse(taxString.Substring(1));
+                    salesTax = Decimal.Parse(taxString.Substring(1).Trim(','));
                 }
 
                 billing.Subtotal = subtotal;
@@ -105,7 +105,7 @@ namespace PhotgraphyMVC.Controllers
             if (ModelState.IsValid)
             {
                 // Calculate sales tax
-                decimal subtotal = billing.Total / 2.0m;
+                decimal subtotal = billing.Total - (billing.Total * .1m);
                 decimal salesTax = subtotal * .066m;
 
                 while (subtotal + salesTax != billing.Total)
@@ -113,7 +113,7 @@ namespace PhotgraphyMVC.Controllers
                     subtotal += .01m;
                     salesTax = subtotal * .066m;
                     string taxString = string.Format("{0:C}", salesTax);
-                    salesTax = Decimal.Parse(taxString.Substring(1));
+                    salesTax = Decimal.Parse(taxString.Substring(1).Trim(','));
                 }
 
                 billing.Subtotal = subtotal;
