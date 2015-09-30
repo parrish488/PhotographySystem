@@ -53,6 +53,21 @@ namespace PhotgraphyMVC.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Calculate sales tax
+                decimal subtotal = billing.Total / 2.0m;
+                decimal salesTax = subtotal * .066m;
+
+                while (subtotal + salesTax != billing.Total)
+                {
+                    subtotal += .01m;
+                    salesTax = subtotal * .066m;
+                    string taxString = string.Format("{0:C}", salesTax);
+                    salesTax = Decimal.Parse(taxString.Substring(1));
+                }
+
+                billing.Subtotal = subtotal;
+                billing.SalesTax = salesTax;
+
                 db.Billing.Add(billing);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -89,6 +104,21 @@ namespace PhotgraphyMVC.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Calculate sales tax
+                decimal subtotal = billing.Total / 2.0m;
+                decimal salesTax = subtotal * .066m;
+
+                while (subtotal + salesTax != billing.Total)
+                {
+                    subtotal += .01m;
+                    salesTax = subtotal * .066m;
+                    string taxString = string.Format("{0:C}", salesTax);
+                    salesTax = Decimal.Parse(taxString.Substring(1));
+                }
+
+                billing.Subtotal = subtotal;
+                billing.SalesTax = salesTax;
+
                 db.Entry(billing).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
