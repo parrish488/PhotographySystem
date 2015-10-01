@@ -7,6 +7,7 @@ using System.Web.Mvc;
 
 namespace PhotgraphyMVC.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private PhotographerContext db = new PhotographerContext();
@@ -32,13 +33,6 @@ namespace PhotgraphyMVC.Controllers
             data.UpcomingEvents =  data.UpcomingEvents.OrderBy(x => x.EventDate).ToList();
 
             return View(data);
-        }
-
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
         }
 
         public ActionResult Contact()
