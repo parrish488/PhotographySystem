@@ -50,7 +50,6 @@ namespace PhotgraphyMVC.Models
     {
         [Required]
         [Display(Name = "Username")]
-        [EmailAddress]
         public string Username { get; set; }
 
         [Required]
@@ -83,7 +82,6 @@ namespace PhotgraphyMVC.Models
     public class ResetPasswordViewModel
     {
         [Required]
-        [EmailAddress]
         [Display(Name = "Username")]
         public string Username { get; set; }
 
