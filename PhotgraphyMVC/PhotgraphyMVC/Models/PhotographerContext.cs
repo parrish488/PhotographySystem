@@ -13,6 +13,7 @@ namespace PhotgraphyMVC.Models
         public DbSet<Billing> Billing { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<Mileage> Mileage { get; set; }
+        public DbSet<TodoList> TodoList { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

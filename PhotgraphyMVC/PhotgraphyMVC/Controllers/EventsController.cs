@@ -83,7 +83,7 @@ namespace PhotgraphyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "EventID,EventDate,EventType,ClientID")] Event @event)
+        public ActionResult Create([Bind(Include = "EventID,EventDate,EventType,ContractCompleted,ClientID")] Event @event)
         {
             if (ModelState.IsValid)
             {
@@ -117,7 +117,7 @@ namespace PhotgraphyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "EventID,EventDate,EventType,ClientID")] Event @event)
+        public ActionResult Edit([Bind(Include = "EventID,EventDate,EventType,ContractCompleted,ClientID")] Event @event)
         {
             if (ModelState.IsValid)
             {

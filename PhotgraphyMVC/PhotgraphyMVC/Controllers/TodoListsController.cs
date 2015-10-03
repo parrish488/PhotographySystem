@@ -10,129 +10,107 @@ using PhotgraphyMVC.Models;
 
 namespace PhotgraphyMVC.Controllers
 {
-    [Authorize]
-    public class ClientsController : Controller
+    public class TodoListsController : Controller
     {
         private PhotographerContext db = new PhotographerContext();
 
-        // GET: Clients
-        public ActionResult Index(string sortOrder)
+        // GET: TodoLists
+        public ActionResult Index()
         {
-            ViewBag.LastNameSortParm = String.IsNullOrEmpty(sortOrder) ? "last_name_desc" : "";
-            ViewBag.FirstNameSortParm = String.IsNullOrEmpty(sortOrder) ? "first_name_desc" : "first_name";
-
-            List<Client> clients = new List<Client>();
-
-            switch (sortOrder)
-            {
-                case "first_name":
-                    clients = db.Clients.OrderBy(c => c.FirstName).ToList();
-                    break;
-                case "first_name_desc":
-                    clients = db.Clients.OrderByDescending(c => c.FirstName).ToList();
-                    break;
-                case "last_name_desc":
-                    clients = db.Clients.OrderByDescending(c => c.LastName).ToList();
-                    break;
-                default:
-                    clients = db.Clients.OrderBy(c => c.LastName).ToList();
-                    break;
-            }
-
-            return View(clients);
+            return View(db.TodoList.ToList());
         }
 
-        // GET: Clients/Details/5
+        // GET: TodoLists/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Client client = db.Clients.Find(id);
-            if (client == null)
+            TodoList todoList = db.TodoList.Find(id);
+            if (todoList == null)
             {
                 return HttpNotFound();
             }
-            return View(client);
+            return View(todoList);
         }
 
-        // GET: Clients/Create
+        // GET: TodoLists/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Clients/Create
+        // POST: TodoLists/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ClientID,FirstName,LastName,Street,City,State,Zip,PrimaryPhone,SecondaryPhone,Email")] Client client)
+        public ActionResult Create([Bind(Include = "TodoListID,ItemDescription,DueDate,IsCompleted")] TodoList todoList)
         {
             if (ModelState.IsValid)
             {
-                db.Clients.Add(client);
+                db.TodoList.Add(todoList);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(client);
+            return View(todoList);
         }
 
-        // GET: Clients/Edit/5
+        // GET: TodoLists/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Client client = db.Clients.Find(id);
-            if (client == null)
+            TodoList todoList = db.TodoList.Find(id);
+            if (todoList == null)
             {
                 return HttpNotFound();
             }
-            return View(client);
+            return View(todoList);
         }
 
-        // POST: Clients/Edit/5
+        // POST: TodoLists/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ClientID,FirstName,LastName,Street,City,State,Zip,PrimaryPhone,SecondaryPhone,Email")] Client client)
+        public ActionResult Edit([Bind(Include = "TodoListID,ItemDescription,DueDate,IsCompleted")] TodoList todoList)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(client).State = EntityState.Modified;
+                db.Entry(todoList).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(client);
+            return View(todoList);
         }
 
-        // GET: Clients/Delete/5
+        // GET: TodoLists/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Client client = db.Clients.Find(id);
-            if (client == null)
+            TodoList todoList = db.TodoList.Find(id);
+            if (todoList == null)
             {
                 return HttpNotFound();
             }
-            return View(client);
+            return View(todoList);
         }
 
-        // POST: Clients/Delete/5
+        // POST: TodoLists/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Client client = db.Clients.Find(id);
-            db.Clients.Remove(client);
+            TodoList todoList = db.TodoList.Find(id);
+            db.TodoList.Remove(todoList);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

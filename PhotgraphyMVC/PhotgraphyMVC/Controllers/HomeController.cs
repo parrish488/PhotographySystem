@@ -30,7 +30,16 @@ namespace PhotgraphyMVC.Controllers
                 }
             }
 
+            foreach (TodoList todo in db.TodoList)
+            {
+                if (!todo.IsCompleted)
+                {
+                    data.TodoListItems.Add(todo);
+                }
+            }
+
             data.UpcomingEvents =  data.UpcomingEvents.OrderBy(x => x.EventDate).ToList();
+            data.TodoListItems = data.TodoListItems.OrderBy(x => x.DueDate).ToList();
 
             return View(data);
         }

@@ -174,6 +174,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MileagesController.cs" />
+    <Compile Include="Controllers\TodoListsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -187,6 +188,7 @@
     <Compile Include="Models\Mileage.cs" />
     <Compile Include="Models\PhotographerContext.cs" />
     <Compile Include="Models\PhotographerInitializer.cs" />
+    <Compile Include="Models\TodoList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -379,6 +381,11 @@
     <Content Include="Views\Mileages\Details.cshtml" />
     <Content Include="Views\Mileages\Edit.cshtml" />
     <Content Include="Views\Mileages\Index.cshtml" />
+    <Content Include="Views\TodoLists\Create.cshtml" />
+    <Content Include="Views\TodoLists\Delete.cshtml" />
+    <Content Include="Views\TodoLists\Details.cshtml" />
+    <Content Include="Views\TodoLists\Edit.cshtml" />
+    <Content Include="Views\TodoLists\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

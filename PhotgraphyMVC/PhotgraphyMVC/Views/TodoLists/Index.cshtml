@@ -1,0 +1,45 @@
+﻿@model IEnumerable<PhotgraphyMVC.Models.TodoList>
+
+@{
+    ViewBag.Title = "Todo Items";
+}
+
+<h2>Todo Items</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ItemDescription)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DueDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsCompleted)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.ItemDescription)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DueDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.IsCompleted)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.TodoListID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.TodoListID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.TodoListID })
+        </td>
+    </tr>
+}
+
+</table>

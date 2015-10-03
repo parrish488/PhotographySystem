@@ -13,8 +13,19 @@
 
 <div class="row">
     <div class="col-md-4">
-        <h2>Clients</h2>
-        <h4>@Html.ActionLink("Enter New Client", "Create", "Clients")</h4>
+        <h2>Todo List</h2>
+        @foreach (PhotgraphyMVC.Models.TodoList todo in Model.TodoListItems)
+        {
+            if (todo.DueDate < DateTime.Now)
+            {
+                <h4 style="color:red">@todo.DueDate.ToShortDateString(): @todo.ItemDescription</h4>;
+            }
+            else
+            {
+                <h4>@todo.DueDate.ToShortDateString(): @todo.ItemDescription</h4>;
+            }
+        }
+        <h4>@Html.ActionLink("Manage Todo Items", "Index", "TodoLists")</h4>
     </div>
     <div class="col-md-4">
         <h2>Mileage</h2>
