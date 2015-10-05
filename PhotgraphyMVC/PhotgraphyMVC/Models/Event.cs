@@ -18,6 +18,7 @@ namespace PhotgraphyMVC.Models
         [Display(Name = "Contract Completed?")]
         public string ContractCompleted { get; set; }
 
+        [Display(Name = "Event")]
         public string EventLabel
         {
             get

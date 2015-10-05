@@ -12,19 +12,13 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Client.FirstName)
+            @Html.DisplayNameFor(model => model.Client.FullName)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Client.LastName)
+            @Html.DisplayNameFor(model => model.ClientEvent.EventLabel)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ClientEvent.EventType)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ClientEvent.EventDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.TaxYear.TaxYearID)
+            @Html.DisplayNameFor(model => model.TaxYear.Year)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.MilesDriven)
@@ -38,19 +32,13 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.Client.FirstName)
+            @Html.DisplayFor(modelItem => item.Client.FullName)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Client.LastName)
+            @Html.DisplayFor(modelItem => item.ClientEvent.EventLabel)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.ClientEvent.EventType)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.ClientEvent.EventDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.TaxYear.TaxYearID)
+            @Html.DisplayFor(modelItem => item.TaxYear.Year)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.MilesDriven)
