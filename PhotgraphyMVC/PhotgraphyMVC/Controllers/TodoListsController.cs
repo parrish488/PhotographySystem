@@ -10,6 +10,7 @@ using PhotgraphyMVC.Models;
 
 namespace PhotgraphyMVC.Controllers
 {
+    [Authorize]
     public class TodoListsController : Controller
     {
         private PhotographerContext db = new PhotographerContext();

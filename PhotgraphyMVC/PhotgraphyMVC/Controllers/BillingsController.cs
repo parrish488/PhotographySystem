@@ -56,24 +56,19 @@ namespace PhotgraphyMVC.Controllers
             if (ModelState.IsValid)
             {
                 // Calculate sales tax
-                decimal subtotal = billing.Total - (billing.Total * .1m);
-                decimal salesTax = subtotal * .066m;
-
-                while (subtotal + salesTax != billing.Total)
-                {
-                    subtotal += .01m;
-                    salesTax = subtotal * .066m;
-                    string taxString = string.Format("{0:C}", salesTax);
-                    salesTax = Decimal.Parse(taxString.Substring(1).Trim(','));
-                }
+                decimal subtotal = Decimal.Round(Decimal.Divide(billing.Total, 1.066m), 2);
+                decimal salesTax = Decimal.Round(Decimal.Subtract(billing.Total, subtotal), 2);
 
                 billing.Subtotal = subtotal;
                 billing.SalesTax = salesTax;
 
+                db.Billing.Add(billing);
+                db.SaveChanges();
+
                 TaxYear taxYear = db.TaxYears.Find(billing.TaxYearID);
                 taxYear.TotalTax += billing.SalesTax;
                 db.Entry(taxYear).State = EntityState.Modified;
-                db.Billing.Add(billing);
+
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -112,25 +107,24 @@ namespace PhotgraphyMVC.Controllers
             if (ModelState.IsValid)
             {
                 // Calculate sales tax
-                decimal subtotal = billing.Total - (billing.Total * .1m);
-                decimal salesTax = subtotal * .066m;
-
-                while (subtotal + salesTax != billing.Total)
-                {
-                    subtotal += .01m;
-                    salesTax = subtotal * .066m;
-                    string taxString = string.Format("{0:C}", salesTax);
-                    salesTax = Decimal.Parse(taxString.Substring(1).Trim(','));
-                }
+                decimal subtotal = Decimal.Round(Decimal.Divide(billing.Total, 1.066m), 2);
+                decimal salesTax = Decimal.Round(Decimal.Subtract(billing.Total, subtotal), 2);
 
                 billing.Subtotal = subtotal;
                 billing.SalesTax = salesTax;
 
+                db.Entry(billing).State = EntityState.Modified;
+                db.SaveChanges();
+
                 TaxYear taxYear = db.TaxYears.Find(billing.TaxYearID);
-                taxYear.TotalTax += billing.SalesTax;
+                taxYear.TotalTax = 0;
+
+                foreach (Billing bill in db.Billing)
+                {
+                    taxYear.TotalTax += bill.SalesTax;
+                }
                 db.Entry(taxYear).State = EntityState.Modified;
 
-                db.Entry(billing).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -163,6 +157,18 @@ namespace PhotgraphyMVC.Controllers
             Billing billing = db.Billing.Find(id);
             db.Billing.Remove(billing);
             db.SaveChanges();
+
+            TaxYear taxYear = db.TaxYears.Find(billing.TaxYearID);
+            taxYear.TotalTax = 0;
+
+            foreach (Billing bill in db.Billing)
+            {
+                taxYear.TotalTax += bill.SalesTax;
+            }
+
+            db.Entry(taxYear).State = EntityState.Modified;
+            db.SaveChanges();
+
             return RedirectToAction("Index");
         }
 
