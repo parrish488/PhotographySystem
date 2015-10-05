@@ -55,11 +55,11 @@ namespace PhotgraphyMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Calculate sales tax
-                decimal subtotal = Decimal.Round(Decimal.Divide(billing.Total, 1.066m), 2);
-                decimal salesTax = Decimal.Round(Decimal.Subtract(billing.Total, subtotal), 2);
+                // Calculate sales tax: only 10% of cost is taxable product.  Put this in a variable later
+                decimal subtotal = Decimal.Round(Decimal.Divide(Decimal.Multiply(billing.Total, .1m), 1.066m), 2);
+                decimal salesTax = Decimal.Round(Decimal.Subtract(Decimal.Multiply(billing.Total, .1m), subtotal), 2);
 
-                billing.Subtotal = subtotal;
+                billing.Subtotal = billing.Total - salesTax;
                 billing.SalesTax = salesTax;
 
                 db.Billing.Add(billing);
@@ -106,11 +106,11 @@ namespace PhotgraphyMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Calculate sales tax
-                decimal subtotal = Decimal.Round(Decimal.Divide(billing.Total, 1.066m), 2);
-                decimal salesTax = Decimal.Round(Decimal.Subtract(billing.Total, subtotal), 2);
+                // Calculate sales tax: only 10% of cost is taxable product.  Put this in a variable later
+                decimal subtotal = Decimal.Round(Decimal.Divide(Decimal.Multiply(billing.Total, .1m), 1.066m), 2);
+                decimal salesTax = Decimal.Round(Decimal.Subtract(Decimal.Multiply(billing.Total, .1m), subtotal), 2);
 
-                billing.Subtotal = subtotal;
+                billing.Subtotal = billing.Total - salesTax;
                 billing.SalesTax = salesTax;
 
                 db.Entry(billing).State = EntityState.Modified;
