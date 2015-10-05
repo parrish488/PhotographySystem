@@ -18,7 +18,7 @@ namespace PhotgraphyMVC.Controllers
         // GET: Mileages
         public ActionResult Index()
         {
-            var mileage = db.Mileage.Include(m => m.Client).Include(m => m.ClientEvent);
+            var mileage = db.Mileage.Include(m => m.Client).Include(m => m.ClientEvent).Include(m => m.TaxYear);
             return View(mileage.ToList());
         }
 
@@ -42,6 +42,7 @@ namespace PhotgraphyMVC.Controllers
         {
             ViewBag.ClientID = new SelectList(db.Clients, "ClientID", "FullName");
             ViewBag.EventID = new SelectList(db.Events, "EventID", "EventLabel");
+            ViewBag.TaxYearID = new SelectList(db.TaxYears, "TaxYearID", "Year");
             return View();
         }
 
@@ -50,17 +51,21 @@ namespace PhotgraphyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "MileageID,ClientID,EventID,MilesDriven,Source")] Mileage mileage)
+        public ActionResult Create([Bind(Include = "MileageID,ClientID,EventID,TaxYearID,MilesDriven,Source")] Mileage mileage)
         {
             if (ModelState.IsValid)
             {
                 db.Mileage.Add(mileage);
+                TaxYear taxYear = db.TaxYears.Find(mileage.TaxYearID);
+                taxYear.TotalMiles += mileage.MilesDriven;
+                db.Entry(taxYear).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
             ViewBag.ClientID = new SelectList(db.Clients, "ClientID", "FullName", mileage.ClientID);
             ViewBag.EventID = new SelectList(db.Events, "EventID", "EventLabel", mileage.EventID);
+            ViewBag.TaxYearID = new SelectList(db.TaxYears, "TaxYearID", "Year", mileage.TaxYearID);
             return View(mileage);
         }
 
@@ -78,6 +83,7 @@ namespace PhotgraphyMVC.Controllers
             }
             ViewBag.ClientID = new SelectList(db.Clients, "ClientID", "FullName", mileage.ClientID);
             ViewBag.EventID = new SelectList(db.Events, "EventID", "EventLabel", mileage.EventID);
+            ViewBag.TaxYearID = new SelectList(db.TaxYears, "TaxYearID", "Year", mileage.TaxYearID);
             return View(mileage);
         }
 
@@ -86,16 +92,20 @@ namespace PhotgraphyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "MileageID,ClientID,EventID,MilesDriven,Source")] Mileage mileage)
+        public ActionResult Edit([Bind(Include = "MileageID,ClientID,EventID,TaxYearID,MilesDriven,Source")] Mileage mileage)
         {
             if (ModelState.IsValid)
             {
+                TaxYear taxYear = db.TaxYears.Find(mileage.TaxYearID);
+                taxYear.TotalMiles += mileage.MilesDriven;
+                db.Entry(taxYear).State = EntityState.Modified;
                 db.Entry(mileage).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
             ViewBag.ClientID = new SelectList(db.Clients, "ClientID", "FullName", mileage.ClientID);
             ViewBag.EventID = new SelectList(db.Events, "EventID", "EventLabel", mileage.EventID);
+            ViewBag.TaxYearID = new SelectList(db.TaxYears, "TaxYearID", "Year", mileage.TaxYearID);
             return View(mileage);
         }
 

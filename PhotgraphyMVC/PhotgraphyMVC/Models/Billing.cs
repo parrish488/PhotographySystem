@@ -23,5 +23,9 @@ namespace PhotgraphyMVC.Models
         [ForeignKey("ClientEvent")]
         public int EventID { get; set; }
         public virtual Event ClientEvent { get; set; }
+
+        [ForeignKey("TaxYear")]
+        public int TaxYearID { get; set; }
+        public virtual TaxYear TaxYear { get; set; }
     }
 }

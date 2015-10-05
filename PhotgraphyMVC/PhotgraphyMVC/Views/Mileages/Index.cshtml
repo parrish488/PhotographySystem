@@ -24,6 +24,9 @@
             @Html.DisplayNameFor(model => model.ClientEvent.EventDate)
         </th>
         <th>
+            @Html.DisplayNameFor(model => model.TaxYear.TaxYearID)
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.MilesDriven)
         </th>
         <th>
@@ -45,6 +48,9 @@
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.ClientEvent.EventDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TaxYear.TaxYearID)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.MilesDriven)

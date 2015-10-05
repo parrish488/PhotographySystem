@@ -18,7 +18,6 @@ namespace PhotgraphyMVC.Controllers
 
             foreach (Billing bill in db.Billing)
             {
-                data.TotalSalesTax += bill.SalesTax;
                 data.TotalEarnings += bill.Subtotal;
             }
 
@@ -38,6 +37,18 @@ namespace PhotgraphyMVC.Controllers
                 }
             }
 
+            TaxYear taxYear = new TaxYear();
+
+            foreach (TaxYear year in db.TaxYears)
+            {
+                if (year.Year == DateTime.Now.Year)
+                {
+                    taxYear = year;
+                }
+            }
+
+            data.TotalSalesTax = taxYear.TotalTax;
+            data.MilesDriven = (int)taxYear.TotalMiles;
             data.UpcomingEvents =  data.UpcomingEvents.OrderBy(x => x.EventDate).ToList();
             data.TodoListItems = data.TodoListItems.OrderBy(x => x.DueDate).ToList();
 

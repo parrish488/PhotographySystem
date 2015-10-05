@@ -43,6 +43,9 @@ namespace PhotgraphyMVC.Models
 
         public string Email { get; set; }
 
+        [Display(Name = "Client Notes")]
+        public string ClientNotes { get; set; }
+
         public virtual ICollection<Event> Events { get; set; }
         public virtual ICollection<Billing> Billing { get; set; }
         public virtual ICollection<Mileage> Mileage { get; set; }

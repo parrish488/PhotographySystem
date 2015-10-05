@@ -20,5 +20,7 @@ namespace PhotgraphyMVC.Models
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
         }
+
+        public System.Data.Entity.DbSet<PhotgraphyMVC.Models.TaxYear> TaxYears { get; set; }
     }
 }

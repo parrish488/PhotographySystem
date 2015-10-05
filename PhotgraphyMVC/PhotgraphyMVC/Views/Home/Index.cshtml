@@ -25,10 +25,13 @@
                 <h4>@todo.DueDate.ToShortDateString(): @todo.ItemDescription</h4>;
             }
         }
+        <hr />
         <h4>@Html.ActionLink("Manage Todo Items", "Index", "TodoLists")</h4>
     </div>
     <div class="col-md-4">
         <h2>Mileage</h2>
+        <h4>Total Mileage Driven: @Model.MilesDriven</h4>
+        <hr />
         <h4>@Html.ActionLink("Enter New Mileage", "Create", "Mileages")</h4>
     </div>
     <div class="col-md-4">

@@ -10,129 +10,107 @@ using PhotgraphyMVC.Models;
 
 namespace PhotgraphyMVC.Controllers
 {
-    [Authorize]
-    public class ClientsController : Controller
+    public class TaxYearsController : Controller
     {
         private PhotographerContext db = new PhotographerContext();
 
-        // GET: Clients
-        public ActionResult Index(string sortOrder)
+        // GET: TaxYears
+        public ActionResult Index()
         {
-            ViewBag.LastNameSortParm = String.IsNullOrEmpty(sortOrder) ? "last_name_desc" : "";
-            ViewBag.FirstNameSortParm = String.IsNullOrEmpty(sortOrder) ? "first_name_desc" : "first_name";
-
-            List<Client> clients = new List<Client>();
-
-            switch (sortOrder)
-            {
-                case "first_name":
-                    clients = db.Clients.OrderBy(c => c.FirstName).ToList();
-                    break;
-                case "first_name_desc":
-                    clients = db.Clients.OrderByDescending(c => c.FirstName).ToList();
-                    break;
-                case "last_name_desc":
-                    clients = db.Clients.OrderByDescending(c => c.LastName).ToList();
-                    break;
-                default:
-                    clients = db.Clients.OrderBy(c => c.LastName).ToList();
-                    break;
-            }
-
-            return View(clients);
+            return View(db.TaxYears.ToList());
         }
 
-        // GET: Clients/Details/5
+        // GET: TaxYears/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Client client = db.Clients.Find(id);
-            if (client == null)
+            TaxYear taxYear = db.TaxYears.Find(id);
+            if (taxYear == null)
             {
                 return HttpNotFound();
             }
-            return View(client);
+            return View(taxYear);
         }
 
-        // GET: Clients/Create
+        // GET: TaxYears/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Clients/Create
+        // POST: TaxYears/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ClientID,FirstName,LastName,Street,City,State,Zip,PrimaryPhone,SecondaryPhone,Email,ClientNotes")] Client client)
+        public ActionResult Create([Bind(Include = "TaxYearID,Year,TaxRate,TotalTax,TotalMiles")] TaxYear taxYear)
         {
             if (ModelState.IsValid)
             {
-                db.Clients.Add(client);
+                db.TaxYears.Add(taxYear);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(client);
+            return View(taxYear);
         }
 
-        // GET: Clients/Edit/5
+        // GET: TaxYears/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Client client = db.Clients.Find(id);
-            if (client == null)
+            TaxYear taxYear = db.TaxYears.Find(id);
+            if (taxYear == null)
             {
                 return HttpNotFound();
             }
-            return View(client);
+            return View(taxYear);
         }
 
-        // POST: Clients/Edit/5
+        // POST: TaxYears/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ClientID,FirstName,LastName,Street,City,State,Zip,PrimaryPhone,SecondaryPhone,Email,ClientNotes")] Client client)
+        public ActionResult Edit([Bind(Include = "TaxYearID,Year,TaxRate,TotalTax,TotalMiles")] TaxYear taxYear)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(client).State = EntityState.Modified;
+                db.Entry(taxYear).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(client);
+            return View(taxYear);
         }
 
-        // GET: Clients/Delete/5
+        // GET: TaxYears/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Client client = db.Clients.Find(id);
-            if (client == null)
+            TaxYear taxYear = db.TaxYears.Find(id);
+            if (taxYear == null)
             {
                 return HttpNotFound();
             }
-            return View(client);
+            return View(taxYear);
         }
 
-        // POST: Clients/Delete/5
+        // POST: TaxYears/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Client client = db.Clients.Find(id);
-            db.Clients.Remove(client);
+            TaxYear taxYear = db.TaxYears.Find(id);
+            db.TaxYears.Remove(taxYear);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

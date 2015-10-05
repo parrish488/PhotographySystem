@@ -18,7 +18,7 @@ namespace PhotgraphyMVC.Controllers
         // GET: Billings
         public ActionResult Index()
         {
-            var billing = db.Billing.Include(b => b.Client).Include(b => b.ClientEvent);
+            var billing = db.Billing.Include(b => b.Client).Include(b => b.ClientEvent).Include(b => b.TaxYear);
             return View(billing.ToList());
         }
 
@@ -42,6 +42,7 @@ namespace PhotgraphyMVC.Controllers
         {
             ViewBag.ClientID = new SelectList(db.Clients, "ClientID", "FullName");
             ViewBag.EventID = new SelectList(db.Events, "EventID", "EventLabel");
+            ViewBag.TaxYearID = new SelectList(db.TaxYears, "TaxYearID", "Year");
             return View();
         }
 
@@ -50,7 +51,7 @@ namespace PhotgraphyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "BillingID,Date,Subtotal,SalesTax,Total,ClientID,EventID")] Billing billing)
+        public ActionResult Create([Bind(Include = "BillingID,Date,Subtotal,SalesTax,Total,ClientID,EventID,TaxYearID")] Billing billing)
         {
             if (ModelState.IsValid)
             {
@@ -69,6 +70,9 @@ namespace PhotgraphyMVC.Controllers
                 billing.Subtotal = subtotal;
                 billing.SalesTax = salesTax;
 
+                TaxYear taxYear = db.TaxYears.Find(billing.TaxYearID);
+                taxYear.TotalTax += billing.SalesTax;
+                db.Entry(taxYear).State = EntityState.Modified;
                 db.Billing.Add(billing);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -76,6 +80,7 @@ namespace PhotgraphyMVC.Controllers
 
             ViewBag.ClientID = new SelectList(db.Clients, "ClientID", "FullName", billing.ClientID);
             ViewBag.EventID = new SelectList(db.Events, "EventID", "EventLabel", billing.EventID);
+            ViewBag.TaxYearID = new SelectList(db.TaxYears, "TaxYearID", "Year", billing.TaxYearID);
             return View(billing);
         }
 
@@ -93,6 +98,7 @@ namespace PhotgraphyMVC.Controllers
             }
             ViewBag.ClientID = new SelectList(db.Clients, "ClientID", "FullName", billing.ClientID);
             ViewBag.EventID = new SelectList(db.Events, "EventID", "EventLabel", billing.EventID);
+            ViewBag.TaxYearID = new SelectList(db.TaxYears, "TaxYearID", "Year", billing.TaxYearID);
             return View(billing);
         }
 
@@ -101,7 +107,7 @@ namespace PhotgraphyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "BillingID,Date,Subtotal,SalesTax,Total,ClientID,EventID")] Billing billing)
+        public ActionResult Edit([Bind(Include = "BillingID,Date,Subtotal,SalesTax,Total,ClientID,EventID,TaxYearID")] Billing billing)
         {
             if (ModelState.IsValid)
             {
@@ -120,12 +126,17 @@ namespace PhotgraphyMVC.Controllers
                 billing.Subtotal = subtotal;
                 billing.SalesTax = salesTax;
 
+                TaxYear taxYear = db.TaxYears.Find(billing.TaxYearID);
+                taxYear.TotalTax += billing.SalesTax;
+                db.Entry(taxYear).State = EntityState.Modified;
+
                 db.Entry(billing).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
             ViewBag.ClientID = new SelectList(db.Clients, "ClientID", "FullName", billing.ClientID);
             ViewBag.EventID = new SelectList(db.Events, "EventID", "EventLabel", billing.EventID);
+            ViewBag.TaxYearID = new SelectList(db.TaxYears, "TaxYearID", "Year", billing.TaxYearID);
             return View(billing);
         }
 

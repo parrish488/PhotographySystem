@@ -9,6 +9,7 @@ namespace PhotgraphyMVC.Models
     {
         public decimal TotalSalesTax { get; set; }
         public decimal TotalEarnings { get; set; }
+        public int MilesDriven { get; set; }
 
         public List<Event> UpcomingEvents { get; set; }
         public List<TodoList> TodoListItems { get; set; }
@@ -17,6 +18,7 @@ namespace PhotgraphyMVC.Models
         {
             TotalSalesTax = 0;
             TotalEarnings = 0;
+            MilesDriven = 0;
             UpcomingEvents = new List<Event>();
             TodoListItems = new List<TodoList>();
         }

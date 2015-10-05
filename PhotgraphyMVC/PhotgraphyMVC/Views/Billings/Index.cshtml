@@ -21,6 +21,9 @@
             @Html.DisplayNameFor(model => model.ClientEvent.EventType)
         </th>
         <th>
+            @Html.DisplayNameFor(model => model.TaxYear.TaxYearID)
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.Subtotal)
         </th>
         <th>
@@ -44,6 +47,9 @@
             @Html.DisplayFor(modelItem => item.ClientEvent.EventType)
         </td>
         <td>
+            @Html.DisplayFor(modelItem => item.TaxYear.TaxYearID)
+        </td>
+        <td>
             @Html.DisplayFor(modelItem => item.Subtotal)
         </td>
         <td>
@@ -61,3 +67,6 @@
 }
 
 </table>
+<p>
+    @Html.ActionLink("Manage Tax Years", "Index", "TaxYears")
+</p>

@@ -17,9 +17,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a href='@Url.Action("Index", "Home")'>
-                    <img src='@Url.Content("Alissa Paige Photography Color.png")' />
-                </a>  
+                @Html.ActionLink("Dashboard", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -27,6 +25,7 @@
                     <li>@Html.ActionLink("Events", "Index", "Events")</li>
                     <li>@Html.ActionLink("Billing", "Index", "Billings")</li>
                     <li>@Html.ActionLink("Mileage", "Index", "Mileages")</li>
+                    <li>@Html.ActionLink("TodoList", "Index", "TodoLists")</li>
                     <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
                 </ul>
                 @Html.Partial("_LoginPartial")
