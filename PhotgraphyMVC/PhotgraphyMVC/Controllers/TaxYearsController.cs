@@ -47,7 +47,7 @@ namespace PhotgraphyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "TaxYearID,Year,TaxRate,TotalTax,TotalMiles")] TaxYear taxYear)
+        public ActionResult Create([Bind(Include = "TaxYearID,Year,TaxRate,TotalTax,TotalMiles,TaxablePercent")] TaxYear taxYear)
         {
             if (ModelState.IsValid)
             {
@@ -79,7 +79,7 @@ namespace PhotgraphyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "TaxYearID,Year,TaxRate,TotalTax,TotalMiles")] TaxYear taxYear)
+        public ActionResult Edit([Bind(Include = "TaxYearID,Year,TaxRate,TotalTax,TotalMiles,TaxablePercent")] TaxYear taxYear)
         {
             if (ModelState.IsValid)
             {

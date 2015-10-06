@@ -27,5 +27,8 @@ namespace PhotgraphyMVC.Models
 
         [Display(Name = "Total Miles")]
         public double TotalMiles { get; set; }
+
+        [Display(Name = "Taxable Percent")]
+        public decimal TaxablePercent { get; set; }
     }
 }

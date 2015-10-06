@@ -56,8 +56,7 @@ namespace PhotgraphyMVC.Controllers
             if (ModelState.IsValid)
             {
                 // Calculate sales tax: only 10% of cost is taxable product.  Put this in a variable later
-                decimal subtotal = Decimal.Round(Decimal.Divide(Decimal.Multiply(billing.Total, .1m), 1.066m), 2);
-                decimal salesTax = Decimal.Round(Decimal.Subtract(Decimal.Multiply(billing.Total, .1m), subtotal), 2);
+                decimal salesTax = GetSalesTax(billing);
 
                 billing.Subtotal = billing.Total - salesTax;
                 billing.SalesTax = salesTax;
@@ -107,8 +106,7 @@ namespace PhotgraphyMVC.Controllers
             if (ModelState.IsValid)
             {
                 // Calculate sales tax: only 10% of cost is taxable product.  Put this in a variable later
-                decimal subtotal = Decimal.Round(Decimal.Divide(Decimal.Multiply(billing.Total, .1m), 1.066m), 2);
-                decimal salesTax = Decimal.Round(Decimal.Subtract(Decimal.Multiply(billing.Total, .1m), subtotal), 2);
+                decimal salesTax = GetSalesTax(billing);
 
                 billing.Subtotal = billing.Total - salesTax;
                 billing.SalesTax = salesTax;
@@ -179,6 +177,16 @@ namespace PhotgraphyMVC.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        private decimal GetSalesTax(Billing billing)
+        {
+            TaxYear taxYear = db.TaxYears.Find(billing.TaxYearID);
+
+            decimal subtotal = Decimal.Round(Decimal.Divide(Decimal.Multiply(billing.Total, (taxYear.TaxablePercent / 100)), (decimal)(1 + taxYear.TaxRate)), 2);
+            decimal salesTax = Decimal.Round(Decimal.Subtract(Decimal.Multiply(billing.Total, (taxYear.TaxablePercent / 100)), subtotal), 2);
+
+            return salesTax;
         }
     }
 }
