@@ -16,11 +16,6 @@ namespace PhotgraphyMVC.Controllers
         {
             HomeData data = new HomeData();
 
-            foreach (Billing bill in db.Billing)
-            {
-                data.TotalEarnings += bill.Subtotal;
-            }
-
             foreach (Event evnt in db.Events)
             {
                 if (evnt.EventDate >= DateTime.Now && evnt.EventDate < DateTime.Now.AddDays(30))
@@ -48,6 +43,7 @@ namespace PhotgraphyMVC.Controllers
             }
 
             data.TotalSalesTax = taxYear.TotalTax;
+            data.TotalEarnings = taxYear.TotalNetIncome;
             data.MilesDriven = (int)taxYear.TotalMiles;
             data.UpcomingEvents =  data.UpcomingEvents.OrderBy(x => x.EventDate).ToList();
             data.TodoListItems = data.TodoListItems.OrderBy(x => x.DueDate).ToList();

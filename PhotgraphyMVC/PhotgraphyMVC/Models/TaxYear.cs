@@ -13,6 +13,8 @@ namespace PhotgraphyMVC.Models
             TaxRate = 0;
             TotalTax = 0.0m;
             TotalMiles = 0;
+            TaxablePercent = 0.0m;
+            TotalNetIncome = 0.0m;
         }
 
         public int TaxYearID { get; set; }
@@ -30,5 +32,8 @@ namespace PhotgraphyMVC.Models
 
         [Display(Name = "Taxable Percent")]
         public decimal TaxablePercent { get; set; }
+
+        [Display(Name = "Total Net Income")]
+        public decimal TotalNetIncome { get; set; }
     }
 }

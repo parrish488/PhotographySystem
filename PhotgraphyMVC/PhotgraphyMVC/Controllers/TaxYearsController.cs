@@ -47,7 +47,7 @@ namespace PhotgraphyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "TaxYearID,Year,TaxRate,TotalTax,TotalMiles,TaxablePercent")] TaxYear taxYear)
+        public ActionResult Create([Bind(Include = "TaxYearID,Year,TaxRate,TotalTax,TotalMiles,TaxablePercent,TotalNetIncome")] TaxYear taxYear)
         {
             if (ModelState.IsValid)
             {
@@ -79,10 +79,11 @@ namespace PhotgraphyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "TaxYearID,Year,TaxRate,TotalTax,TotalMiles,TaxablePercent")] TaxYear taxYear)
+        public ActionResult Edit([Bind(Include = "TaxYearID,Year,TaxRate,TotalTax,TotalMiles,TaxablePercent,TotalNetIncome")] TaxYear taxYear)
         {
             if (ModelState.IsValid)
             {
+                taxYear = RecalculateBilling(taxYear);
                 db.Entry(taxYear).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -123,6 +124,23 @@ namespace PhotgraphyMVC.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        private TaxYear RecalculateBilling(TaxYear taxYear)
+        {
+            taxYear.TotalTax = 0;
+            taxYear.TotalNetIncome = 0;
+
+            foreach (Billing billing in db.Billing)
+            {
+                billing.SalesTax = billing.GetSalesTax(billing, taxYear);
+                billing.Subtotal = billing.Total - billing.SalesTax;
+
+                taxYear.TotalTax += billing.SalesTax;
+                taxYear.TotalNetIncome += billing.Subtotal;
+            }
+
+            return taxYear;
         }
     }
 }

@@ -27,5 +27,13 @@ namespace PhotgraphyMVC.Models
         [ForeignKey("TaxYear")]
         public int TaxYearID { get; set; }
         public virtual TaxYear TaxYear { get; set; }
+
+        public decimal GetSalesTax(Billing billing, TaxYear taxYear)
+        {
+            decimal subtotal = Decimal.Round(Decimal.Divide(Decimal.Multiply(billing.Total, (taxYear.TaxablePercent / 100)), (decimal)(1 + (taxYear.TaxRate / 100))), 2);
+            decimal salesTax = Decimal.Round(Decimal.Subtract(Decimal.Multiply(billing.Total, (taxYear.TaxablePercent / 100)), subtotal), 2);
+
+            return salesTax;
+        }
     }
 }

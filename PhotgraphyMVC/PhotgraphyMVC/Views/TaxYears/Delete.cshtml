@@ -27,11 +27,27 @@
         </dd>
 
         <dt>
+            @Html.DisplayNameFor(model => model.TaxablePercent)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TaxablePercent)
+        </dd>
+
+        <dt>
             @Html.DisplayNameFor(model => model.TotalTax)
         </dt>
 
         <dd>
             @Html.DisplayFor(model => model.TotalTax)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TotalNetIncome)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TotalNetIncome)
         </dd>
 
         <dt>
@@ -42,17 +58,10 @@
             @Html.DisplayFor(model => model.TotalMiles)
         </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.TaxablePercent)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.TaxablePercent)
-        </dd>
-
     </dl>
 
-    @using (Html.BeginForm()) {
+    @using (Html.BeginForm())
+    {
         @Html.AntiForgeryToken()
 
         <div class="form-actions no-color">

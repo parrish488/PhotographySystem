@@ -96,11 +96,20 @@ namespace PhotgraphyMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                TaxYear taxYear = db.TaxYears.Find(mileage.TaxYearID);
-                taxYear.TotalMiles += mileage.MilesDriven;
-                db.Entry(taxYear).State = EntityState.Modified;
                 db.Entry(mileage).State = EntityState.Modified;
                 db.SaveChanges();
+
+                TaxYear taxYear = db.TaxYears.Find(mileage.TaxYearID);
+                taxYear.TotalMiles = 0;
+
+                foreach (Mileage miles in db.Mileage)
+                {
+                    taxYear.TotalMiles += miles.MilesDriven;
+                }
+
+                db.Entry(taxYear).State = EntityState.Modified;
+                db.SaveChanges();
+                
                 return RedirectToAction("Index");
             }
             ViewBag.ClientID = new SelectList(db.Clients, "ClientID", "FullName", mileage.ClientID);
@@ -132,6 +141,18 @@ namespace PhotgraphyMVC.Controllers
             Mileage mileage = db.Mileage.Find(id);
             db.Mileage.Remove(mileage);
             db.SaveChanges();
+
+            TaxYear taxYear = db.TaxYears.Find(mileage.TaxYearID);
+            taxYear.TotalMiles = 0;
+
+            foreach (Mileage miles in db.Mileage)
+            {
+                taxYear.TotalMiles += miles.MilesDriven;
+            }
+
+            db.Entry(taxYear).State = EntityState.Modified;
+            db.SaveChanges();
+
             return RedirectToAction("Index");
         }
 

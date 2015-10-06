@@ -25,31 +25,15 @@
         <div class="form-group">
             @Html.LabelFor(model => model.TaxRate, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.TaxRate, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.TaxRate, new { htmlAttributes = new { @class = "form-control" } })<span>Enter in whole percent: 6.6 for 6.6%, etc.</span>
                 @Html.ValidationMessageFor(model => model.TaxRate, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.TotalTax, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.TotalTax, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.TotalTax, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.TotalMiles, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.TotalMiles, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.TotalMiles, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
             @Html.LabelFor(model => model.TaxablePercent, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.TaxablePercent, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.TaxablePercent, new { htmlAttributes = new { @class = "form-control" } })<span>Enter in whole percent: 10 for 10%, etc.</span>
                 @Html.ValidationMessageFor(model => model.TaxablePercent, "", new { @class = "text-danger" })
             </div>
         </div>

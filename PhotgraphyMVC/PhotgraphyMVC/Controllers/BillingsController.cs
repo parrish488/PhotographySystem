@@ -55,8 +55,9 @@ namespace PhotgraphyMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Calculate sales tax: only 10% of cost is taxable product.  Put this in a variable later
-                decimal salesTax = GetSalesTax(billing);
+                // Calculate sales tax
+                TaxYear taxYear = db.TaxYears.Find(billing.TaxYearID);
+                decimal salesTax = billing.GetSalesTax(billing, taxYear);
 
                 billing.Subtotal = billing.Total - salesTax;
                 billing.SalesTax = salesTax;
@@ -64,8 +65,8 @@ namespace PhotgraphyMVC.Controllers
                 db.Billing.Add(billing);
                 db.SaveChanges();
 
-                TaxYear taxYear = db.TaxYears.Find(billing.TaxYearID);
                 taxYear.TotalTax += billing.SalesTax;
+                taxYear.TotalNetIncome += billing.Subtotal;
                 db.Entry(taxYear).State = EntityState.Modified;
 
                 db.SaveChanges();
@@ -105,8 +106,9 @@ namespace PhotgraphyMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Calculate sales tax: only 10% of cost is taxable product.  Put this in a variable later
-                decimal salesTax = GetSalesTax(billing);
+                // Calculate sales tax
+                TaxYear taxYear = db.TaxYears.Find(billing.TaxYearID);
+                decimal salesTax = billing.GetSalesTax(billing, taxYear);
 
                 billing.Subtotal = billing.Total - salesTax;
                 billing.SalesTax = salesTax;
@@ -114,12 +116,13 @@ namespace PhotgraphyMVC.Controllers
                 db.Entry(billing).State = EntityState.Modified;
                 db.SaveChanges();
 
-                TaxYear taxYear = db.TaxYears.Find(billing.TaxYearID);
                 taxYear.TotalTax = 0;
+                taxYear.TotalNetIncome = 0;
 
                 foreach (Billing bill in db.Billing)
                 {
                     taxYear.TotalTax += bill.SalesTax;
+                    taxYear.TotalNetIncome += bill.Subtotal;
                 }
                 db.Entry(taxYear).State = EntityState.Modified;
 
@@ -158,13 +161,15 @@ namespace PhotgraphyMVC.Controllers
 
             TaxYear taxYear = db.TaxYears.Find(billing.TaxYearID);
             taxYear.TotalTax = 0;
+            taxYear.TotalNetIncome = 0;
 
             foreach (Billing bill in db.Billing)
             {
                 taxYear.TotalTax += bill.SalesTax;
+                taxYear.TotalNetIncome += bill.Subtotal;
             }
-
             db.Entry(taxYear).State = EntityState.Modified;
+
             db.SaveChanges();
 
             return RedirectToAction("Index");
@@ -177,16 +182,6 @@ namespace PhotgraphyMVC.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
-        }
-
-        private decimal GetSalesTax(Billing billing)
-        {
-            TaxYear taxYear = db.TaxYears.Find(billing.TaxYearID);
-
-            decimal subtotal = Decimal.Round(Decimal.Divide(Decimal.Multiply(billing.Total, (taxYear.TaxablePercent / 100)), (decimal)(1 + taxYear.TaxRate)), 2);
-            decimal salesTax = Decimal.Round(Decimal.Subtract(Decimal.Multiply(billing.Total, (taxYear.TaxablePercent / 100)), subtotal), 2);
-
-            return salesTax;
         }
     }
 }

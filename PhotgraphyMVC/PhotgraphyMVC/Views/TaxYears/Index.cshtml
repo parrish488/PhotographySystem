@@ -18,40 +18,47 @@
             @Html.DisplayNameFor(model => model.TaxRate)
         </th>
         <th>
+            @Html.DisplayNameFor(model => model.TaxablePercent)
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.TotalTax)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TotalNetIncome)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.TotalMiles)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.TaxablePercent)
-        </th>
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Year)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.TaxRate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.TotalTax)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.TotalMiles)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.TaxablePercent)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.TaxYearID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.TaxYearID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.TaxYearID })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Year)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaxRate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaxablePercent)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalTax)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalNetIncome)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalMiles)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.TaxYearID }) |
+                @Html.ActionLink("Details", "Details", new { id = item.TaxYearID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.TaxYearID })
+            </td>
+        </tr>
+    }
 
 </table>
