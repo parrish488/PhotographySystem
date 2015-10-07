@@ -16,10 +16,52 @@ namespace PhotgraphyMVC.Controllers
         private PhotographerContext db = new PhotographerContext();
 
         // GET: Billings
-        public ActionResult Index()
+        public ActionResult Index(string sortOrder, string searchString)
         {
-            var billing = db.Billing.Include(b => b.Client).Include(b => b.ClientEvent).Include(b => b.TaxYear);
-            return View(billing.ToList());
+            ViewBag.LastNameSortParm = String.IsNullOrEmpty(sortOrder) ? "last_name_desc" : "";
+            ViewBag.FirstNameSortParm = sortOrder == "first_name" ? "first_name_desc" : "first_name";
+            ViewBag.EventTypeParm = sortOrder == "event_type" ? "event_type_desc" : "event_type";
+            ViewBag.TotalParm = sortOrder == "total" ? "total_desc" : "total";
+
+            var bills = from b in db.Billing
+                             select b;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                bills = bills.Where(b => b.Client.LastName.Contains(searchString)
+                                       || b.Client.FirstName.Contains(searchString)
+                                       || b.ClientEvent.EventType.Contains(searchString)
+                                       || b.Total.ToString().Contains(searchString));
+            }
+
+            switch (sortOrder)
+            {
+                case "total":
+                    bills = bills.OrderBy(c => c.Total).Include(b => b.Client).Include(b => b.ClientEvent).Include(b => b.TaxYear);
+                    break;
+                case "total_desc":
+                    bills = bills.OrderByDescending(c => c.Total).Include(b => b.Client).Include(b => b.ClientEvent).Include(b => b.TaxYear);
+                    break;
+                case "event_type":
+                    bills = bills.OrderBy(c => c.ClientEvent.EventType).Include(b => b.Client).Include(b => b.ClientEvent).Include(b => b.TaxYear);
+                    break;
+                case "event_type_desc":
+                    bills = bills.OrderByDescending(c => c.ClientEvent.EventType).Include(b => b.Client).Include(b => b.ClientEvent).Include(b => b.TaxYear);
+                    break;
+                case "first_name":
+                    bills = bills.OrderBy(c => c.Client.FirstName).Include(b => b.Client).Include(b => b.ClientEvent).Include(b => b.TaxYear);
+                    break;
+                case "first_name_desc":
+                    bills = bills.OrderByDescending(c => c.Client.FirstName).Include(b => b.Client).Include(b => b.ClientEvent).Include(b => b.TaxYear);
+                    break;
+                case "last_name_desc":
+                    bills = bills.OrderByDescending(c => c.Client.LastName).Include(b => b.Client).Include(b => b.ClientEvent).Include(b => b.TaxYear);
+                    break;
+                default:
+                    bills = bills.OrderBy(c => c.Client.LastName).Include(b => b.Client).Include(b => b.ClientEvent).Include(b => b.TaxYear);
+                    break;
+            }
+
+            return View(bills.ToList());
         }
 
         // GET: Billings/Details/5

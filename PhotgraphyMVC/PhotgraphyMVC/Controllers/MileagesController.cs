@@ -16,10 +16,58 @@ namespace PhotgraphyMVC.Controllers
         private PhotographerContext db = new PhotographerContext();
 
         // GET: Mileages
-        public ActionResult Index()
+        public ActionResult Index(string sortOrder, string searchString)
         {
-            var mileage = db.Mileage.Include(m => m.Client).Include(m => m.ClientEvent).Include(m => m.TaxYear);
-            return View(mileage.ToList());
+            ViewBag.LastNameSortParm = String.IsNullOrEmpty(sortOrder) ? "last_name_desc" : "";
+            ViewBag.FirstNameSortParm = sortOrder == "first_name" ? "first_name_desc" : "first_name";
+            ViewBag.YearSortParm = sortOrder == "year" ? "year_desc" : "year";
+            ViewBag.MileageSortParm = sortOrder == "mileage" ? "mileage_desc" : "mileage";
+            ViewBag.SourceSortParm = sortOrder == "source" ? "source_desc" : "source";
+
+            var mileages = from m in db.Mileage
+                         select m;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                mileages = mileages.Where(m => m.Client.LastName.Contains(searchString)
+                                       || m.Client.FirstName.Contains(searchString)
+                                       || m.Source.Contains(searchString));
+            }
+
+            switch (sortOrder)
+            {
+                case "source":
+                    mileages = mileages.OrderBy(c => c.Source).Include(m => m.Client).Include(m => m.ClientEvent).Include(m => m.TaxYear);
+                    break;
+                case "source_desc":
+                    mileages = mileages.OrderByDescending(c => c.Source).Include(m => m.Client).Include(m => m.ClientEvent).Include(m => m.TaxYear);
+                    break;
+                case "mileage":
+                    mileages = mileages.OrderBy(c => c.MilesDriven).Include(m => m.Client).Include(m => m.ClientEvent).Include(m => m.TaxYear);
+                    break;
+                case "mileage_desc":
+                    mileages = mileages.OrderByDescending(c => c.MilesDriven).Include(m => m.Client).Include(m => m.ClientEvent).Include(m => m.TaxYear);
+                    break;
+                case "year":
+                    mileages = mileages.OrderBy(c => c.TaxYear.Year).Include(m => m.Client).Include(m => m.ClientEvent).Include(m => m.TaxYear);
+                    break;
+                case "year_desc":
+                    mileages = mileages.OrderByDescending(c => c.TaxYear.Year).Include(m => m.Client).Include(m => m.ClientEvent).Include(m => m.TaxYear);
+                    break;
+                case "first_name":
+                    mileages = mileages.OrderBy(c => c.Client.FirstName).Include(m => m.Client).Include(m => m.ClientEvent).Include(m => m.TaxYear);
+                    break;
+                case "first_name_desc":
+                    mileages = mileages.OrderByDescending(c => c.Client.FirstName).Include(m => m.Client).Include(m => m.ClientEvent).Include(m => m.TaxYear);
+                    break;
+                case "last_name_desc":
+                    mileages = mileages.OrderByDescending(c => c.Client.LastName).Include(m => m.Client).Include(m => m.ClientEvent).Include(m => m.TaxYear);
+                    break;
+                default:
+                    mileages = mileages.OrderBy(c => c.Client.LastName).Include(m => m.Client).Include(m => m.ClientEvent).Include(m => m.TaxYear);
+                    break;
+            }
+
+            return View(mileages.ToList());
         }
 
         // GET: Mileages/Details/5

@@ -16,9 +16,49 @@ namespace PhotgraphyMVC.Controllers
         private PhotographerContext db = new PhotographerContext();
 
         // GET: TaxYears
-        public ActionResult Index()
+        public ActionResult Index(string sortOrder, string searchString)
         {
-            return View(db.TaxYears.ToList());
+            ViewBag.YearSortParm = String.IsNullOrEmpty(sortOrder) ? "year_desc" : "";
+            ViewBag.TotalTaxSortParm = sortOrder == "total_tax" ? "total_tax_desc" : "total_tax";
+            ViewBag.TotalIncomeSortParm = sortOrder == "total_income" ? "total_income_desc" : "total_income";
+            ViewBag.TotalMilesSortParm = sortOrder == "total_miles" ? "total_miles_desc" : "total_miles";
+
+            var taxYear = from t in db.TaxYears
+                           select t;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                taxYear = taxYear.Where(t => t.Year.ToString().Contains(searchString));
+            }
+
+            switch (sortOrder)
+            {
+                case "total_miles":
+                    taxYear = taxYear.OrderBy(c => c.TotalMiles);
+                    break;
+                case "total_miles_desc":
+                    taxYear = taxYear.OrderByDescending(c => c.TotalMiles);
+                    break;
+                case "total_income":
+                    taxYear = taxYear.OrderBy(c => c.TotalNetIncome);
+                    break;
+                case "total_income_desc":
+                    taxYear = taxYear.OrderByDescending(c => c.TotalNetIncome);
+                    break;
+                case "total_tax":
+                    taxYear = taxYear.OrderBy(c => c.TotalTax);
+                    break;
+                case "total_tax_desc":
+                    taxYear = taxYear.OrderByDescending(c => c.TotalTax);
+                    break;
+                case "year_desc":
+                    taxYear = taxYear.OrderByDescending(c => c.Year);
+                    break;
+                default:
+                    taxYear = taxYear.OrderBy(c => c.Year);
+                    break;
+            }
+
+            return View(taxYear.ToList());
         }
 
         // GET: TaxYears/Details/5

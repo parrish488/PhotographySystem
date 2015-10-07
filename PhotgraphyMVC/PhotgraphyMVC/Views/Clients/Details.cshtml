@@ -92,7 +92,33 @@
 
     </dl>
 </div>
+
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.ClientID }) |
     @Html.ActionLink("Back to List", "Index")
 </p>
+
+<div class="row">
+    <div class="col-md-4">
+        <h2>Client Events</h2>
+        @foreach (var item in Model.Events)
+        {
+            <h4>@item.EventLabel</h4>
+        }
+    </div>
+    <div class="col-md-4">
+        <h2>Client Bills</h2>
+        @foreach (var item in Model.Billing)
+        {
+            <h4>@item.ClientEvent.EventDate.ToShortDateString(): $@item.Total</h4>
+        }
+    </div>
+    <div class="col-md-4">
+        <h2>Client Mileage</h2>
+        @foreach (var item in Model.Mileage)
+        {
+            <h4>@item.ClientEvent.EventDate.ToShortDateString(): @item.MilesDriven Miles</h4>
+        }
+    </div>
+</div>
+

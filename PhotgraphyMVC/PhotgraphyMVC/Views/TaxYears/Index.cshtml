@@ -9,10 +9,19 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
+
+@using (Html.BeginForm())
+{
+    <p>
+        Find by name: @Html.TextBox("SearchString")
+        <input type="submit" value="Search" />
+    </p>
+}
+
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Year)
+            @Html.ActionLink("Year", "Index", new { sortOrder = ViewBag.YearSortParm })
         </th>
         <th>
             @Html.DisplayNameFor(model => model.TaxRate)
@@ -21,13 +30,13 @@
             @Html.DisplayNameFor(model => model.TaxablePercent)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.TotalTax)
+            @Html.ActionLink("Total Tax", "Index", new { sortOrder = ViewBag.TotalTaxSortParm })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.TotalNetIncome)
+            @Html.ActionLink("Total Net Income", "Index", new { sortOrder = ViewBag.TotalIncomeSortParm })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.TotalMiles)
+            @Html.ActionLink("Total Miles", "Index", new { sortOrder = ViewBag.TotalMilesSortParm })
         </th>
         <th></th>
     </tr>

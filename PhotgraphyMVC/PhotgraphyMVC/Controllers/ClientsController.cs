@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using PhotgraphyMVC.Models;
+using PagedList;
 
 namespace PhotgraphyMVC.Controllers
 {
@@ -16,30 +17,50 @@ namespace PhotgraphyMVC.Controllers
         private PhotographerContext db = new PhotographerContext();
 
         // GET: Clients
-        public ActionResult Index(string sortOrder)
+        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
+            ViewBag.CurrentSort = sortOrder;
             ViewBag.LastNameSortParm = String.IsNullOrEmpty(sortOrder) ? "last_name_desc" : "";
-            ViewBag.FirstNameSortParm = String.IsNullOrEmpty(sortOrder) ? "first_name_desc" : "first_name";
+            ViewBag.FirstNameSortParm = sortOrder == "first_name" ? "first_name_desc" : "first_name";
 
-            List<Client> clients = new List<Client>();
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = searchString;
+
+            var clientList = from c in db.Clients
+                           select c;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                clientList = clientList.Where(c => c.LastName.Contains(searchString)
+                                       || c.FirstName.Contains(searchString));
+            }
 
             switch (sortOrder)
             {
                 case "first_name":
-                    clients = db.Clients.OrderBy(c => c.FirstName).ToList();
+                    clientList = clientList.OrderBy(c => c.FirstName);
                     break;
                 case "first_name_desc":
-                    clients = db.Clients.OrderByDescending(c => c.FirstName).ToList();
+                    clientList = clientList.OrderByDescending(c => c.FirstName);
                     break;
                 case "last_name_desc":
-                    clients = db.Clients.OrderByDescending(c => c.LastName).ToList();
+                    clientList = clientList.OrderByDescending(c => c.LastName);
                     break;
                 default:
-                    clients = db.Clients.OrderBy(c => c.LastName).ToList();
+                    clientList = clientList.OrderBy(c => c.LastName);
                     break;
             }
 
-            return View(clients);
+            int pageSize = 5;
+            int pageNumber = (page ?? 1);
+            return View(clientList.ToPagedList(pageNumber, pageSize));
         }
 
         // GET: Clients/Details/5

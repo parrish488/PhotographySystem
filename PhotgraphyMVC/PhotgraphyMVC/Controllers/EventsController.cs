@@ -16,44 +16,51 @@ namespace PhotgraphyMVC.Controllers
         private PhotographerContext db = new PhotographerContext();
 
         // GET: Events
-        public ActionResult Index(string sortOrder)
+        public ActionResult Index(string sortOrder, string searchString)
         {
             ViewBag.LastNameSortParm = String.IsNullOrEmpty(sortOrder) ? "last_name_desc" : "";
-            ViewBag.FirstNameSortParm = String.IsNullOrEmpty(sortOrder) ? "first_name_desc" : "first_name";
-            ViewBag.EventTypeSortParm = String.IsNullOrEmpty(sortOrder) ? "event_type_desc" : "event_type";
+            ViewBag.FirstNameSortParm = sortOrder == "first_name" ? "first_name_desc" : "first_name";
+            ViewBag.EventTypeSortParm = sortOrder == "event_type" ? "event_type_desc" : "event_type";
             ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
 
-            List<Event> events = new List<Event>();
+            var events = from e in db.Events
+                        select e;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                events = events.Where(e => e.Client.LastName.Contains(searchString)
+                                       || e.Client.FirstName.Contains(searchString)
+                                       || e.EventType.Contains(searchString));
+            }
 
             switch (sortOrder)
             {
                 case "event_type":
-                    events = db.Events.Include(c => c.Client).OrderBy(c => c.EventType).ToList();
+                    events = events.Include(c => c.Client).OrderBy(c => c.EventType);
                     break;
                 case "event_type_desc":
-                    events = db.Events.Include(c => c.Client).OrderByDescending(c => c.EventType).ToList();
+                    events = events.Include(c => c.Client).OrderByDescending(c => c.EventType);
                     break;                
                 case "Date":
-                    events = db.Events.Include(c => c.Client).OrderBy(c => c.EventDate).ToList();
+                    events = events.Include(c => c.Client).OrderBy(c => c.EventDate);
                     break;
                 case "date_desc":
-                    events = db.Events.Include(c => c.Client).OrderByDescending(c => c.EventDate).ToList();
+                    events = events.Include(c => c.Client).OrderByDescending(c => c.EventDate);
                     break;
                 case "first_name":
-                    events = db.Events.Include(c => c.Client).OrderBy(c => c.Client.FirstName).ToList();
+                    events = events.Include(c => c.Client).OrderBy(c => c.Client.FirstName);
                     break;
                 case "first_name_desc":
-                    events = db.Events.Include(c => c.Client).OrderByDescending(c => c.Client.FirstName).ToList();
+                    events = events.Include(c => c.Client).OrderByDescending(c => c.Client.FirstName);
                     break;
                 case "last_name_desc":
-                    events = db.Events.Include(c => c.Client).OrderBy(c => c.Client.LastName).ToList();
+                    events = events.Include(c => c.Client).OrderBy(c => c.Client.LastName);
                     break;
                 default:
-                    events = db.Events.Include(c => c.Client).OrderByDescending(c => c.Client.LastName).ToList();
+                    events = events.Include(c => c.Client).OrderByDescending(c => c.Client.LastName);
                     break;
             }
             
-            return View(events);
+            return View(events.ToList());
         }
 
         // GET: Events/Details/5

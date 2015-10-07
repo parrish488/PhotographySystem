@@ -9,22 +9,34 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
+
+@using (Html.BeginForm())
+{
+    <p>
+        Find by name: @Html.TextBox("SearchString")
+        <input type="submit" value="Search" />
+    </p>
+}
+
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Client.FullName)
+            @Html.ActionLink("First Name", "Index", new { sortOrder = ViewBag.FirstNameSortParm })
+        </th>
+        <th>
+            @Html.ActionLink("Last Name", "Index", new { sortOrder = ViewBag.LastNameSortParm })
         </th>
         <th>
             @Html.DisplayNameFor(model => model.ClientEvent.EventLabel)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.TaxYear.Year)
+            @Html.ActionLink("Year", "Index", new { sortOrder = ViewBag.YearSortParm })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.MilesDriven)
+            @Html.ActionLink("Miles Driven", "Index", new { sortOrder = ViewBag.MileageSortParm })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Source)
+            @Html.ActionLink("Source", "Index", new { sortOrder = ViewBag.SourceSortParm })
         </th>
         <th></th>
     </tr>
@@ -32,7 +44,10 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.Client.FullName)
+            @Html.DisplayFor(modelItem => item.Client.FirstName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Client.LastName)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.ClientEvent.EventLabel)
