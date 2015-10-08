@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using PhotgraphyMVC.Models;
+using PagedList;
 
 namespace PhotgraphyMVC.Controllers
 {
@@ -16,12 +17,23 @@ namespace PhotgraphyMVC.Controllers
         private PhotographerContext db = new PhotographerContext();
 
         // GET: Events
-        public ActionResult Index(string sortOrder, string searchString)
+        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
             ViewBag.LastNameSortParm = String.IsNullOrEmpty(sortOrder) ? "last_name_desc" : "";
             ViewBag.FirstNameSortParm = sortOrder == "first_name" ? "first_name_desc" : "first_name";
             ViewBag.EventTypeSortParm = sortOrder == "event_type" ? "event_type_desc" : "event_type";
             ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = searchString;
 
             var events = from e in db.Events
                         select e;
@@ -59,8 +71,10 @@ namespace PhotgraphyMVC.Controllers
                     events = events.Include(c => c.Client).OrderByDescending(c => c.Client.LastName);
                     break;
             }
-            
-            return View(events.ToList());
+
+            int pageSize = 5;
+            int pageNumber = (page ?? 1);
+            return View(events.ToPagedList(pageNumber, pageSize));
         }
 
         // GET: Events/Details/5

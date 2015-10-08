@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using PhotgraphyMVC.Models;
+using PagedList;
 
 namespace PhotgraphyMVC.Controllers
 {
@@ -16,12 +17,23 @@ namespace PhotgraphyMVC.Controllers
         private PhotographerContext db = new PhotographerContext();
 
         // GET: TaxYears
-        public ActionResult Index(string sortOrder, string searchString)
+        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
             ViewBag.YearSortParm = String.IsNullOrEmpty(sortOrder) ? "year_desc" : "";
             ViewBag.TotalTaxSortParm = sortOrder == "total_tax" ? "total_tax_desc" : "total_tax";
             ViewBag.TotalIncomeSortParm = sortOrder == "total_income" ? "total_income_desc" : "total_income";
             ViewBag.TotalMilesSortParm = sortOrder == "total_miles" ? "total_miles_desc" : "total_miles";
+
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = searchString;
 
             var taxYear = from t in db.TaxYears
                            select t;
@@ -51,14 +63,16 @@ namespace PhotgraphyMVC.Controllers
                     taxYear = taxYear.OrderByDescending(c => c.TotalTax);
                     break;
                 case "year_desc":
-                    taxYear = taxYear.OrderByDescending(c => c.Year);
+                    taxYear = taxYear.OrderBy(c => c.Year);
                     break;
                 default:
-                    taxYear = taxYear.OrderBy(c => c.Year);
+                    taxYear = taxYear.OrderByDescending(c => c.Year);
                     break;
             }
 
-            return View(taxYear.ToList());
+            int pageSize = 5;
+            int pageNumber = (page ?? 1);
+            return View(taxYear.ToPagedList(pageNumber, pageSize));
         }
 
         // GET: TaxYears/Details/5

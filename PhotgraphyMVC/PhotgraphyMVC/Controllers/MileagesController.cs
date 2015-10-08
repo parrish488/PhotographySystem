@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using PhotgraphyMVC.Models;
+using PagedList;
 
 namespace PhotgraphyMVC.Controllers
 {
@@ -16,13 +17,24 @@ namespace PhotgraphyMVC.Controllers
         private PhotographerContext db = new PhotographerContext();
 
         // GET: Mileages
-        public ActionResult Index(string sortOrder, string searchString)
+        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
             ViewBag.LastNameSortParm = String.IsNullOrEmpty(sortOrder) ? "last_name_desc" : "";
             ViewBag.FirstNameSortParm = sortOrder == "first_name" ? "first_name_desc" : "first_name";
             ViewBag.YearSortParm = sortOrder == "year" ? "year_desc" : "year";
             ViewBag.MileageSortParm = sortOrder == "mileage" ? "mileage_desc" : "mileage";
             ViewBag.SourceSortParm = sortOrder == "source" ? "source_desc" : "source";
+
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = searchString;
 
             var mileages = from m in db.Mileage
                          select m;
@@ -67,7 +79,9 @@ namespace PhotgraphyMVC.Controllers
                     break;
             }
 
-            return View(mileages.ToList());
+            int pageSize = 5;
+            int pageNumber = (page ?? 1);
+            return View(mileages.ToPagedList(pageNumber, pageSize));
         }
 
         // GET: Mileages/Details/5
@@ -152,7 +166,10 @@ namespace PhotgraphyMVC.Controllers
 
                 foreach (Mileage miles in db.Mileage)
                 {
-                    taxYear.TotalMiles += miles.MilesDriven;
+                    if (miles.TaxYearID == mileage.TaxYearID)
+                    {
+                        taxYear.TotalMiles += miles.MilesDriven;
+                    }
                 }
 
                 db.Entry(taxYear).State = EntityState.Modified;
@@ -195,7 +212,10 @@ namespace PhotgraphyMVC.Controllers
 
             foreach (Mileage miles in db.Mileage)
             {
-                taxYear.TotalMiles += miles.MilesDriven;
+                if (miles.TaxYearID == mileage.TaxYearID)
+                {
+                    taxYear.TotalMiles += miles.MilesDriven;
+                }
             }
 
             db.Entry(taxYear).State = EntityState.Modified;

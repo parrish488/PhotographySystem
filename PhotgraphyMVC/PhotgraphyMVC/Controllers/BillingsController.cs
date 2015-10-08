@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using PhotgraphyMVC.Models;
+using PagedList;
 
 namespace PhotgraphyMVC.Controllers
 {
@@ -16,12 +17,23 @@ namespace PhotgraphyMVC.Controllers
         private PhotographerContext db = new PhotographerContext();
 
         // GET: Billings
-        public ActionResult Index(string sortOrder, string searchString)
+        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
             ViewBag.LastNameSortParm = String.IsNullOrEmpty(sortOrder) ? "last_name_desc" : "";
             ViewBag.FirstNameSortParm = sortOrder == "first_name" ? "first_name_desc" : "first_name";
             ViewBag.EventTypeParm = sortOrder == "event_type" ? "event_type_desc" : "event_type";
             ViewBag.TotalParm = sortOrder == "total" ? "total_desc" : "total";
+
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = searchString;
 
             var bills = from b in db.Billing
                              select b;
@@ -61,7 +73,9 @@ namespace PhotgraphyMVC.Controllers
                     break;
             }
 
-            return View(bills.ToList());
+            int pageSize = 5;
+            int pageNumber = (page ?? 1);
+            return View(bills.ToPagedList(pageNumber, pageSize));
         }
 
         // GET: Billings/Details/5
@@ -163,8 +177,11 @@ namespace PhotgraphyMVC.Controllers
 
                 foreach (Billing bill in db.Billing)
                 {
-                    taxYear.TotalTax += bill.SalesTax;
-                    taxYear.TotalNetIncome += bill.Subtotal;
+                    if (bill.TaxYearID == billing.TaxYearID)
+                    {
+                        taxYear.TotalTax += bill.SalesTax;
+                        taxYear.TotalNetIncome += bill.Subtotal;
+                    }
                 }
                 db.Entry(taxYear).State = EntityState.Modified;
 
@@ -207,8 +224,11 @@ namespace PhotgraphyMVC.Controllers
 
             foreach (Billing bill in db.Billing)
             {
-                taxYear.TotalTax += bill.SalesTax;
-                taxYear.TotalNetIncome += bill.Subtotal;
+                if (bill.TaxYearID == billing.TaxYearID)
+                {
+                    taxYear.TotalTax += bill.SalesTax;
+                    taxYear.TotalNetIncome += bill.Subtotal;
+                }
             }
             db.Entry(taxYear).State = EntityState.Modified;
 

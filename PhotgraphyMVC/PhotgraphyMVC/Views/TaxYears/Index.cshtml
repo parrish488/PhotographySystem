@@ -1,4 +1,6 @@
-﻿@model IEnumerable<PhotgraphyMVC.Models.TaxYear>
+﻿@model PagedList.IPagedList<PhotgraphyMVC.Models.TaxYear>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
 @{
     ViewBag.Title = "Tax Years";
@@ -10,10 +12,10 @@
     @Html.ActionLink("Create New", "Create")
 </p>
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("Index", "TaxYears", FormMethod.Get))
 {
     <p>
-        Find by name: @Html.TextBox("SearchString")
+        Find by name: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
         <input type="submit" value="Search" />
     </p>
 }
@@ -21,13 +23,13 @@
 <table class="table">
     <tr>
         <th>
-            @Html.ActionLink("Year", "Index", new { sortOrder = ViewBag.YearSortParm })
+            @Html.ActionLink("Year", "Index", new { sortOrder = ViewBag.YearSortParm, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.TaxRate)
+            Tax Rate
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.TaxablePercent)
+            Taxable Percent
         </th>
         <th>
             @Html.ActionLink("Total Tax", "Index", new { sortOrder = ViewBag.TotalTaxSortParm })
@@ -71,3 +73,9 @@
     }
 
 </table>
+
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("Index",
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
