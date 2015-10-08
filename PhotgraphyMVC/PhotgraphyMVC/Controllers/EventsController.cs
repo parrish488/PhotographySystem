@@ -19,10 +19,10 @@ namespace PhotgraphyMVC.Controllers
         // GET: Events
         public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
-            ViewBag.LastNameSortParm = String.IsNullOrEmpty(sortOrder) ? "last_name_desc" : "";
+            ViewBag.LastNameSortParm = String.IsNullOrEmpty(sortOrder) ? "date_desc" : "";
             ViewBag.FirstNameSortParm = sortOrder == "first_name" ? "first_name_desc" : "first_name";
             ViewBag.EventTypeSortParm = sortOrder == "event_type" ? "event_type_desc" : "event_type";
-            ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
+            ViewBag.DateSortParm = sortOrder == "last_name" ? "last_name_desc" : "last_name";
 
             if (searchString != null)
             {
@@ -52,12 +52,6 @@ namespace PhotgraphyMVC.Controllers
                 case "event_type_desc":
                     events = events.Include(c => c.Client).OrderByDescending(c => c.EventType);
                     break;                
-                case "Date":
-                    events = events.Include(c => c.Client).OrderBy(c => c.EventDate);
-                    break;
-                case "date_desc":
-                    events = events.Include(c => c.Client).OrderByDescending(c => c.EventDate);
-                    break;
                 case "first_name":
                     events = events.Include(c => c.Client).OrderBy(c => c.Client.FirstName);
                     break;
@@ -65,14 +59,20 @@ namespace PhotgraphyMVC.Controllers
                     events = events.Include(c => c.Client).OrderByDescending(c => c.Client.FirstName);
                     break;
                 case "last_name_desc":
+                    events = events.Include(c => c.Client).OrderByDescending(c => c.Client.LastName);
+                    break;
+                case "last_name":
                     events = events.Include(c => c.Client).OrderBy(c => c.Client.LastName);
                     break;
+                case "date_desc":
+                    events = events.Include(c => c.Client).OrderByDescending(c => c.EventDate);
+                    break;
                 default:
-                    events = events.Include(c => c.Client).OrderByDescending(c => c.Client.LastName);
+                    events = events.Include(c => c.Client).OrderBy(c => c.EventDate);                    
                     break;
             }
 
-            int pageSize = 5;
+            int pageSize = 10;
             int pageNumber = (page ?? 1);
             return View(events.ToPagedList(pageNumber, pageSize));
         }
