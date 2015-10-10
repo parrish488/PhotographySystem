@@ -46,7 +46,7 @@
             @Html.DisplayFor(modelItem => item.Client.LastName)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.EventDate)
+            @item.EventDate.ToString("dddd, MMMM dd yyyy hh:mm tt")
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.EventType)

@@ -20,7 +20,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.EventDate, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.EventDate, new { htmlAttributes = new { @class = "form-control" } })<span>Enter in MM/DD/YYYY HH:MM:SS (AM/PM)</span>
+                @Html.EditorFor(model => model.EventDate, new { htmlAttributes = new { @Value = Model.EventDate.ToString("dddd, MMMM dd yyyy hh:mm tt"), @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.EventDate, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -68,6 +68,17 @@
     @Html.ActionLink("Back to List", "Index")
 </div>
 
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
+@section scripts {
+    <script type="text/javascript">
+  $(function () {
+    $('#EventDate').datetimepicker({
+      defaultDate: '@Model.EventDate',
+      format: 'LLLL',
+      showClose: true,
+      showClear: true,
+      toolbarPlacement: 'top',
+      stepping: 15
+    });
+  });
+    </script>
 }
