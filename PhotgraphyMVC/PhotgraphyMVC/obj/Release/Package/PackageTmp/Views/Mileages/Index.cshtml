@@ -1,0 +1,84 @@
+﻿@model PagedList.IPagedList<PhotgraphyMVC.Models.Mileage>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+    ViewBag.Title = "Mileage";
+}
+
+<h2>Current Mileage</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+@using (Html.BeginForm("Index", "Mileages", FormMethod.Get))
+{
+    <p>
+        Find by name: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+        <input type="submit" value="Search" />
+    </p>
+}
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.ActionLink("First Name", "Index", new { sortOrder = ViewBag.FirstNameSortParm, currentFilter = ViewBag.CurrentFilter })
+        </th>
+        <th>
+            @Html.ActionLink("Last Name", "Index", new { sortOrder = ViewBag.LastNameSortParm })
+        </th>
+        <th>
+            Event
+        </th>
+        <th>
+            @Html.ActionLink("Year", "Index", new { sortOrder = ViewBag.YearSortParm })
+        </th>
+        <th>
+            @Html.ActionLink("Miles Driven", "Index", new { sortOrder = ViewBag.MileageSortParm })
+        </th>
+        <th>
+            @Html.ActionLink("Source", "Index", new { sortOrder = ViewBag.SourceSortParm })
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Client.FirstName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Client.LastName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ClientEvent.EventLabel)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TaxYear.Year)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MilesDriven)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Source)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.MileageID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.MileageID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.MileageID })
+        </td>
+    </tr>
+}
+
+</table>
+
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("Index",
+    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+
+<p>
+    @Html.ActionLink("Manage Tax Years", "Index", "TaxYears")
+</p>

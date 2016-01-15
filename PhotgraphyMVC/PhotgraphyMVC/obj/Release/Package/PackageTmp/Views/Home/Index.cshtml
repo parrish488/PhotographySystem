@@ -1,0 +1,42 @@
+﻿@model PhotgraphyMVC.Models.HomeData
+@{
+    ViewBag.Title = "Dashboard";
+}
+
+<div class="jumbotron">
+    <h2>Upcoming Events:</h2>
+    @foreach (PhotgraphyMVC.Models.Event evnt in Model.UpcomingEvents)
+    {
+        <h4>@evnt.EventDate.ToShortDateString(): @evnt.Client.FullName - @evnt.EventType</h4>
+    }
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <h2>Todo List</h2>
+        @foreach (PhotgraphyMVC.Models.TodoList todo in Model.TodoListItems)
+        {
+            if (todo.DueDate < DateTime.Now)
+            {
+                <h4 style="color:red">@todo.DueDate.ToShortDateString(): @todo.ItemDescription</h4>;
+            }
+            else
+            {
+                <h4>@todo.DueDate.ToShortDateString(): @todo.ItemDescription</h4>;
+            }
+        }
+        <hr />
+        <h4>@Html.ActionLink("Manage Todo Items", "Index", "TodoLists")</h4>
+    </div>
+    <div class="col-md-4">
+        <h2>Mileage</h2>
+        <h4>Total Mileage Driven: @Model.MilesDriven</h4>
+        <hr />
+        <h4>@Html.ActionLink("Enter New Mileage", "Create", "Mileages")</h4>
+    </div>
+    <div class="col-md-4">
+        <h2>Billing</h2>
+        <h4>Total Sales Tax: $@Model.TotalSalesTax</h4>
+        <h4>Total Takeaway: $@Model.TotalEarnings</h4>
+    </div>
+</div>

@@ -1,0 +1,65 @@
+﻿@model PhotgraphyMVC.Models.TaxYear
+
+@{
+    ViewBag.Title = "Tax Year Details";
+}
+
+<h2>Tax Year Details</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Year)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Year)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TaxRate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TaxRate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TaxablePercent)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TaxablePercent)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TotalTax)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TotalTax)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TotalNetIncome)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TotalNetIncome)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TotalMiles)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TotalMiles)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.TaxYearID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
