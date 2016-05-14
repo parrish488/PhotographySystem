@@ -15,7 +15,7 @@ namespace PhotgraphyMVC.Models
         public DateTime EventDate { get; set; }
         [Display(Name = "Event Type")]
         public string EventType { get; set; }
-        [Display(Name = "Contract Completed?")]
+        [Display(Name = "Contract Status")]
         public string ContractCompleted { get; set; }
 
         [Display(Name = "Event")]

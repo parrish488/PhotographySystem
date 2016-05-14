@@ -29,7 +29,7 @@
             @Html.ActionLink("Last Name", "Index", new { sortOrder = ViewBag.LastNameSortParm })
         </th>
         <th>
-            Event
+            @Html.ActionLink("Mileage Date", "Index", new { sortOrder = ViewBag.DateSortParam })
         </th>
         <th>
             @Html.ActionLink("Year", "Index", new { sortOrder = ViewBag.YearSortParm })
@@ -52,7 +52,7 @@
             @Html.DisplayFor(modelItem => item.Client.LastName)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.ClientEvent.EventLabel)
+            @Html.DisplayFor(modelItem => item.MileageDate)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.TaxYear.Year)

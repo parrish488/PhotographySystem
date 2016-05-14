@@ -17,7 +17,7 @@ namespace PhotgraphyMVC.Controllers
         private PhotographerContext db = new PhotographerContext();
 
         // GET: Clients
-        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
+        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page, bool activeOnly)
         {
             ViewBag.CurrentSort = sortOrder;
             ViewBag.LastNameSortParm = String.IsNullOrEmpty(sortOrder) ? "last_name_desc" : "";
@@ -36,10 +36,15 @@ namespace PhotgraphyMVC.Controllers
 
             var clientList = from c in db.Clients
                            select c;
-            if (!String.IsNullOrEmpty(searchString))
+            if (!string.IsNullOrEmpty(searchString))
             {
                 clientList = clientList.Where(c => c.LastName.Contains(searchString)
                                        || c.FirstName.Contains(searchString));
+            }
+
+            if (activeOnly)
+            {
+                clientList = clientList.Where(c => c.Status == "Active");
             }
 
             switch (sortOrder)
@@ -89,7 +94,7 @@ namespace PhotgraphyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ClientID,FirstName,LastName,Street,City,State,Zip,PrimaryPhone,SecondaryPhone,Email,ClientNotes")] Client client)
+        public ActionResult Create([Bind(Include = "ClientID,FirstName,LastName,Street,City,State,Zip,PrimaryPhone,SecondaryPhone,Email,ClientNotes,Status")] Client client)
         {
             if (ModelState.IsValid)
             {

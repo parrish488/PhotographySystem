@@ -10,6 +10,8 @@ namespace PhotgraphyMVC.Models
     public class Mileage
     {
         public int MileageID { get; set; }
+        [Display(Name = "Mileage Date")]
+        public DateTime MileageDate { get; set; }
         [Display(Name = "Mileage Driven")]
         public float MilesDriven { get; set; }
         public string Source { get; set; }
@@ -18,9 +20,9 @@ namespace PhotgraphyMVC.Models
         public int ClientID { get; set; }
         public virtual Client Client { get; set; }
 
-        [ForeignKey("ClientEvent")]
-        public int EventID { get; set; }
-        public virtual Event ClientEvent { get; set; }
+        //[ForeignKey("ClientEvent")]
+        //public int EventID { get; set; }
+        //public virtual Event ClientEvent { get; set; }
 
         [ForeignKey("TaxYear")]
         public int TaxYearID { get; set; }

@@ -10,7 +10,8 @@ namespace PhotgraphyMVC.Models
     public class Billing
     {
         public int BillingID { get; set; }
-        
+        [Display(Name = "Billing Date")]
+        public DateTime BillingDate { get; set; }
         public decimal Subtotal { get; set; }
         [Display(Name = "Sales Tax")]
         public decimal SalesTax { get; set; }
@@ -20,9 +21,9 @@ namespace PhotgraphyMVC.Models
         public int ClientID { get; set; }
         public virtual Client Client { get; set; }
 
-        [ForeignKey("ClientEvent")]
-        public int EventID { get; set; }
-        public virtual Event ClientEvent { get; set; }
+        //[ForeignKey("ClientEvent")]
+        //public int EventID { get; set; }
+        //public virtual Event ClientEvent { get; set; }
 
         [ForeignKey("TaxYear")]
         public int TaxYearID { get; set; }
