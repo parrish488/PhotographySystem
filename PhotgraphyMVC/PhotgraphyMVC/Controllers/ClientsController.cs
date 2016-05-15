@@ -17,10 +17,10 @@ namespace PhotgraphyMVC.Controllers
         private PhotographerContext db = new PhotographerContext();
 
         // GET: Clients
-        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page, bool activeOnly)
+        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
             ViewBag.CurrentSort = sortOrder;
-            ViewBag.LastNameSortParm = String.IsNullOrEmpty(sortOrder) ? "last_name_desc" : "";
+            ViewBag.LastNameSortParm = string.IsNullOrEmpty(sortOrder) ? "last_name_desc" : "";
             ViewBag.FirstNameSortParm = sortOrder == "first_name" ? "first_name_desc" : "first_name";
 
             if (searchString != null)
@@ -34,17 +34,70 @@ namespace PhotgraphyMVC.Controllers
 
             ViewBag.CurrentFilter = searchString;
 
-            var clientList = from c in db.Clients
-                           select c;
+            var clientList = from c in db.Clients select c;
+
+            //foreach (Client client in clientList)
+            //{
+            //    client.Status = VerifyActiveStatus(client.Events) ? "Active" : "Inactive";
+            //}
+
             if (!string.IsNullOrEmpty(searchString))
             {
                 clientList = clientList.Where(c => c.LastName.Contains(searchString)
                                        || c.FirstName.Contains(searchString));
             }
 
-            if (activeOnly)
+            clientList = clientList.Where(c => c.Status == "Active");
+
+            switch (sortOrder)
             {
-                clientList = clientList.Where(c => c.Status == "Active");
+                case "first_name":
+                    clientList = clientList.OrderBy(c => c.FirstName);
+                    break;
+                case "first_name_desc":
+                    clientList = clientList.OrderByDescending(c => c.FirstName);
+                    break;
+                case "last_name_desc":
+                    clientList = clientList.OrderByDescending(c => c.LastName);
+                    break;
+                default:
+                    clientList = clientList.OrderBy(c => c.LastName);
+                    break;
+            }
+
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+            return View(clientList.ToPagedList(pageNumber, pageSize));
+        }
+
+        public ActionResult CompleteIndex(string sortOrder, string currentFilter, string searchString, int? page)
+        {
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.LastNameSortParm = string.IsNullOrEmpty(sortOrder) ? "last_name_desc" : "";
+            ViewBag.FirstNameSortParm = sortOrder == "first_name" ? "first_name_desc" : "first_name";
+
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = searchString;
+
+            var clientList = from c in db.Clients select c;
+
+            //foreach (Client client in clientList)
+            //{
+            //    client.Status = VerifyActiveStatus(client.Events) ? "Active" : "Inactive";
+            //}
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                clientList = clientList.Where(c => c.LastName.Contains(searchString)
+                                       || c.FirstName.Contains(searchString));
             }
 
             switch (sortOrder)
@@ -98,6 +151,19 @@ namespace PhotgraphyMVC.Controllers
         {
             if (ModelState.IsValid)
             {
+                //foreach (Event clientEvent in client.Events)
+                //{
+                //    if (clientEvent.EventDate >= DateTime.Now.AddMonths(-1))
+                //    {
+                //        client.Status = "Active";
+                //        break;
+                //    }
+                //    else
+                //    {
+                //        client.Status = "Inactive";
+                //    }
+                //}
+
                 db.Clients.Add(client);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -130,6 +196,19 @@ namespace PhotgraphyMVC.Controllers
         {
             if (ModelState.IsValid)
             {
+                //foreach (Event clientEvent in client.Events)
+                //{
+                //    if (clientEvent.EventDate >= DateTime.Now.AddMonths(-1))
+                //    {
+                //        client.Status = "Active";
+                //        break;
+                //    }
+                //    else
+                //    {
+                //        client.Status = "Inactive";
+                //    }
+                //}
+
                 db.Entry(client).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");

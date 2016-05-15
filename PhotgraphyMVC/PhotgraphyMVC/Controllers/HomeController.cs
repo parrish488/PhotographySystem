@@ -1,6 +1,7 @@
 ﻿using PhotgraphyMVC.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -48,6 +49,8 @@ namespace PhotgraphyMVC.Controllers
             data.UpcomingEvents =  data.UpcomingEvents.OrderBy(x => x.EventDate).ToList();
             data.TodoListItems = data.TodoListItems.OrderBy(x => x.DueDate).ToList();
 
+            VerifyActiveStatus();
+
             return View(data);
         }
 
@@ -56,6 +59,41 @@ namespace PhotgraphyMVC.Controllers
             ViewBag.Message = "Contact Me";
 
             return View();
+        }
+
+        private void VerifyActiveStatus()
+        {
+            HashSet<int> activeClients = new HashSet<int>();
+
+            var eventList = db.Events;
+
+            foreach (Event clientEvent in eventList)
+            {
+                activeClients.Add(clientEvent.ClientID);
+            }
+
+            var clientList = db.Clients;
+
+            foreach (Client client in clientList)
+            {
+                if (activeClients.Contains(client.ClientID))
+                {
+                    client.Status = "Active";
+                }
+                else
+                {
+                    client.Status = "Inactive";
+                }
+
+                db.Entry(client).State = EntityState.Modified;
+            }
+
+            //foreach (Client client in clientList)
+            //{
+            //    db.Entry(client).State = EntityState.Modified;
+            //}
+
+            db.SaveChanges();
         }
     }
 }

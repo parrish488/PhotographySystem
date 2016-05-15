@@ -116,16 +116,28 @@
     </div>
     <div class="col-md-4">
         <h2>Client Bills</h2>
-        @foreach (var item in Model.Billing)
-        {
-            <h4>@item.BillingDate.ToShortDateString(): $@item.Total</h4>
+        @{decimal total = 0;
+
+            foreach (var item in Model.Billing)
+            {
+                if (item.BillingType == "Invoice")
+                {
+                    total += item.Total;
+                }
+                else if (item.BillingType == "Payment")
+                {
+                    total -= item.Total;
+                }
+            }
         }
+        
+        <h4>Total Owed: $@total</h4>
     </div>
     <div class="col-md-4">
         <h2>Client Mileage</h2>
         @foreach (var item in Model.Mileage)
         {
-            <h4>@item.MileDate: @item.MilesDriven Miles</h4>
+            <h4>@item.MileageDate: @item.MilesDriven Miles</h4>
         }
     </div>
 </div>

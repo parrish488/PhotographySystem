@@ -14,3 +14,4 @@
 -Add ability to make TODO list items when adding a client
 -Find a way for multiple clients to use the same database
 -Add way to make client inactive or completed, and only show active unless chosen otherwise.
+-Add ability to email billing reciept.

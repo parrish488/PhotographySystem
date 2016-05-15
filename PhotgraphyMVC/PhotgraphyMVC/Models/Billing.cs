@@ -12,6 +12,8 @@ namespace PhotgraphyMVC.Models
         public int BillingID { get; set; }
         [Display(Name = "Billing Date")]
         public DateTime BillingDate { get; set; }
+        [Display(Name = "Billing Type")]
+        public string BillingType { get; set; }
         public decimal Subtotal { get; set; }
         [Display(Name = "Sales Tax")]
         public decimal SalesTax { get; set; }

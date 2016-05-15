@@ -107,7 +107,7 @@ namespace PhotgraphyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "BillingID,BillingDate,Subtotal,SalesTax,Total,ClientID,TaxYearID")] Billing billing)
+        public ActionResult Create([Bind(Include = "BillingID,BillingDate,BillingType,Subtotal,SalesTax,Total,ClientID,TaxYearID")] Billing billing)
         {
             if (ModelState.IsValid)
             {
@@ -158,7 +158,7 @@ namespace PhotgraphyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "BillingID,BillingDate,Subtotal,SalesTax,Total,ClientID,TaxYearID")] Billing billing)
+        public ActionResult Edit([Bind(Include = "BillingID,BillingDate,BillingType,Subtotal,SalesTax,Total,ClientID,TaxYearID")] Billing billing)
         {
             if (ModelState.IsValid)
             {
