@@ -110,6 +110,9 @@ namespace PhotgraphyMVC.Controllers
             {
                 db.Events.Add(@event);
                 db.SaveChanges();
+
+                HomeController.VerifyActiveStatus(db);
+
                 return RedirectToAction("Index");
             }
 
@@ -144,6 +147,9 @@ namespace PhotgraphyMVC.Controllers
             {
                 db.Entry(@event).State = EntityState.Modified;
                 db.SaveChanges();
+
+                HomeController.VerifyActiveStatus(db);
+
                 return RedirectToAction("Index");
             }
             ViewBag.ClientID = new SelectList(db.Clients, "ClientID", "FullName", @event.ClientID);
@@ -173,6 +179,9 @@ namespace PhotgraphyMVC.Controllers
             Event @event = db.Events.Find(id);
             db.Events.Remove(@event);
             db.SaveChanges();
+
+            HomeController.VerifyActiveStatus(db);
+
             return RedirectToAction("Index");
         }
 

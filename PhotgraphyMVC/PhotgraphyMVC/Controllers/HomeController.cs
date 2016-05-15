@@ -49,7 +49,7 @@ namespace PhotgraphyMVC.Controllers
             data.UpcomingEvents =  data.UpcomingEvents.OrderBy(x => x.EventDate).ToList();
             data.TodoListItems = data.TodoListItems.OrderBy(x => x.DueDate).ToList();
 
-            VerifyActiveStatus();
+            VerifyActiveStatus(db);
 
             return View(data);
         }
@@ -61,7 +61,7 @@ namespace PhotgraphyMVC.Controllers
             return View();
         }
 
-        private void VerifyActiveStatus()
+        public static void VerifyActiveStatus(PhotographerContext db)
         {
             HashSet<int> activeClients = new HashSet<int>();
 
@@ -87,11 +87,6 @@ namespace PhotgraphyMVC.Controllers
 
                 db.Entry(client).State = EntityState.Modified;
             }
-
-            //foreach (Client client in clientList)
-            //{
-            //    db.Entry(client).State = EntityState.Modified;
-            //}
 
             db.SaveChanges();
         }

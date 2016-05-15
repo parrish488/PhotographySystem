@@ -37,7 +37,7 @@ namespace PhotgraphyMVC.Controllers
 
             var taxYear = from t in db.TaxYears
                            select t;
-            if (!String.IsNullOrEmpty(searchString))
+            if (!string.IsNullOrEmpty(searchString))
             {
                 taxYear = taxYear.Where(t => t.Year.ToString().Contains(searchString));
             }
@@ -187,11 +187,14 @@ namespace PhotgraphyMVC.Controllers
 
             foreach (Billing billing in db.Billing)
             {
-                billing.SalesTax = billing.GetSalesTax(billing, taxYear);
-                billing.Subtotal = billing.Total - billing.SalesTax;
+                if (billing.BillingType == "Payment")
+                {
+                    billing.SalesTax = billing.GetSalesTax(billing, taxYear);
+                    billing.Subtotal = billing.Total - billing.SalesTax;
 
-                taxYear.TotalTax += billing.SalesTax;
-                taxYear.TotalNetIncome += billing.Subtotal;
+                    taxYear.TotalTax += billing.SalesTax;
+                    taxYear.TotalNetIncome += billing.Subtotal;
+                }
             }
 
             return taxYear;

@@ -36,11 +36,6 @@ namespace PhotgraphyMVC.Controllers
 
             var clientList = from c in db.Clients select c;
 
-            //foreach (Client client in clientList)
-            //{
-            //    client.Status = VerifyActiveStatus(client.Events) ? "Active" : "Inactive";
-            //}
-
             if (!string.IsNullOrEmpty(searchString))
             {
                 clientList = clientList.Where(c => c.LastName.Contains(searchString)
@@ -88,11 +83,6 @@ namespace PhotgraphyMVC.Controllers
             ViewBag.CurrentFilter = searchString;
 
             var clientList = from c in db.Clients select c;
-
-            //foreach (Client client in clientList)
-            //{
-            //    client.Status = VerifyActiveStatus(client.Events) ? "Active" : "Inactive";
-            //}
 
             if (!string.IsNullOrEmpty(searchString))
             {
@@ -151,21 +141,11 @@ namespace PhotgraphyMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                //foreach (Event clientEvent in client.Events)
-                //{
-                //    if (clientEvent.EventDate >= DateTime.Now.AddMonths(-1))
-                //    {
-                //        client.Status = "Active";
-                //        break;
-                //    }
-                //    else
-                //    {
-                //        client.Status = "Inactive";
-                //    }
-                //}
-
                 db.Clients.Add(client);
                 db.SaveChanges();
+
+                HomeController.VerifyActiveStatus(db);
+
                 return RedirectToAction("Index");
             }
 
@@ -192,25 +172,15 @@ namespace PhotgraphyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ClientID,FirstName,LastName,Street,City,State,Zip,PrimaryPhone,SecondaryPhone,Email,ClientNotes")] Client client)
+        public ActionResult Edit([Bind(Include = "ClientID,FirstName,LastName,Street,City,State,Zip,PrimaryPhone,SecondaryPhone,Email,ClientNotes,Status")] Client client)
         {
             if (ModelState.IsValid)
             {
-                //foreach (Event clientEvent in client.Events)
-                //{
-                //    if (clientEvent.EventDate >= DateTime.Now.AddMonths(-1))
-                //    {
-                //        client.Status = "Active";
-                //        break;
-                //    }
-                //    else
-                //    {
-                //        client.Status = "Inactive";
-                //    }
-                //}
-
                 db.Entry(client).State = EntityState.Modified;
                 db.SaveChanges();
+
+                HomeController.VerifyActiveStatus(db);
+
                 return RedirectToAction("Index");
             }
             return View(client);
@@ -239,6 +209,9 @@ namespace PhotgraphyMVC.Controllers
             Client client = db.Clients.Find(id);
             db.Clients.Remove(client);
             db.SaveChanges();
+
+            HomeController.VerifyActiveStatus(db);
+
             return RedirectToAction("Index");
         }
 
