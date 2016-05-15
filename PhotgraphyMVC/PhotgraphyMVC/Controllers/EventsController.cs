@@ -17,7 +17,7 @@ namespace PhotgraphyMVC.Controllers
         private PhotographerContext db = new PhotographerContext();
 
         // GET: Events
-        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
+        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page, int? taxYear)
         {
             ViewBag.LastNameSortParm = String.IsNullOrEmpty(sortOrder) ? "date_desc" : "";
             ViewBag.FirstNameSortParm = sortOrder == "first_name" ? "first_name_desc" : "first_name";
@@ -37,11 +37,15 @@ namespace PhotgraphyMVC.Controllers
 
             var events = from e in db.Events
                         select e;
-            if (!String.IsNullOrEmpty(searchString))
+            if (!string.IsNullOrEmpty(searchString))
             {
                 events = events.Where(e => e.Client.LastName.Contains(searchString)
                                        || e.Client.FirstName.Contains(searchString)
                                        || e.EventType.Contains(searchString));
+            }
+            if (taxYear != null && taxYear != 0)
+            {
+                events = events.Where(e => e.EventDate.Year == taxYear);
             }
 
             switch (sortOrder)

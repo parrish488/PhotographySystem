@@ -6,13 +6,14 @@
     ViewBag.Title = "Clients";
 }
 
-<h2>Active Clients</h2>
+<h2>Clients</h2>
 
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
 <p>
-    @Html.ActionLink("Show All Clients", "CompleteIndex")
+    <span>@Html.ActionLink("Show Active Only", "Index", new { activeOnly = true })  |  </span>
+    <span>@Html.ActionLink("Show All Clients", "Index", new { activeOnly = false })</span>
 </p>
 
 @using (Html.BeginForm("Index", "Clients", FormMethod.Get))

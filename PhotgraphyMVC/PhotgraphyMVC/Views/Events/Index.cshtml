@@ -11,6 +11,21 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
+<p>
+    <span>@Html.ActionLink("All", "Index", new { taxYear = "All" })</span>
+    @{
+        HashSet<int> eventYears = new HashSet<int>();
+        foreach (var item in Model)
+        {
+            eventYears.Add(item.EventDate.Year);
+        }
+
+        foreach (int year in eventYears)
+        {
+            <span>  |  @Html.ActionLink(year.ToString(), "Index", new { taxYear = year })</span>
+        }
+    }
+</p>
 
 @using (Html.BeginForm("Index", "Events", FormMethod.Get))
 {

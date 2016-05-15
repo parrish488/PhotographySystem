@@ -4,9 +4,6 @@
 9/28/2015 - Re-write using MVC and Entity Framework
 
 #todo
--Event list to split between upcoming and past
--Event list to have option for showing events for current tax year
--Event - Details: The details page should link to the billings somehow.
 -Fix event list sorting with paging
 -Filter event list dropdown based on clientId selection
 -Make TODO items checkable on the dashboard (so you can complete them)

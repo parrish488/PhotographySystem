@@ -17,7 +17,7 @@ namespace PhotgraphyMVC.Controllers
         private PhotographerContext db = new PhotographerContext();
 
         // GET: Clients
-        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
+        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page, bool? activeOnly)
         {
             ViewBag.CurrentSort = sortOrder;
             ViewBag.LastNameSortParm = string.IsNullOrEmpty(sortOrder) ? "last_name_desc" : "";
@@ -42,53 +42,8 @@ namespace PhotgraphyMVC.Controllers
                                        || c.FirstName.Contains(searchString));
             }
 
-            clientList = clientList.Where(c => c.Status == "Active");
-
-            switch (sortOrder)
-            {
-                case "first_name":
-                    clientList = clientList.OrderBy(c => c.FirstName);
-                    break;
-                case "first_name_desc":
-                    clientList = clientList.OrderByDescending(c => c.FirstName);
-                    break;
-                case "last_name_desc":
-                    clientList = clientList.OrderByDescending(c => c.LastName);
-                    break;
-                default:
-                    clientList = clientList.OrderBy(c => c.LastName);
-                    break;
-            }
-
-            int pageSize = 10;
-            int pageNumber = (page ?? 1);
-            return View(clientList.ToPagedList(pageNumber, pageSize));
-        }
-
-        public ActionResult CompleteIndex(string sortOrder, string currentFilter, string searchString, int? page)
-        {
-            ViewBag.CurrentSort = sortOrder;
-            ViewBag.LastNameSortParm = string.IsNullOrEmpty(sortOrder) ? "last_name_desc" : "";
-            ViewBag.FirstNameSortParm = sortOrder == "first_name" ? "first_name_desc" : "first_name";
-
-            if (searchString != null)
-            {
-                page = 1;
-            }
-            else
-            {
-                searchString = currentFilter;
-            }
-
-            ViewBag.CurrentFilter = searchString;
-
-            var clientList = from c in db.Clients select c;
-
-            if (!string.IsNullOrEmpty(searchString))
-            {
-                clientList = clientList.Where(c => c.LastName.Contains(searchString)
-                                       || c.FirstName.Contains(searchString));
-            }
+            if (activeOnly != null && activeOnly.Value)
+                clientList = clientList.Where(c => c.Status == "Active");
 
             switch (sortOrder)
             {
@@ -144,7 +99,7 @@ namespace PhotgraphyMVC.Controllers
                 db.Clients.Add(client);
                 db.SaveChanges();
 
-                HomeController.VerifyActiveStatus(db);
+                //HomeController.VerifyActiveStatus(db);
 
                 return RedirectToAction("Index");
             }

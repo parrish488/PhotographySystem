@@ -15,14 +15,12 @@ namespace PhotgraphyMVC.Models
             Mileage = new HashSet<Mileage>();
         }
 
+        [Display(Name = "Client")]
         public int ClientID { get; set; }
-
         [Display(Name = "First Name")]
         public string FirstName { get; set; }
-
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
-
         [Display(Name = "Full Name")]
         public string FullName
         {
@@ -41,12 +39,10 @@ namespace PhotgraphyMVC.Models
         public string PrimaryPhone { get; set; }
         [Display(Name = "Secondary Phone")]
         public string SecondaryPhone { get; set; }
-
         public string Email { get; set; }
-
         [Display(Name = "Client Notes")]
+        [DataType(DataType.MultilineText)]
         public string ClientNotes { get; set; }
-
         [Display(Name = "Client Status")]
         public string Status { get; set; }
 
