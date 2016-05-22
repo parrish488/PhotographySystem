@@ -79,6 +79,7 @@ namespace PhotgraphyMVC.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
+                    Session["Username"] = model.Username;
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");

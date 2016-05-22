@@ -19,7 +19,7 @@ namespace PhotgraphyMVC.Controllers
         // GET: Billings
         public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
-            ViewBag.LastNameSortParm = String.IsNullOrEmpty(sortOrder) ? "last_name_desc" : "";
+            ViewBag.LastNameSortParm = string.IsNullOrEmpty(sortOrder) ? "last_name_desc" : "";
             ViewBag.FirstNameSortParm = sortOrder == "first_name" ? "first_name_desc" : "first_name";
             ViewBag.DateSortParam = sortOrder == "billing_date" ? "billing_date_desc" : "billing_date";
             ViewBag.TotalParm = sortOrder == "total" ? "total_desc" : "total";
@@ -35,41 +35,43 @@ namespace PhotgraphyMVC.Controllers
 
             ViewBag.CurrentFilter = searchString;
 
-            var bills = from b in db.Billing
+            string user = Convert.ToString(Session["Username"]);
+
+            var bills = from b in db.Billing where b.Username == user
                              select b;
-            if (!String.IsNullOrEmpty(searchString))
+
+            if (!string.IsNullOrEmpty(searchString))
             {
                 bills = bills.Where(b => b.Client.LastName.Contains(searchString)
                                        || b.Client.FirstName.Contains(searchString)
-                                       //|| b.ClientEvent.EventType.Contains(searchString)
                                        || b.Total.ToString().Contains(searchString));
             }
 
             switch (sortOrder)
             {
                 case "total":
-                    bills = bills.OrderBy(c => c.Total).Include(b => b.Client)/*.Include(b => b.ClientEvent)*/.Include(b => b.TaxYear);
+                    bills = bills.OrderBy(c => c.Total).Include(b => b.Client).Include(b => b.TaxYear);
                     break;
                 case "total_desc":
-                    bills = bills.OrderByDescending(c => c.Total).Include(b => b.Client)/*.Include(b => b.ClientEvent)*/.Include(b => b.TaxYear);
+                    bills = bills.OrderByDescending(c => c.Total).Include(b => b.Client).Include(b => b.TaxYear);
                     break;
                 case "mileage_date":
-                    bills = bills.OrderBy(c => c.BillingDate).Include(m => m.Client)/*.Include(m => m.ClientEvent)*/.Include(m => m.TaxYear);
+                    bills = bills.OrderBy(c => c.BillingDate).Include(m => m.Client).Include(m => m.TaxYear);
                     break;
                 case "mileage_date_desc":
-                    bills = bills.OrderByDescending(c => c.BillingDate).Include(m => m.Client)/*.Include(m => m.ClientEvent)*/.Include(m => m.TaxYear);
+                    bills = bills.OrderByDescending(c => c.BillingDate).Include(m => m.Client).Include(m => m.TaxYear);
                     break;
                 case "first_name":
-                    bills = bills.OrderBy(c => c.Client.FirstName).Include(b => b.Client)/*.Include(b => b.ClientEvent)*/.Include(b => b.TaxYear);
+                    bills = bills.OrderBy(c => c.Client.FirstName).Include(b => b.Client).Include(b => b.TaxYear);
                     break;
                 case "first_name_desc":
-                    bills = bills.OrderByDescending(c => c.Client.FirstName).Include(b => b.Client)/*.Include(b => b.ClientEvent)*/.Include(b => b.TaxYear);
+                    bills = bills.OrderByDescending(c => c.Client.FirstName).Include(b => b.Client).Include(b => b.TaxYear);
                     break;
                 case "last_name_desc":
-                    bills = bills.OrderByDescending(c => c.Client.LastName).Include(b => b.Client)/*.Include(b => b.ClientEvent)*/.Include(b => b.TaxYear);
+                    bills = bills.OrderByDescending(c => c.Client.LastName).Include(b => b.Client).Include(b => b.TaxYear);
                     break;
                 default:
-                    bills = bills.OrderBy(c => c.Client.LastName).Include(b => b.Client)/*.Include(b => b.ClientEvent)*/.Include(b => b.TaxYear);
+                    bills = bills.OrderBy(c => c.Client.LastName).Include(b => b.Client).Include(b => b.TaxYear);
                     break;
             }
 
@@ -85,19 +87,21 @@ namespace PhotgraphyMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Billing billing = db.Billing.Find(id);
-            if (billing == null)
+
+            Billing bill = db.Billing.Find(id);
+
+            if (bill == null)
             {
                 return HttpNotFound();
             }
-            return View(billing);
+
+            return View(bill);
         }
 
         // GET: Billings/Create
         public ActionResult Create()
         {
             ViewBag.ClientID = new SelectList(db.Clients, "ClientID", "FullName");
-            //ViewBag.EventID = new SelectList(db.Events, "EventID", "EventLabel");
             ViewBag.TaxYearID = new SelectList(db.TaxYears, "TaxYearID", "Year");
             return View();
         }
@@ -107,7 +111,7 @@ namespace PhotgraphyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "BillingID,BillingDate,BillingType,Subtotal,SalesTax,Total,ClientID,TaxYearID")] Billing billing)
+        public ActionResult Create([Bind(Include = "BillingID,BillingDate,BillingType,Subtotal,SalesTax,Total,Username,ClientID,TaxYearID")] Billing billing)
         {
             if (ModelState.IsValid)
             {
@@ -117,6 +121,8 @@ namespace PhotgraphyMVC.Controllers
 
                 billing.Subtotal = billing.Total - salesTax;
                 billing.SalesTax = salesTax;
+
+                billing.Username = Session["Username"].ToString();
 
                 db.Billing.Add(billing);
                 db.SaveChanges();
@@ -130,7 +136,6 @@ namespace PhotgraphyMVC.Controllers
             }
 
             ViewBag.ClientID = new SelectList(db.Clients, "ClientID", "FullName", billing.ClientID);
-            //ViewBag.EventID = new SelectList(db.Events, "EventID", "EventLabel", billing.EventID);
             ViewBag.TaxYearID = new SelectList(db.TaxYears, "TaxYearID", "Year", billing.TaxYearID);
             return View(billing);
         }
@@ -142,15 +147,17 @@ namespace PhotgraphyMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Billing billing = db.Billing.Find(id);
-            if (billing == null)
+
+            Billing bill = db.Billing.Find(id);
+
+            if (bill == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.ClientID = new SelectList(db.Clients, "ClientID", "FullName", billing.ClientID);
-            //ViewBag.EventID = new SelectList(db.Events, "EventID", "EventLabel", billing.EventID);
-            ViewBag.TaxYearID = new SelectList(db.TaxYears, "TaxYearID", "Year", billing.TaxYearID);
-            return View(billing);
+
+            ViewBag.ClientID = new SelectList(db.Clients, "ClientID", "FullName", bill.ClientID);
+            ViewBag.TaxYearID = new SelectList(db.TaxYears, "TaxYearID", "Year", bill.TaxYearID);
+            return View(bill);
         }
 
         // POST: Billings/Edit/5
@@ -158,7 +165,7 @@ namespace PhotgraphyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "BillingID,BillingDate,BillingType,Subtotal,SalesTax,Total,ClientID,TaxYearID")] Billing billing)
+        public ActionResult Edit([Bind(Include = "BillingID,BillingDate,BillingType,Subtotal,SalesTax,Total,Username,ClientID,TaxYearID")] Billing billing)
         {
             if (ModelState.IsValid)
             {
@@ -168,6 +175,8 @@ namespace PhotgraphyMVC.Controllers
 
                 billing.Subtotal = billing.Total - salesTax;
                 billing.SalesTax = salesTax;
+
+                billing.Username = Session["Username"].ToString();
 
                 db.Entry(billing).State = EntityState.Modified;
                 db.SaveChanges();
@@ -190,7 +199,6 @@ namespace PhotgraphyMVC.Controllers
             }
 
             ViewBag.ClientID = new SelectList(db.Clients, "ClientID", "FullName", billing.ClientID);
-            //ViewBag.EventID = new SelectList(db.Events, "EventID", "EventLabel", billing.EventID);
             ViewBag.TaxYearID = new SelectList(db.TaxYears, "TaxYearID", "Year", billing.TaxYearID);
             return View(billing);
         }
@@ -202,12 +210,15 @@ namespace PhotgraphyMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Billing billing = db.Billing.Find(id);
-            if (billing == null)
+
+            Billing bill = db.Billing.Find(id);
+
+            if (bill == null)
             {
                 return HttpNotFound();
             }
-            return View(billing);
+
+            return View(bill);
         }
 
         // POST: Billings/Delete/5

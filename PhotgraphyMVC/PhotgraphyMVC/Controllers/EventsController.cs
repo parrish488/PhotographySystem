@@ -35,8 +35,11 @@ namespace PhotgraphyMVC.Controllers
 
             ViewBag.CurrentFilter = searchString;
 
-            var events = from e in db.Events
+            string user = Session["Username"].ToString();
+
+            var events = from e in db.Events where e.Username == user
                         select e;
+
             if (!string.IsNullOrEmpty(searchString))
             {
                 events = events.Where(e => e.Client.LastName.Contains(searchString)
@@ -108,14 +111,16 @@ namespace PhotgraphyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "EventID,EventDate,EventType,ContractCompleted,ClientID")] Event @event)
+        public ActionResult Create([Bind(Include = "EventID,EventDate,EventType,ContractCompleted,Username,ClientID")] Event @event)
         {
             if (ModelState.IsValid)
             {
+                @event.Username = Session["Username"].ToString();
+
                 db.Events.Add(@event);
                 db.SaveChanges();
 
-                HomeController.VerifyActiveStatus(db);
+                HomeController.VerifyActiveStatus(db, Session["Username"].ToString());
 
                 return RedirectToAction("Index");
             }
@@ -145,14 +150,16 @@ namespace PhotgraphyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "EventID,EventDate,EventType,ContractCompleted,ClientID")] Event @event)
+        public ActionResult Edit([Bind(Include = "EventID,EventDate,EventType,ContractCompleted,Username,ClientID")] Event @event)
         {
             if (ModelState.IsValid)
             {
+                @event.Username = Session["Username"].ToString();
+
                 db.Entry(@event).State = EntityState.Modified;
                 db.SaveChanges();
 
-                HomeController.VerifyActiveStatus(db);
+                HomeController.VerifyActiveStatus(db, Session["Username"].ToString());
 
                 return RedirectToAction("Index");
             }
@@ -184,7 +191,7 @@ namespace PhotgraphyMVC.Controllers
             db.Events.Remove(@event);
             db.SaveChanges();
 
-            HomeController.VerifyActiveStatus(db);
+            HomeController.VerifyActiveStatus(db, Session["Username"].ToString());
 
             return RedirectToAction("Index");
         }

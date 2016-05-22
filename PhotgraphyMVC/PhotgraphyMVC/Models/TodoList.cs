@@ -18,5 +18,7 @@ namespace PhotgraphyMVC.Models
 
         [Display(Name = "Is Completed?")]
         public bool IsCompleted { get; set; }
+
+        public string Username { get; set; }
     }
 }

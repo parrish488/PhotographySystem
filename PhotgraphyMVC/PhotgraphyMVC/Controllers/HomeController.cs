@@ -17,7 +17,9 @@ namespace PhotgraphyMVC.Controllers
         {
             HomeData data = new HomeData();
 
-            foreach (Event evnt in db.Events)
+            string user = User.Identity.Name;
+
+            foreach (Event evnt in db.Events.Where(e => e.Username == user))
             {
                 if (evnt.EventDate >= DateTime.Now && evnt.EventDate < DateTime.Now.AddDays(30))
                 {
@@ -25,17 +27,17 @@ namespace PhotgraphyMVC.Controllers
                 }
             }
 
-            foreach (TodoList todo in db.TodoList)
+            foreach (TodoList todo in db.TodoList.Where(e => e.Username == user))
             {
-                if (!todo.IsCompleted)
-                {
+                //if (!todo.IsCompleted)
+                //{
                     data.TodoListItems.Add(todo);
-                }
+                //}
             }
 
             TaxYear taxYear = new TaxYear();
 
-            foreach (TaxYear year in db.TaxYears)
+            foreach (TaxYear year in db.TaxYears.Where(e => e.Username == user))
             {
                 if (year.Year == DateTime.Now.Year)
                 {
@@ -49,7 +51,7 @@ namespace PhotgraphyMVC.Controllers
             data.UpcomingEvents =  data.UpcomingEvents.OrderBy(x => x.EventDate).ToList();
             data.TodoListItems = data.TodoListItems.OrderBy(x => x.DueDate).ToList();
 
-            VerifyActiveStatus(db);
+            VerifyActiveStatus(db, user);
 
             return View(data);
         }
@@ -61,15 +63,18 @@ namespace PhotgraphyMVC.Controllers
             return View();
         }
 
-        public static void VerifyActiveStatus(PhotographerContext db)
+        public static void VerifyActiveStatus(PhotographerContext db, string user)
         {
             HashSet<int> activeClients = new HashSet<int>();
 
-            var eventList = db.Events;
+            var eventList = db.Events.Where(e => e.Username == user);
 
             foreach (Event clientEvent in eventList)
             {
-                activeClients.Add(clientEvent.ClientID);
+                if (clientEvent.EventDate > DateTime.Now.AddMonths(-1))
+                {
+                    activeClients.Add(clientEvent.ClientID);
+                }
             }
 
             var clientList = db.Clients;

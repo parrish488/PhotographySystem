@@ -35,8 +35,11 @@ namespace PhotgraphyMVC.Controllers
 
             ViewBag.CurrentFilter = searchString;
 
-            var taxYear = from t in db.TaxYears
+            string user = Session["Username"].ToString();
+
+            var taxYear = from t in db.TaxYears where t.Username == user
                            select t;
+
             if (!string.IsNullOrEmpty(searchString))
             {
                 taxYear = taxYear.Where(t => t.Year.ToString().Contains(searchString));
@@ -101,10 +104,12 @@ namespace PhotgraphyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "TaxYearID,Year,TaxRate,TotalTax,TotalMiles,TaxablePercent,TotalNetIncome")] TaxYear taxYear)
+        public ActionResult Create([Bind(Include = "TaxYearID,Year,TaxRate,TotalTax,TotalMiles,TaxablePercent,TotalNetIncome,Username")] TaxYear taxYear)
         {
             if (ModelState.IsValid)
             {
+                taxYear.Username = Session["Username"].ToString();
+
                 db.TaxYears.Add(taxYear);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -133,11 +138,12 @@ namespace PhotgraphyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "TaxYearID,Year,TaxRate,TotalTax,TotalMiles,TaxablePercent,TotalNetIncome")] TaxYear taxYear)
+        public ActionResult Edit([Bind(Include = "TaxYearID,Year,TaxRate,TotalTax,TotalMiles,TaxablePercent,TotalNetIncome,Username")] TaxYear taxYear)
         {
             if (ModelState.IsValid)
             {
                 taxYear = RecalculateBilling(taxYear);
+                taxYear.Username = Session["Username"].ToString();
                 db.Entry(taxYear).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");

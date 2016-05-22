@@ -35,5 +35,7 @@ namespace PhotgraphyMVC.Models
 
         [Display(Name = "Total Net Income")]
         public decimal TotalNetIncome { get; set; }
+
+        public string Username { get; set; }
     }
 }

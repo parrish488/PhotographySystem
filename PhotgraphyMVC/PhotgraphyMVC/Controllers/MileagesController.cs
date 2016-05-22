@@ -37,7 +37,9 @@ namespace PhotgraphyMVC.Controllers
 
             ViewBag.CurrentFilter = searchString;
 
-            var mileages = from m in db.Mileage
+            string user = Session["Username"].ToString();
+
+            var mileages = from m in db.Mileage where m.Username == user
                          select m;
             if (!string.IsNullOrEmpty(searchString))
             {
@@ -49,40 +51,40 @@ namespace PhotgraphyMVC.Controllers
             switch (sortOrder)
             {
                 case "source":
-                    mileages = mileages.OrderBy(c => c.Source).Include(m => m.Client)/*.Include(m => m.ClientEvent)*/.Include(m => m.TaxYear);
+                    mileages = mileages.OrderBy(c => c.Source).Include(m => m.Client).Include(m => m.TaxYear);
                     break;
                 case "source_desc":
-                    mileages = mileages.OrderByDescending(c => c.Source).Include(m => m.Client)/*.Include(m => m.ClientEvent)*/.Include(m => m.TaxYear);
+                    mileages = mileages.OrderByDescending(c => c.Source).Include(m => m.Client).Include(m => m.TaxYear);
                     break;
                 case "mileage_date":
-                    mileages = mileages.OrderBy(c => c.MileageDate).Include(m => m.Client)/*.Include(m => m.ClientEvent)*/.Include(m => m.TaxYear);
+                    mileages = mileages.OrderBy(c => c.MileageDate).Include(m => m.Client).Include(m => m.TaxYear);
                     break;
                 case "mileage_date_desc":
-                    mileages = mileages.OrderByDescending(c => c.MileageDate).Include(m => m.Client)/*.Include(m => m.ClientEvent)*/.Include(m => m.TaxYear);
+                    mileages = mileages.OrderByDescending(c => c.MileageDate).Include(m => m.Client).Include(m => m.TaxYear);
                     break;
                 case "mileage":
-                    mileages = mileages.OrderBy(c => c.MilesDriven).Include(m => m.Client)/*.Include(m => m.ClientEvent)*/.Include(m => m.TaxYear);
+                    mileages = mileages.OrderBy(c => c.MilesDriven).Include(m => m.Client).Include(m => m.TaxYear);
                     break;
                 case "mileage_desc":
-                    mileages = mileages.OrderByDescending(c => c.MilesDriven).Include(m => m.Client)/*.Include(m => m.ClientEvent)*/.Include(m => m.TaxYear);
+                    mileages = mileages.OrderByDescending(c => c.MilesDriven).Include(m => m.Client).Include(m => m.TaxYear);
                     break;
                 case "year":
-                    mileages = mileages.OrderBy(c => c.TaxYear.Year).Include(m => m.Client)/*.Include(m => m.ClientEvent)*/.Include(m => m.TaxYear);
+                    mileages = mileages.OrderBy(c => c.TaxYear.Year).Include(m => m.Client).Include(m => m.TaxYear);
                     break;
                 case "year_desc":
-                    mileages = mileages.OrderByDescending(c => c.TaxYear.Year).Include(m => m.Client)/*.Include(m => m.ClientEvent)*/.Include(m => m.TaxYear);
+                    mileages = mileages.OrderByDescending(c => c.TaxYear.Year).Include(m => m.Client).Include(m => m.TaxYear);
                     break;
                 case "first_name":
-                    mileages = mileages.OrderBy(c => c.Client.FirstName).Include(m => m.Client)/*.Include(m => m.ClientEvent)*/.Include(m => m.TaxYear);
+                    mileages = mileages.OrderBy(c => c.Client.FirstName).Include(m => m.Client).Include(m => m.TaxYear);
                     break;
                 case "first_name_desc":
-                    mileages = mileages.OrderByDescending(c => c.Client.FirstName).Include(m => m.Client)/*.Include(m => m.ClientEvent)*/.Include(m => m.TaxYear);
+                    mileages = mileages.OrderByDescending(c => c.Client.FirstName).Include(m => m.Client).Include(m => m.TaxYear);
                     break;
                 case "last_name_desc":
-                    mileages = mileages.OrderByDescending(c => c.Client.LastName).Include(m => m.Client)/*.Include(m => m.ClientEvent)*/.Include(m => m.TaxYear);
+                    mileages = mileages.OrderByDescending(c => c.Client.LastName).Include(m => m.Client).Include(m => m.TaxYear);
                     break;
                 default:
-                    mileages = mileages.OrderBy(c => c.Client.LastName).Include(m => m.Client)/*.Include(m => m.ClientEvent)*/.Include(m => m.TaxYear);
+                    mileages = mileages.OrderBy(c => c.Client.LastName).Include(m => m.Client).Include(m => m.TaxYear);
                     break;
             }
 
@@ -110,7 +112,6 @@ namespace PhotgraphyMVC.Controllers
         public ActionResult Create()
         {
             ViewBag.ClientID = new SelectList(db.Clients, "ClientID", "FullName");
-            //ViewBag.EventID = new SelectList(db.Events, "EventID", "EventLabel");
             ViewBag.TaxYearID = new SelectList(db.TaxYears, "TaxYearID", "Year");
             return View();
         }
@@ -120,20 +121,25 @@ namespace PhotgraphyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "MileageID,ClientID,TaxYearID,MileageDate,MilesDriven,Source")] Mileage mileage)
+        public ActionResult Create([Bind(Include = "MileageID,ClientID,TaxYearID,MileageDate,MilesDriven,Source,Username")] Mileage mileage)
         {
             if (ModelState.IsValid)
             {
+                mileage.Username = Session["Username"].ToString();
                 db.Mileage.Add(mileage);
+
                 TaxYear taxYear = db.TaxYears.Find(mileage.TaxYearID);
                 taxYear.TotalMiles += mileage.MilesDriven;
+
+                taxYear.Username = Session["Username"].ToString();
+
                 db.Entry(taxYear).State = EntityState.Modified;
                 db.SaveChanges();
+
                 return RedirectToAction("Index");
             }
 
             ViewBag.ClientID = new SelectList(db.Clients, "ClientID", "FullName", mileage.ClientID);
-            //ViewBag.EventID = new SelectList(db.Events, "EventID", "EventLabel", mileage.EventID);
             ViewBag.TaxYearID = new SelectList(db.TaxYears, "TaxYearID", "Year", mileage.TaxYearID);
             return View(mileage);
         }
@@ -152,7 +158,6 @@ namespace PhotgraphyMVC.Controllers
             }
 
             ViewBag.ClientID = new SelectList(db.Clients, "ClientID", "FullName", mileage.ClientID);
-            //ViewBag.EventID = new SelectList(db.Events, "EventID", "EventLabel", mileage.EventID);
             ViewBag.TaxYearID = new SelectList(db.TaxYears, "TaxYearID", "Year", mileage.TaxYearID);
             return View(mileage);
         }
@@ -162,23 +167,27 @@ namespace PhotgraphyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "MileageID,ClientID,EventID,TaxYearID,MileageDate,MilesDriven,Source")] Mileage mileage)
+        public ActionResult Edit([Bind(Include = "MileageID,ClientID,EventID,TaxYearID,MileageDate,MilesDriven,Source,Username")] Mileage mileage)
         {
             if (ModelState.IsValid)
             {
+                mileage.Username = Session["Username"].ToString();
+
                 db.Entry(mileage).State = EntityState.Modified;
-                db.SaveChanges();
+                //db.SaveChanges();
 
                 TaxYear taxYear = db.TaxYears.Find(mileage.TaxYearID);
                 taxYear.TotalMiles = 0;
 
-                foreach (Mileage miles in db.Mileage)
+                foreach (Mileage miles in db.Mileage.Where(m => m.Username == mileage.Username))
                 {
                     if (miles.TaxYearID == mileage.TaxYearID)
                     {
                         taxYear.TotalMiles += miles.MilesDriven;
                     }
                 }
+
+                taxYear.Username = Session["Username"].ToString();
 
                 db.Entry(taxYear).State = EntityState.Modified;
                 db.SaveChanges();
@@ -187,7 +196,6 @@ namespace PhotgraphyMVC.Controllers
             }
 
             ViewBag.ClientID = new SelectList(db.Clients, "ClientID", "FullName", mileage.ClientID);
-            //ViewBag.EventID = new SelectList(db.Events, "EventID", "EventLabel", mileage.EventID);
             ViewBag.TaxYearID = new SelectList(db.TaxYears, "TaxYearID", "Year", mileage.TaxYearID);
             return View(mileage);
         }
@@ -226,6 +234,8 @@ namespace PhotgraphyMVC.Controllers
                     taxYear.TotalMiles += miles.MilesDriven;
                 }
             }
+
+            taxYear.Username = Session["Username"].ToString();
 
             db.Entry(taxYear).State = EntityState.Modified;
             db.SaveChanges();

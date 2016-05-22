@@ -15,6 +15,7 @@ namespace PhotgraphyMVC.Models
         [Display(Name = "Mileage Driven")]
         public float MilesDriven { get; set; }
         public string Source { get; set; }
+        public string Username { get; set; }
 
         [ForeignKey("Client")]
         public int ClientID { get; set; }

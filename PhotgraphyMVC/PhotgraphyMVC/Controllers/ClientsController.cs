@@ -34,7 +34,10 @@ namespace PhotgraphyMVC.Controllers
 
             ViewBag.CurrentFilter = searchString;
 
-            var clientList = from c in db.Clients select c;
+            string user = Convert.ToString(Session["Username"]);
+
+            var clientList = from c in db.Clients where c.Username == user
+                             select c;
 
             if (!string.IsNullOrEmpty(searchString))
             {
@@ -92,14 +95,14 @@ namespace PhotgraphyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ClientID,FirstName,LastName,Street,City,State,Zip,PrimaryPhone,SecondaryPhone,Email,ClientNotes,Status")] Client client)
+        public ActionResult Create([Bind(Include = "ClientID,FirstName,LastName,Street,City,State,Zip,PrimaryPhone,SecondaryPhone,Email,ClientNotes,Status,Username")] Client client)
         {
             if (ModelState.IsValid)
             {
+                client.Username = Session["Username"].ToString();
+
                 db.Clients.Add(client);
                 db.SaveChanges();
-
-                //HomeController.VerifyActiveStatus(db);
 
                 return RedirectToAction("Index");
             }
@@ -127,14 +130,16 @@ namespace PhotgraphyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ClientID,FirstName,LastName,Street,City,State,Zip,PrimaryPhone,SecondaryPhone,Email,ClientNotes,Status")] Client client)
+        public ActionResult Edit([Bind(Include = "ClientID,FirstName,LastName,Street,City,State,Zip,PrimaryPhone,SecondaryPhone,Email,ClientNotes,Status,Username")] Client client)
         {
             if (ModelState.IsValid)
             {
+                client.Username = Session["Username"].ToString();
+
                 db.Entry(client).State = EntityState.Modified;
                 db.SaveChanges();
 
-                HomeController.VerifyActiveStatus(db);
+                HomeController.VerifyActiveStatus(db, Session["Username"].ToString());
 
                 return RedirectToAction("Index");
             }
@@ -165,7 +170,7 @@ namespace PhotgraphyMVC.Controllers
             db.Clients.Remove(client);
             db.SaveChanges();
 
-            HomeController.VerifyActiveStatus(db);
+            HomeController.VerifyActiveStatus(db, Session["Username"].ToString());
 
             return RedirectToAction("Index");
         }

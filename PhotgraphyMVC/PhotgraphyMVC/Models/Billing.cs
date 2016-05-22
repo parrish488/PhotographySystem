@@ -18,6 +18,7 @@ namespace PhotgraphyMVC.Models
         [Display(Name = "Sales Tax")]
         public decimal SalesTax { get; set; }
         public decimal Total { get; set; }
+        public string Username { get; set; }
 
         [ForeignKey("Client")]
         public int ClientID { get; set; }

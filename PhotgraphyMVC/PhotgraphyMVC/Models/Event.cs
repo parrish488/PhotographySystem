@@ -17,6 +17,7 @@ namespace PhotgraphyMVC.Models
         public string EventType { get; set; }
         [Display(Name = "Contract Status")]
         public string ContractCompleted { get; set; }
+        public string Username { get; set; }
 
         [Display(Name = "Event")]
         public string EventLabel

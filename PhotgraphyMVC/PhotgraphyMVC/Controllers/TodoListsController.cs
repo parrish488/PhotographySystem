@@ -18,7 +18,9 @@ namespace PhotgraphyMVC.Controllers
         // GET: TodoLists
         public ActionResult Index()
         {
-            return View(db.TodoList.ToList());
+            string user = Session["Username"].ToString();
+
+            return View(db.TodoList.Where(t => t.Username == user).ToList());
         }
 
         // GET: TodoLists/Details/5
@@ -47,10 +49,12 @@ namespace PhotgraphyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "TodoListID,ItemDescription,DueDate,IsCompleted")] TodoList todoList)
+        public ActionResult Create([Bind(Include = "TodoListID,ItemDescription,DueDate,IsCompleted,Username")] TodoList todoList)
         {
             if (ModelState.IsValid)
             {
+                todoList.Username = Session["Username"].ToString();
+
                 db.TodoList.Add(todoList);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -79,10 +83,12 @@ namespace PhotgraphyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "TodoListID,ItemDescription,DueDate,IsCompleted")] TodoList todoList)
+        public ActionResult Edit([Bind(Include = "TodoListID,ItemDescription,DueDate,IsCompleted,Username")] TodoList todoList)
         {
             if (ModelState.IsValid)
             {
+                todoList.Username = Session["Username"].ToString();
+
                 db.Entry(todoList).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");

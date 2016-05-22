@@ -5,7 +5,6 @@
 
 #todo
 -Fix event list sorting with paging
--Filter event list dropdown based on clientId selection
 -Make TODO items checkable on the dashboard (so you can complete them)
 -Add ability to make TODO list items when adding a client
 -Find a way for multiple clients to use the same database
