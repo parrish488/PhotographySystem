@@ -102,7 +102,13 @@ namespace PhotgraphyMVC.Controllers
         // GET: Events/Create
         public ActionResult Create()
         {
-            ViewBag.ClientID = new SelectList(db.Clients, "ClientID", "FullName");
+            string user = Session["Username"].ToString();
+
+            var clients = from c in db.Clients
+                          where c.Username == user
+                          select c;
+            
+            ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName");
             return View();
         }
 
@@ -125,7 +131,15 @@ namespace PhotgraphyMVC.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.ClientID = new SelectList(db.Clients, "ClientID", "FullName", @event.ClientID);
+
+            string user = Session["Username"].ToString();
+
+            var clients = from c in db.Clients
+                          where c.Username == user
+                          select c;
+
+            ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName", @event.ClientID);
+
             return View(@event);
         }
 
@@ -141,7 +155,15 @@ namespace PhotgraphyMVC.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.ClientID = new SelectList(db.Clients, "ClientID", "FullName", @event.ClientID);
+
+            string user = Session["Username"].ToString();
+
+            var clients = from c in db.Clients
+                          where c.Username == user
+                          select c;
+
+            ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName", @event.ClientID);
+
             return View(@event);
         }
 
@@ -163,7 +185,14 @@ namespace PhotgraphyMVC.Controllers
 
                 return RedirectToAction("Index");
             }
-            ViewBag.ClientID = new SelectList(db.Clients, "ClientID", "FullName", @event.ClientID);
+
+            string user = Session["Username"].ToString();
+
+            var clients = from c in db.Clients
+                          where c.Username == user
+                          select c;
+
+            ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName", @event.ClientID);
             return View(@event);
         }
 

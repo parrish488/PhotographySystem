@@ -111,8 +111,18 @@ namespace PhotgraphyMVC.Controllers
         // GET: Mileages/Create
         public ActionResult Create()
         {
-            ViewBag.ClientID = new SelectList(db.Clients, "ClientID", "FullName");
-            ViewBag.TaxYearID = new SelectList(db.TaxYears, "TaxYearID", "Year");
+            string user = Session["Username"].ToString();
+
+            var clients = from c in db.Clients
+                          where c.Username == user
+                          select c;
+
+            var taxYears = from t in db.TaxYears
+                           where t.Username == user
+                           select t;
+
+            ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName");
+            ViewBag.TaxYearID = new SelectList(taxYears, "TaxYearID", "Year");
             return View();
         }
 
@@ -139,8 +149,18 @@ namespace PhotgraphyMVC.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.ClientID = new SelectList(db.Clients, "ClientID", "FullName", mileage.ClientID);
-            ViewBag.TaxYearID = new SelectList(db.TaxYears, "TaxYearID", "Year", mileage.TaxYearID);
+            string user = Session["Username"].ToString();
+
+            var clients = from c in db.Clients
+                          where c.Username == user
+                          select c;
+
+            var taxYears = from t in db.TaxYears
+                           where t.Username == user
+                           select t;
+
+            ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName", mileage.ClientID);
+            ViewBag.TaxYearID = new SelectList(taxYears, "TaxYearID", "Year", mileage.TaxYearID);
             return View(mileage);
         }
 
@@ -157,8 +177,18 @@ namespace PhotgraphyMVC.Controllers
                 return HttpNotFound();
             }
 
-            ViewBag.ClientID = new SelectList(db.Clients, "ClientID", "FullName", mileage.ClientID);
-            ViewBag.TaxYearID = new SelectList(db.TaxYears, "TaxYearID", "Year", mileage.TaxYearID);
+            string user = Session["Username"].ToString();
+
+            var clients = from c in db.Clients
+                          where c.Username == user
+                          select c;
+
+            var taxYears = from t in db.TaxYears
+                           where t.Username == user
+                           select t;
+
+            ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName", mileage.ClientID);
+            ViewBag.TaxYearID = new SelectList(taxYears, "TaxYearID", "Year", mileage.TaxYearID);
             return View(mileage);
         }
 
@@ -195,8 +225,18 @@ namespace PhotgraphyMVC.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.ClientID = new SelectList(db.Clients, "ClientID", "FullName", mileage.ClientID);
-            ViewBag.TaxYearID = new SelectList(db.TaxYears, "TaxYearID", "Year", mileage.TaxYearID);
+            string user = Session["Username"].ToString();
+
+            var clients = from c in db.Clients
+                          where c.Username == user
+                          select c;
+
+            var taxYears = from t in db.TaxYears
+                           where t.Username == user
+                           select t;
+
+            ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName", mileage.ClientID);
+            ViewBag.TaxYearID = new SelectList(taxYears, "TaxYearID", "Year", mileage.TaxYearID);
             return View(mileage);
         }
 

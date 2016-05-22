@@ -10,7 +10,6 @@ namespace PhotgraphyMVC.Models
     public class Event
     {
         public int EventID { get; set; }
-
         [Display(Name = "Event Date")]
         public DateTime EventDate { get; set; }
         [Display(Name = "Event Type")]
@@ -29,7 +28,7 @@ namespace PhotgraphyMVC.Models
         }
 
         [ForeignKey("Client")]
-        public int ClientID { get; set; }        
+        public int ClientID { get; set; }
         public virtual Client Client { get; set; }
     }
 }
