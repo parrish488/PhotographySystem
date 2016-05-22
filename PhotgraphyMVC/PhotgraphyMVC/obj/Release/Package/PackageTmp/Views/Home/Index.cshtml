@@ -16,15 +16,24 @@
         <h2>Todo List</h2>
         @foreach (PhotgraphyMVC.Models.TodoList todo in Model.TodoListItems)
         {
-            if (todo.DueDate < DateTime.Now)
-            {
-                <h4 style="color:red">@todo.DueDate.ToShortDateString(): @todo.ItemDescription</h4>;
-            }
-            else
-            {
-                <h4>@todo.DueDate.ToShortDateString(): @todo.ItemDescription</h4>;
-            }
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => todo.TodoListID)
+            <p>
+                @if (todo.DueDate < DateTime.Now)
+                {
+                    <span style="color:red;font-size:large">@todo.DueDate.ToShortDateString(): @todo.ItemDescription</span>;
+                }
+                else
+                {
+                    <span style="font-size:large">@todo.DueDate.ToShortDateString(): @todo.ItemDescription</span>;
+                }
+
+                @*<div class="editor-field">
+                    @Html.CheckBoxFor(model => todo.IsCompleted, new { id = todo.DueDate.ToShortDateString() })
+                </div>*@
+            </p>
         }
+
         <hr />
         <h4>@Html.ActionLink("Manage Todo Items", "Index", "TodoLists")</h4>
     </div>
@@ -40,3 +49,18 @@
         <h4>Total Takeaway: $@Model.TotalEarnings</h4>
     </div>
 </div>
+
+@section Scripts {
+    @foreach (PhotgraphyMVC.Models.TodoList todo in Model.TodoListItems)
+    {
+        <script type="text/javascript">
+            $(function () {
+                $('#chkImmediate').change(
+                    function () {
+                        var checked = $(this).is(':checked'); clickEvent(checked);
+                    });
+            });
+        </script>
+    }
+}
+

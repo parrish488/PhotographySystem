@@ -11,7 +11,7 @@
     <ProjectView>ProjectFiles</ProjectView>
     <WebStackScaffolding_DbContextTypeFullName>PhotgraphyMVC.Models.PhotographerContext</WebStackScaffolding_DbContextTypeFullName>
     <WebStackScaffolding_IsViewGenerationSelected>True</WebStackScaffolding_IsViewGenerationSelected>
-    <NameOfLastUsedPublishProfile>AlissaPaigePhotographyManager %282%29</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>AlissaPaigePhotographyManager</NameOfLastUsedPublishProfile>
     <UseIISExpress>true</UseIISExpress>
   </PropertyGroup>
   <ProjectExtensions>
