@@ -7,5 +7,4 @@
 -Fix event list sorting with paging
 -Make TODO items checkable on the dashboard (so you can complete them)
 -Add ability to make TODO list items when adding a client
--Find a way for multiple clients to use the same database
 -Add ability to email billing reciept.
