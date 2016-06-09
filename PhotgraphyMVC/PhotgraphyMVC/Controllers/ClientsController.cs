@@ -100,6 +100,12 @@ namespace PhotgraphyMVC.Controllers
             if (ModelState.IsValid)
             {
                 client.Username = Session["Username"].ToString();
+                List<TodoList> items = (List<TodoList>)Session["TodoItems"];
+
+                foreach (TodoList item in items)
+                {
+                    db.TodoList.Add(item);
+                }
 
                 db.Clients.Add(client);
                 db.SaveChanges();
