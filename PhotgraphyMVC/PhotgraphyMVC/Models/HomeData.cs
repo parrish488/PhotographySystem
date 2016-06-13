@@ -8,7 +8,9 @@ namespace PhotgraphyMVC.Models
     public class HomeData
     {
         public decimal TotalSalesTax { get; set; }
-        public decimal TotalEarnings { get; set; }
+        public decimal TotalGrossIncome { get; set; }
+        public decimal TotalExpenses { get; set; }
+        public decimal TotalNetIncome { get; set; }
         public int MilesDriven { get; set; }
 
         public List<Event> UpcomingEvents { get; set; }
@@ -17,7 +19,9 @@ namespace PhotgraphyMVC.Models
         public HomeData()
         {
             TotalSalesTax = 0;
-            TotalEarnings = 0;
+            TotalGrossIncome = 0;
+            TotalExpenses = 0;
+            TotalNetIncome = 0;
             MilesDriven = 0;
             UpcomingEvents = new List<Event>();
             TodoListItems = new List<TodoList>();

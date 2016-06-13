@@ -21,12 +21,8 @@ namespace PhotgraphyMVC.Models
         public string Username { get; set; }
 
         [ForeignKey("Client")]
-        public int ClientID { get; set; }
+        public int? ClientID { get; set; }
         public virtual Client Client { get; set; }
-
-        //[ForeignKey("ClientEvent")]
-        //public int EventID { get; set; }
-        //public virtual Event ClientEvent { get; set; }
 
         [ForeignKey("TaxYear")]
         public int TaxYearID { get; set; }
@@ -34,8 +30,8 @@ namespace PhotgraphyMVC.Models
 
         public decimal GetSalesTax(Billing billing, TaxYear taxYear)
         {
-            decimal subtotal = Decimal.Round(Decimal.Divide(Decimal.Multiply(billing.Total, (taxYear.TaxablePercent / 100)), (decimal)(1 + (taxYear.TaxRate / 100))), 2);
-            decimal salesTax = Decimal.Round(Decimal.Subtract(Decimal.Multiply(billing.Total, (taxYear.TaxablePercent / 100)), subtotal), 2);
+            decimal subtotal = decimal.Round(decimal.Divide(decimal.Multiply(billing.Total, (taxYear.TaxablePercent / 100)), (decimal)(1 + (taxYear.TaxRate / 100))), 2);
+            decimal salesTax = decimal.Round(decimal.Subtract(decimal.Multiply(billing.Total, (taxYear.TaxablePercent / 100)), subtotal), 2);
 
             return salesTax;
         }

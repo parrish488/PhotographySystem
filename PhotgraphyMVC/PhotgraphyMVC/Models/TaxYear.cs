@@ -14,6 +14,8 @@ namespace PhotgraphyMVC.Models
             TotalTax = 0.0m;
             TotalMiles = 0;
             TaxablePercent = 0.0m;
+            TotalExpenses = 0.0m;
+            TotalGrossIncome = 0.0m;
             TotalNetIncome = 0.0m;
         }
 
@@ -32,6 +34,12 @@ namespace PhotgraphyMVC.Models
 
         [Display(Name = "Taxable Percent")]
         public decimal TaxablePercent { get; set; }
+
+        [Display(Name = "Total Expenses")]
+        public decimal TotalExpenses { get; set; }
+
+        [Display(Name = "Total Gross Income")]
+        public decimal TotalGrossIncome { get; set; }
 
         [Display(Name = "Total Net Income")]
         public decimal TotalNetIncome { get; set; }

@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <parameters>
-  <parameter name="IIS Web Application Name" description="" value="AlissaPaigePhotographyManager" tags="IisApp">
+  <parameter name="IIS Web Application Name" description="" value="PhotographyManager" tags="IisApp">
     <parameterEntry kind="ProviderPath" scope="IisApp" match="^C:\\Users\\jparrish\\Documents\\Personal\\PhotographySystem\\PhotgraphyMVC\\PhotgraphyMVC\\obj\\Release\\Package\\PackageTmp$" />
     <parameterEntry kind="ProviderPath" scope="setAcl" match="^C:\\Users\\jparrish\\Documents\\Personal\\PhotographySystem\\PhotgraphyMVC\\PhotgraphyMVC\\obj\\Release\\Package\\PackageTmp$" />
   </parameter>
-  <parameter name="DefaultConnection-Web.config Connection String" description="" value="data source=tcp:alissapaigephotography.database.windows.net,1433;initial catalog=AlissaPaigePhotographyManager_db;user id=parrish488@alissapaigephotography;password=Jap080312;MultipleActiveResultSets=true" tags="">
+  <parameter name="DefaultConnection-Web.config Connection String" description="" value="data source=tcp:alissapaigephotography.database.windows.net,1433;initial catalog=PhotographyManager68;user id=parrish488@alissapaigephotography;password=Jap080312;MultipleActiveResultSets=true" tags="">
     <parameterEntry kind="XmlFile" scope="C:\\Users\\jparrish\\Documents\\Personal\\PhotographySystem\\PhotgraphyMVC\\PhotgraphyMVC\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='DefaultConnection']/@connectionString" />
   </parameter>
-  <parameter name="PhotographerContext-Web.config Connection String" description="" value="Data Source=tcp:alissapaigephotography.database.windows.net,1433;Initial Catalog=AlissaPaigePhotographyManager_db;User ID=parrish488@alissapaigephotography;Password=Jap080312" tags="">
+  <parameter name="PhotographerContext-Web.config Connection String" description="" value="Data Source=tcp:alissapaigephotography.database.windows.net,1433;Initial Catalog=PhotographyManager68;User Id=parrish488@alissapaigephotography;Password=Jap080312" tags="">
     <parameterEntry kind="XmlFile" scope="C:\\Users\\jparrish\\Documents\\Personal\\PhotographySystem\\PhotgraphyMVC\\PhotgraphyMVC\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='PhotographerContext']/@connectionString" />
   </parameter>
 </parameters>

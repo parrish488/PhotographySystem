@@ -19,6 +19,11 @@ namespace PhotgraphyMVC.Models
         {
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
+
+            modelBuilder.Entity<Billing>()
+                    .HasOptional<Client>(c => c.Client)
+                    .WithMany(b => b.Billing)
+                    .HasForeignKey(c => c.ClientID);
         }
 
         public System.Data.Entity.DbSet<PhotgraphyMVC.Models.TaxYear> TaxYears { get; set; }

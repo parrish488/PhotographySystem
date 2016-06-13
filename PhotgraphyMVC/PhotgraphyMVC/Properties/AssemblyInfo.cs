@@ -3,8 +3,8 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 /*ChangeLog
- * 5/22/2015 - V-2.0 Finished: Includes updates to use one database for multiple 
- *              users and other style updates and bug fixes.
+ * 5/22/2015 - V-2.0 Finished: Includes updates to use one database for multiple users and other style updates and bug fixes.
+ * 6/13/2015 - V-2.0.2 Finished: Add expenses into billing, comment code preventing client creation.
  */
 
 // General Information about an assembly is controlled through the following

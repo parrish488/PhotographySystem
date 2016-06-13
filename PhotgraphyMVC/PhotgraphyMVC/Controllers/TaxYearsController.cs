@@ -54,10 +54,10 @@ namespace PhotgraphyMVC.Controllers
                     taxYear = taxYear.OrderByDescending(c => c.TotalMiles);
                     break;
                 case "total_income":
-                    taxYear = taxYear.OrderBy(c => c.TotalNetIncome);
+                    taxYear = taxYear.OrderBy(c => c.TotalGrossIncome);
                     break;
                 case "total_income_desc":
-                    taxYear = taxYear.OrderByDescending(c => c.TotalNetIncome);
+                    taxYear = taxYear.OrderByDescending(c => c.TotalGrossIncome);
                     break;
                 case "total_tax":
                     taxYear = taxYear.OrderBy(c => c.TotalTax);
@@ -104,7 +104,7 @@ namespace PhotgraphyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "TaxYearID,Year,TaxRate,TotalTax,TotalMiles,TaxablePercent,TotalNetIncome,Username")] TaxYear taxYear)
+        public ActionResult Create([Bind(Include = "TaxYearID,Year,TaxRate,TotalTax,TotalMiles,TaxablePercent,TotalExpenses,TotalGrossIncome,TotalNetIncome,Username")] TaxYear taxYear)
         {
             if (ModelState.IsValid)
             {
@@ -138,7 +138,7 @@ namespace PhotgraphyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "TaxYearID,Year,TaxRate,TotalTax,TotalMiles,TaxablePercent,TotalNetIncome,Username")] TaxYear taxYear)
+        public ActionResult Edit([Bind(Include = "TaxYearID,Year,TaxRate,TotalTax,TotalMiles,TaxablePercent,TotalExpenses,TotalGrossIncome,TotalNetIncome,Username")] TaxYear taxYear)
         {
             if (ModelState.IsValid)
             {
@@ -189,7 +189,8 @@ namespace PhotgraphyMVC.Controllers
         private TaxYear RecalculateBilling(TaxYear taxYear)
         {
             taxYear.TotalTax = 0;
-            taxYear.TotalNetIncome = 0;
+            taxYear.TotalExpenses = 0;
+            taxYear.TotalGrossIncome = 0;
 
             foreach (Billing billing in db.Billing)
             {
@@ -199,9 +200,15 @@ namespace PhotgraphyMVC.Controllers
                     billing.Subtotal = billing.Total - billing.SalesTax;
 
                     taxYear.TotalTax += billing.SalesTax;
-                    taxYear.TotalNetIncome += billing.Subtotal;
+                    taxYear.TotalGrossIncome += billing.Subtotal;
+                }
+                else if (billing.BillingType == "Expense")
+                {
+                    taxYear.TotalExpenses += billing.Total;
                 }
             }
+
+            taxYear.TotalNetIncome = taxYear.TotalGrossIncome - taxYear.TotalExpenses;
 
             return taxYear;
         }

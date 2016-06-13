@@ -95,10 +95,6 @@
                 </div>
             </div>
 
-
-
-
-
             <div class="col-md-4">
                 <h2>Client Details</h2>
                 <hr/>
@@ -119,6 +115,13 @@
                         new SelectListItem { Text="Inactive", Value="Inactive" }
                     }, htmlAttributes: new { @class = "form-control" })
                         @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <h2>Todo Items</h2>
+                <hr/>
+                <div class="form-group">
+                    <div class="col-md-8">
                     </div>
                 </div>
             </div>

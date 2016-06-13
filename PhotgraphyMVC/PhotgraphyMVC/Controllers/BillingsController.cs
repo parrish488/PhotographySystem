@@ -125,23 +125,36 @@ namespace PhotgraphyMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Calculate sales tax
                 TaxYear taxYear = db.TaxYears.Find(billing.TaxYearID);
-                decimal salesTax = billing.GetSalesTax(billing, taxYear);
 
-                billing.Subtotal = billing.Total - salesTax;
-                billing.SalesTax = salesTax;
+                // Calculate sales tax for payment
+                if (billing.BillingType == "Payment")
+                {
+                    decimal salesTax = billing.GetSalesTax(billing, taxYear);
+                    billing.Subtotal = billing.Total - salesTax;
+                    billing.SalesTax = salesTax;
+                }
 
                 billing.Username = Session["Username"].ToString();
 
                 db.Billing.Add(billing);
                 db.SaveChanges();
 
-                taxYear.TotalTax += billing.SalesTax;
-                taxYear.TotalNetIncome += billing.Subtotal;
-                db.Entry(taxYear).State = EntityState.Modified;
+                if (billing.BillingType == "Payment")
+                {
+                    taxYear.TotalTax += billing.SalesTax;
+                    taxYear.TotalGrossIncome += billing.Subtotal;
+                }
+                else if (billing.BillingType == "Expense")
+                {
+                    taxYear.TotalExpenses += billing.Total;
+                }
 
+                taxYear.TotalNetIncome = taxYear.TotalGrossIncome - taxYear.TotalExpenses;
+
+                db.Entry(taxYear).State = EntityState.Modified;
                 db.SaveChanges();
+
                 return RedirectToAction("Index");
             }
 
@@ -199,12 +212,15 @@ namespace PhotgraphyMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Calculate sales tax
                 TaxYear taxYear = db.TaxYears.Find(billing.TaxYearID);
-                decimal salesTax = billing.GetSalesTax(billing, taxYear);
 
-                billing.Subtotal = billing.Total - salesTax;
-                billing.SalesTax = salesTax;
+                // Calculate sales tax for payment
+                if (billing.BillingType == "Payment")
+                {
+                    decimal salesTax = billing.GetSalesTax(billing, taxYear);
+                    billing.Subtotal = billing.Total - salesTax;
+                    billing.SalesTax = salesTax;
+                }
 
                 billing.Username = Session["Username"].ToString();
 
@@ -212,16 +228,27 @@ namespace PhotgraphyMVC.Controllers
                 db.SaveChanges();
 
                 taxYear.TotalTax = 0;
-                taxYear.TotalNetIncome = 0;
+                taxYear.TotalExpenses = 0;
+                taxYear.TotalGrossIncome = 0;
 
                 foreach (Billing bill in db.Billing)
                 {
                     if (bill.TaxYearID == billing.TaxYearID)
                     {
-                        taxYear.TotalTax += bill.SalesTax;
-                        taxYear.TotalNetIncome += bill.Subtotal;
+                        if (bill.BillingType == "Payment")
+                        {
+                            taxYear.TotalTax += bill.SalesTax;
+                            taxYear.TotalGrossIncome += bill.Subtotal;
+                        }
+                        else if (bill.BillingType == "Expense")
+                        {
+                            taxYear.TotalExpenses += bill.Total;
+                        }
                     }
                 }
+
+                taxYear.TotalNetIncome = taxYear.TotalGrossIncome - taxYear.TotalExpenses;
+
                 db.Entry(taxYear).State = EntityState.Modified;
 
                 db.SaveChanges();
@@ -272,16 +299,27 @@ namespace PhotgraphyMVC.Controllers
 
             TaxYear taxYear = db.TaxYears.Find(billing.TaxYearID);
             taxYear.TotalTax = 0;
-            taxYear.TotalNetIncome = 0;
+            taxYear.TotalExpenses = 0;
+            taxYear.TotalGrossIncome = 0;
 
             foreach (Billing bill in db.Billing)
             {
                 if (bill.TaxYearID == billing.TaxYearID)
                 {
-                    taxYear.TotalTax += bill.SalesTax;
-                    taxYear.TotalNetIncome += bill.Subtotal;
+                    if (bill.BillingType == "Payment")
+                    {
+                        taxYear.TotalTax += bill.SalesTax;
+                        taxYear.TotalGrossIncome += bill.Subtotal;
+                    }
+                    else if (bill.BillingType == "Expense")
+                    {
+                        taxYear.TotalExpenses += bill.Total;
+                    }
                 }
             }
+
+            taxYear.TotalNetIncome = taxYear.TotalGrossIncome - taxYear.TotalExpenses;
+
             db.Entry(taxYear).State = EntityState.Modified;
 
             db.SaveChanges();
