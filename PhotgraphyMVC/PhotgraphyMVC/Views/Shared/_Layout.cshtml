@@ -21,13 +21,37 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Clients", "Index", "Clients")</li>
-                    <li>@Html.ActionLink("Events", "Index", "Events")</li>
-                    <li>@Html.ActionLink("Billing", "Index", "Billings")</li>
-                    <li>@Html.ActionLink("Mileage", "Index", "Mileages")</li>
-                    <li>@Html.ActionLink("Tax Information", "Index", "TaxYears")</li>
+                    <li class="dropdown">
+                        <a href="#" data-toggle="dropdown" class="dropdown-toggle">Clients<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("View All Clients", "Index", "Clients")</li>
+                            <li>@Html.ActionLink("Create New Client", "Create", "Clients")</li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" data-toggle="dropdown" class="dropdown-toggle">Events<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("View All Events", "Index", "Events")</li>
+                            <li>@Html.ActionLink("Create New Event", "Create", "Events")</li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" data-toggle="dropdown" class="dropdown-toggle">Billing<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("View All Bills", "Index", "Billings")</li>
+                            <li>@Html.ActionLink("Create New Billing Item", "Create", "Billings")</li>
+                            <li role="separator" class="divider"></li>
+                            <li>@Html.ActionLink("Tax Information", "Index", "TaxYears")</li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" data-toggle="dropdown" class="dropdown-toggle">Mileage<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("View All Mileage", "Index", "Mileages")</li>
+                            <li>@Html.ActionLink("Create New Mileage", "Create", "Mileages")</li>
+                        </ul>
+                    </li>
                     <li>@Html.ActionLink("Todo List", "Index", "TodoLists")</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>

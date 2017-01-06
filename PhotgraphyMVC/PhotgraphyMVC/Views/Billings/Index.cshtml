@@ -1,6 +1,5 @@
 ﻿@model PagedList.IPagedList<PhotgraphyMVC.Models.Billing>
 @using PagedList.Mvc;
-<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
 @{
     ViewBag.Title = "Bills";
@@ -12,13 +11,16 @@
     @Html.ActionLink("Create New", "Create")
 </p>
 
-@using (Html.BeginForm("Index", "Billings", FormMethod.Get))
+@using (Html.BeginForm("Index", "Billings", FormMethod.Get, new { @class = "form-inline" }))
 {
-    <p>
-        Find by name: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
-        <input type="submit" value="Search" />
-    </p>
+    <label>Find By Name: </label>
+    <div class="input-group">
+        @Html.TextBox("SearchString", ViewBag.CurrentFilter as string, new { @class = "form-control" })
+        <span class="input-group-btn"><input type="submit" class="btn btn-default" value="Search" /></span>
+    </div>
 }
+
+<hr />
 
 <table class="table">
     <tr>
@@ -26,16 +28,16 @@
             @Html.ActionLink("First Name", "Index", new { sortOrder = ViewBag.FirstNameSortParm, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            @Html.ActionLink("Last Name", "Index", new { sortOrder = ViewBag.LastNameSortParm })
+            @Html.ActionLink("Last Name", "Index", new { sortOrder = ViewBag.LastNameSortParm, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            @Html.ActionLink("Billing Date", "Index", new { sortOrder = ViewBag.DateSortParam })
+            @Html.ActionLink("Billing Date", "Index", new { sortOrder = ViewBag.DateSortParam, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
             Billing Type
         </th>
         <th>
-            @Html.ActionLink("Total", "Index", new { sortOrder = ViewBag.TotalParm })
+            @Html.ActionLink("Total", "Index", new { sortOrder = ViewBag.TotalParm, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th></th>
     </tr>

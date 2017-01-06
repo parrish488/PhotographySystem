@@ -35,10 +35,8 @@ namespace PhotgraphyMVC.Controllers
 
             ViewBag.CurrentFilter = searchString;
 
-            string user = Session["Username"].ToString();
-
-            var taxYear = from t in db.TaxYears where t.Username == user
-                           select t;
+            var taxYear = from t in db.TaxYears where t.Username == User.Identity.Name
+                          select t;
 
             if (!string.IsNullOrEmpty(searchString))
             {
@@ -108,7 +106,7 @@ namespace PhotgraphyMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                taxYear.Username = Session["Username"].ToString();
+                taxYear.Username = User.Identity.Name;
 
                 db.TaxYears.Add(taxYear);
                 db.SaveChanges();
@@ -143,7 +141,7 @@ namespace PhotgraphyMVC.Controllers
             if (ModelState.IsValid)
             {
                 taxYear = RecalculateBilling(taxYear);
-                taxYear.Username = Session["Username"].ToString();
+                taxYear.Username = User.Identity.Name;
                 db.Entry(taxYear).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");

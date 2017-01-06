@@ -34,9 +34,7 @@ namespace PhotgraphyMVC.Controllers
 
             ViewBag.CurrentFilter = searchString;
 
-            string user = Convert.ToString(Session["Username"]);
-
-            var clientList = from c in db.Clients where c.Username == user
+            var clientList = from c in db.Clients where c.Username == User.Identity.Name
                              select c;
 
             if (!string.IsNullOrEmpty(searchString))
@@ -99,7 +97,7 @@ namespace PhotgraphyMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                client.Username = Session["Username"].ToString();
+                client.Username = User.Identity.Name;
                 //List<TodoList> items = (List<TodoList>)Session["TodoItems"];
 
                 //foreach (TodoList item in items)
@@ -140,12 +138,12 @@ namespace PhotgraphyMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                client.Username = Session["Username"].ToString();
+                client.Username = User.Identity.Name;
 
                 db.Entry(client).State = EntityState.Modified;
                 db.SaveChanges();
 
-                HomeController.VerifyActiveStatus(db, Session["Username"].ToString());
+                HomeController.VerifyActiveStatus(db, User.Identity.Name);
 
                 return RedirectToAction("Index");
             }
@@ -176,7 +174,7 @@ namespace PhotgraphyMVC.Controllers
             db.Clients.Remove(client);
             db.SaveChanges();
 
-            HomeController.VerifyActiveStatus(db, Session["Username"].ToString());
+            HomeController.VerifyActiveStatus(db, User.Identity.Name);
 
             return RedirectToAction("Index");
         }

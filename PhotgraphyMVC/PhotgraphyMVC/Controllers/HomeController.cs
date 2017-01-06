@@ -17,9 +17,7 @@ namespace PhotgraphyMVC.Controllers
         {
             HomeData data = new HomeData();
 
-            string user = User.Identity.Name;
-
-            foreach (Event evnt in db.Events.Where(e => e.Username == user))
+            foreach (Event evnt in db.Events.Where(e => e.Username == User.Identity.Name))
             {
                 if (evnt.EventDate >= DateTime.Now && evnt.EventDate < DateTime.Now.AddDays(30))
                 {
@@ -27,7 +25,7 @@ namespace PhotgraphyMVC.Controllers
                 }
             }
 
-            foreach (TodoList todo in db.TodoList.Where(e => e.Username == user))
+            foreach (TodoList todo in db.TodoList.Where(e => e.Username == User.Identity.Name))
             {
                 //if (!todo.IsCompleted)
                 //{
@@ -37,7 +35,7 @@ namespace PhotgraphyMVC.Controllers
 
             TaxYear taxYear = new TaxYear();
 
-            foreach (TaxYear year in db.TaxYears.Where(e => e.Username == user))
+            foreach (TaxYear year in db.TaxYears.Where(e => e.Username == User.Identity.Name))
             {
                 if (year.Year == DateTime.Now.Year)
                 {
@@ -53,7 +51,7 @@ namespace PhotgraphyMVC.Controllers
             data.UpcomingEvents =  data.UpcomingEvents.OrderBy(x => x.EventDate).ToList();
             data.TodoListItems = data.TodoListItems.OrderBy(x => x.DueDate).ToList();
 
-            VerifyActiveStatus(db, user);
+            VerifyActiveStatus(db, User.Identity.Name);
 
             return View(data);
         }

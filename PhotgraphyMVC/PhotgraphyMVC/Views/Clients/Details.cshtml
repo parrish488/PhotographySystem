@@ -10,7 +10,7 @@
         <div class="col-md-4">
             <h2>Client Info</h2>
             <hr />
-            <h4>
+            <h5>
                 <dl class="dl-horizontal">
                     <dt>
                         @Html.DisplayNameFor(model => model.FirstName)
@@ -47,13 +47,13 @@
                         @Html.DisplayFor(model => model.Email)
                     </dd>
                 </dl>
-            </h4>
+            </h5>
         </div>
 
         <div class="col-md-4">
             <h2>Demographics</h2>
             <hr />
-            <h4>
+            <h5>
                 <dl class="dl-horizontal">
                     <dt>
                         @Html.DisplayNameFor(model => model.Street)
@@ -83,13 +83,13 @@
                         @Html.DisplayFor(model => model.Zip)
                     </dd>
                 </dl>
-            </h4>
+            </h5>
         </div>
 
         <div class="col-md-4">
             <h2>Client Details</h2>
             <hr />
-            <h4>
+            <h5>
                 <dl class="dl-horizontal">
                     <dt>
                         @Html.DisplayNameFor(model => model.ClientNotes)
@@ -105,7 +105,7 @@
                         @Html.DisplayFor(model => model.Status)
                     </dd>
                 </dl>
-            </h4>
+            </h5>
         </div>
     </div>
 </div>
@@ -115,7 +115,7 @@
         <h2>Client Events</h2>
         @foreach (var item in Model.Events)
             {
-            <h4>@item.EventLabel</h4>
+            <h5>@item.EventLabel</h5>
         }
     </div>
     <div class="col-md-4">
@@ -135,13 +135,13 @@
             }
         }
 
-        <h4>Total Owed: $@total</h4>
+        <h5>Total Owed: $@total</h5>
     </div>
     <div class="col-md-4">
         <h2>Client Mileage</h2>
         @foreach (var item in Model.Mileage)
             {
-            <h4>@item.MileageDate: @item.MilesDriven Miles</h4>
+            <h5>@item.MileageDate: @item.MilesDriven Miles</h5>
         }
     </div>
 </div>

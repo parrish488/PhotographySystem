@@ -17,12 +17,13 @@ namespace PhotgraphyMVC.Controllers
         private PhotographerContext db = new PhotographerContext();
 
         // GET: Events
-        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page, int? taxYear)
+        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page, int? eventYearSelection)
         {
-            ViewBag.LastNameSortParm = String.IsNullOrEmpty(sortOrder) ? "date_desc" : "";
+            ViewBag.LastNameSortParm = string.IsNullOrEmpty(sortOrder) ? "last_name" : "";
             ViewBag.FirstNameSortParm = sortOrder == "first_name" ? "first_name_desc" : "first_name";
             ViewBag.EventTypeSortParm = sortOrder == "event_type" ? "event_type_desc" : "event_type";
-            ViewBag.DateSortParm = sortOrder == "last_name" ? "last_name_desc" : "last_name";
+            ViewBag.DateSortParm = sortOrder == "date" ? "date_desc" : "date";
+            ViewBag.EventYearSelection = eventYearSelection;
 
             if (searchString != null)
             {
@@ -35,10 +36,15 @@ namespace PhotgraphyMVC.Controllers
 
             ViewBag.CurrentFilter = searchString;
 
-            string user = Session["Username"].ToString();
+            var events = from e in db.Events where e.Username == User.Identity.Name
+                         select e;
 
-            var events = from e in db.Events where e.Username == user
-                        select e;
+            HashSet<int> eventYears = new HashSet<int>();
+            foreach (var @event in events)
+            {
+                eventYears.Add(@event.EventDate.Year);
+            }
+            ViewBag.EventYears = eventYears;
 
             if (!string.IsNullOrEmpty(searchString))
             {
@@ -46,9 +52,9 @@ namespace PhotgraphyMVC.Controllers
                                        || e.Client.FirstName.Contains(searchString)
                                        || e.EventType.Contains(searchString));
             }
-            if (taxYear != null && taxYear != 0)
+            if (eventYearSelection != null && eventYearSelection != 0)
             {
-                events = events.Where(e => e.EventDate.Year == taxYear);
+                events = events.Where(e => e.EventDate.Year == eventYearSelection);
             }
 
             switch (sortOrder)
@@ -75,7 +81,7 @@ namespace PhotgraphyMVC.Controllers
                     events = events.Include(c => c.Client).OrderByDescending(c => c.EventDate);
                     break;
                 default:
-                    events = events.Include(c => c.Client).OrderBy(c => c.EventDate);                    
+                    events = events.Include(c => c.Client).OrderBy(c => c.EventDate);
                     break;
             }
 
@@ -102,10 +108,8 @@ namespace PhotgraphyMVC.Controllers
         // GET: Events/Create
         public ActionResult Create()
         {
-            string user = Session["Username"].ToString();
-
             var clients = from c in db.Clients
-                          where c.Username == user
+                          where c.Username == User.Identity.Name
                           select c;
             
             ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName");
@@ -121,21 +125,18 @@ namespace PhotgraphyMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                @event.Username = Session["Username"].ToString();
+                @event.Username = User.Identity.Name;
 
                 db.Events.Add(@event);
                 db.SaveChanges();
 
-                HomeController.VerifyActiveStatus(db, Session["Username"].ToString());
+                HomeController.VerifyActiveStatus(db, User.Identity.Name);
 
                 return RedirectToAction("Index");
             }
 
-
-            string user = Session["Username"].ToString();
-
             var clients = from c in db.Clients
-                          where c.Username == user
+                          where c.Username == User.Identity.Name
                           select c;
 
             ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName", @event.ClientID);
@@ -156,10 +157,8 @@ namespace PhotgraphyMVC.Controllers
                 return HttpNotFound();
             }
 
-            string user = Session["Username"].ToString();
-
             var clients = from c in db.Clients
-                          where c.Username == user
+                          where c.Username == User.Identity.Name
                           select c;
 
             ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName", @event.ClientID);
@@ -176,20 +175,18 @@ namespace PhotgraphyMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                @event.Username = Session["Username"].ToString();
+                @event.Username = User.Identity.Name;
 
                 db.Entry(@event).State = EntityState.Modified;
                 db.SaveChanges();
 
-                HomeController.VerifyActiveStatus(db, Session["Username"].ToString());
+                HomeController.VerifyActiveStatus(db, User.Identity.Name);
 
                 return RedirectToAction("Index");
             }
 
-            string user = Session["Username"].ToString();
-
             var clients = from c in db.Clients
-                          where c.Username == user
+                          where c.Username == User.Identity.Name
                           select c;
 
             ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName", @event.ClientID);
@@ -220,7 +217,7 @@ namespace PhotgraphyMVC.Controllers
             db.Events.Remove(@event);
             db.SaveChanges();
 
-            HomeController.VerifyActiveStatus(db, Session["Username"].ToString());
+            HomeController.VerifyActiveStatus(db, User.Identity.Name);
 
             return RedirectToAction("Index");
         }

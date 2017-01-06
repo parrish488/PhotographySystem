@@ -35,10 +35,8 @@ namespace PhotgraphyMVC.Controllers
 
             ViewBag.CurrentFilter = searchString;
 
-            string user = Convert.ToString(Session["Username"]);
-
-            var bills = from b in db.Billing where b.Username == user
-                             select b;
+            var bills = from b in db.Billing where b.Username == User.Identity.Name
+                        select b;
 
             if (!string.IsNullOrEmpty(searchString))
             {
@@ -101,15 +99,13 @@ namespace PhotgraphyMVC.Controllers
         // GET: Billings/Create
         public ActionResult Create()
         {
-            string user = Session["Username"].ToString();
-
             var clients = from c in db.Clients
-                        where c.Username == user
-                        select c;
+                        where c.Username == User.Identity.Name
+                          select c;
 
             var taxYears = from t in db.TaxYears
-                          where t.Username == user
-                          select t;
+                          where t.Username == User.Identity.Name
+                           select t;
 
             ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName");
             ViewBag.TaxYearID = new SelectList(taxYears, "TaxYearID", "Year");
@@ -135,7 +131,7 @@ namespace PhotgraphyMVC.Controllers
                     billing.SalesTax = salesTax;
                 }
 
-                billing.Username = Session["Username"].ToString();
+                billing.Username = User.Identity.Name;
 
                 db.Billing.Add(billing);
                 db.SaveChanges();
@@ -158,14 +154,12 @@ namespace PhotgraphyMVC.Controllers
                 return RedirectToAction("Index");
             }
 
-            string user = Session["Username"].ToString();
-
             var clients = from c in db.Clients
-                          where c.Username == user
+                          where c.Username == User.Identity.Name
                           select c;
 
             var taxYears = from t in db.TaxYears
-                           where t.Username == user
+                           where t.Username == User.Identity.Name
                            select t;
 
             ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName", billing.ClientID);
@@ -188,14 +182,12 @@ namespace PhotgraphyMVC.Controllers
                 return HttpNotFound();
             }
 
-            string user = Session["Username"].ToString();
-
             var clients = from c in db.Clients
-                          where c.Username == user
+                          where c.Username == User.Identity.Name
                           select c;
 
             var taxYears = from t in db.TaxYears
-                           where t.Username == user
+                           where t.Username == User.Identity.Name
                            select t;
 
             ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName");
@@ -222,7 +214,7 @@ namespace PhotgraphyMVC.Controllers
                     billing.SalesTax = salesTax;
                 }
 
-                billing.Username = Session["Username"].ToString();
+                billing.Username = User.Identity.Name;
 
                 db.Entry(billing).State = EntityState.Modified;
                 db.SaveChanges();
@@ -255,14 +247,12 @@ namespace PhotgraphyMVC.Controllers
                 return RedirectToAction("Index");
             }
 
-            string user = Session["Username"].ToString();
-
             var clients = from c in db.Clients
-                          where c.Username == user
+                          where c.Username == User.Identity.Name
                           select c;
 
             var taxYears = from t in db.TaxYears
-                           where t.Username == user
+                           where t.Username == User.Identity.Name
                            select t;
 
             ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName", billing.ClientID);

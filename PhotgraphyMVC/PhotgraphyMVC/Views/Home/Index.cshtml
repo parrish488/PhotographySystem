@@ -45,10 +45,10 @@
     </div>
     <div class="col-md-4">
         <h2>Billing</h2>
-        <h4>Total Sales Tax: $@Model.TotalSalesTax</h4>
-        <h4>Total Expenses: $@Model.TotalExpenses</h4>
-        <h4>Total Gross: $@Model.TotalGrossIncome</h4>
-        <h4>Total Net Income: $@Model.TotalNetIncome</h4>
+        <h4>Total Sales Tax: $@Model.TotalSalesTax.ToString("0.00")</h4>
+        <h4>Total Expenses: $@Model.TotalExpenses.ToString("0.00")</h4>
+        <h4>Total Gross: $@Model.TotalGrossIncome.ToString("0.00")</h4>
+        <h4>Total Net Income: $@Model.TotalNetIncome.ToString("0.00")</h4>
     </div>
 </div>
 
