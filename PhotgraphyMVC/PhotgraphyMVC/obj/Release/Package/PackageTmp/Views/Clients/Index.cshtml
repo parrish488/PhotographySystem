@@ -1,6 +1,5 @@
 ﻿@model PagedList.IPagedList<PhotgraphyMVC.Models.Client>
 @using PagedList.Mvc;
-<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
 @{
     ViewBag.Title = "Clients";
@@ -16,13 +15,16 @@
     <span>@Html.ActionLink("Show All Clients", "Index", new { activeOnly = false })</span>
 </p>
 
-@using (Html.BeginForm("Index", "Clients", FormMethod.Get))
+@using (Html.BeginForm("Index", "Clients", FormMethod.Get, new { @class = "form-inline" }))
 {
-    <p>
-        Find by name: @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
-        <input type="submit" value="Search" />
-    </p>
+    <label>Find By Name: </label>
+    <div class="input-group">
+        @Html.TextBox("SearchString", ViewBag.CurrentFilter as string, new { @class = "form-control" })
+        <span class="input-group-btn"><input type="submit" class="btn btn-default" value="Search" /></span>
+    </div>
 }
+
+<hr />
 
 <table class="table">
     <tr>
@@ -30,7 +32,7 @@
             @Html.ActionLink("First Name", "Index", new { sortOrder = ViewBag.FirstNameSortParm, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            @Html.ActionLink("Last Name", "Index", new { sortOrder = ViewBag.LastNameSortParm })
+            @Html.ActionLink("Last Name", "Index", new { sortOrder = ViewBag.LastNameSortParm, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
             Primary Phone
