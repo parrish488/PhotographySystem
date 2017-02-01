@@ -200,7 +200,7 @@ namespace PhotgraphyMVC.Controllers
                         billing.Subtotal = billing.Total - billing.SalesTax;
 
                         taxYear.TotalTax += billing.SalesTax;
-                        taxYear.TotalGrossIncome += billing.Subtotal;
+                        taxYear.TotalGrossIncome += billing.Total;
                     }
                     else if (billing.BillingType == "Expense")
                     {
@@ -209,7 +209,7 @@ namespace PhotgraphyMVC.Controllers
                 }
             }
 
-            taxYear.TotalNetIncome = taxYear.TotalGrossIncome - taxYear.TotalExpenses;
+            taxYear.TotalNetIncome = taxYear.TotalGrossIncome - taxYear.TotalTax - taxYear.TotalExpenses;
 
             return taxYear;
         }
