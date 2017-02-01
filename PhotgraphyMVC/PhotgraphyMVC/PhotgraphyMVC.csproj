@@ -414,6 +414,7 @@
     <Content Include="Views\TaxYears\Details.cshtml" />
     <Content Include="Views\TaxYears\Edit.cshtml" />
     <Content Include="Views\TaxYears\Index.cshtml" />
+    <Content Include="Views\Home\StateTaxInformation.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

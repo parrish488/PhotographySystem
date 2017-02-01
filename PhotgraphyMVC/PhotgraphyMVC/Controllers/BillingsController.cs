@@ -190,8 +190,9 @@ namespace PhotgraphyMVC.Controllers
                            where t.Username == User.Identity.Name
                            select t;
 
-            ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName");
-            ViewBag.TaxYearID = new SelectList(taxYears, "TaxYearID", "Year");
+            bill.ClientIDs = clients.ToList();
+            bill.TaxYearIDs = taxYears.ToList();
+
             return View(bill);
         }
 

@@ -19,12 +19,12 @@ namespace PhotgraphyMVC.Controllers
         // GET: Mileages
         public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
-            ViewBag.LastNameSortParm = String.IsNullOrEmpty(sortOrder) ? "last_name_desc" : "";
-            ViewBag.FirstNameSortParm = sortOrder == "first_name" ? "first_name_desc" : "first_name";
+            ViewBag.LastNameSortParam = String.IsNullOrEmpty(sortOrder) ? "last_name_desc" : "";
+            ViewBag.FirstNameSortParam = sortOrder == "first_name" ? "first_name_desc" : "first_name";
             ViewBag.DateSortParam = sortOrder == "mileage_date" ? "mileage_date_desc" : "mileage_date";
-            ViewBag.YearSortParm = sortOrder == "year" ? "year_desc" : "year";
-            ViewBag.MileageSortParm = sortOrder == "mileage" ? "mileage_desc" : "mileage";
-            ViewBag.SourceSortParm = sortOrder == "source" ? "source_desc" : "source";
+            ViewBag.YearSortParam = sortOrder == "year" ? "year_desc" : "year";
+            ViewBag.MileageSortParam = sortOrder == "mileage" ? "mileage_desc" : "mileage";
+            ViewBag.SourceSortParam = sortOrder == "source" ? "source_desc" : "source";
 
             if (searchString != null)
             {

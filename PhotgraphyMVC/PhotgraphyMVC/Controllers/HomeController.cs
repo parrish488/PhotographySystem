@@ -63,6 +63,13 @@ namespace PhotgraphyMVC.Controllers
             return View();
         }
 
+        public ActionResult StateTaxInformation()
+        {
+            ViewBag.Message = "State Tax Information";
+
+            return View();
+        }
+
         public static void VerifyActiveStatus(PhotographerContext db, string user)
         {
             HashSet<int> activeClients = new HashSet<int>();

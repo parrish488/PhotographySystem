@@ -1,6 +1,5 @@
 ﻿@model PagedList.IPagedList<PhotgraphyMVC.Models.Mileage>
 @using PagedList.Mvc;
-<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
 @{
     ViewBag.Title = "Mileage";
@@ -26,22 +25,22 @@
 <table class="table">
     <tr>
         <th>
-            @Html.ActionLink("First Name", "Index", new { sortOrder = ViewBag.FirstNameSortParm, currentFilter = ViewBag.CurrentFilter })
+            @Html.ActionLink("First Name", "Index", new { sortOrder = ViewBag.FirstNameSortParam, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            @Html.ActionLink("Last Name", "Index", new { sortOrder = ViewBag.LastNameSortParm, currentFilter = ViewBag.CurrentFilter })
+            @Html.ActionLink("Last Name", "Index", new { sortOrder = ViewBag.LastNameSortParam, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
             @Html.ActionLink("Mileage Date", "Index", new { sortOrder = ViewBag.DateSortParam, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            @Html.ActionLink("Year", "Index", new { sortOrder = ViewBag.YearSortParm, currentFilter = ViewBag.CurrentFilter })
+            @Html.ActionLink("Year", "Index", new { sortOrder = ViewBag.YearSortParam, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            @Html.ActionLink("Miles Driven", "Index", new { sortOrder = ViewBag.MileageSortParm, currentFilter = ViewBag.CurrentFilter })
+            @Html.ActionLink("Miles Driven", "Index", new { sortOrder = ViewBag.MileageSortParam, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th>
-            @Html.ActionLink("Source", "Index", new { sortOrder = ViewBag.SourceSortParm, currentFilter = ViewBag.CurrentFilter })
+            @Html.ActionLink("Source", "Index", new { sortOrder = ViewBag.SourceSortParam, currentFilter = ViewBag.CurrentFilter })
         </th>
         <th></th>
     </tr>

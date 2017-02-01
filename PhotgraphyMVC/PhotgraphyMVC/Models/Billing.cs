@@ -35,5 +35,8 @@ namespace PhotgraphyMVC.Models
 
             return salesTax;
         }
+
+        public List<TaxYear> TaxYearIDs { get; set; }
+        public List<Client> ClientIDs { get; set; }
     }
 }

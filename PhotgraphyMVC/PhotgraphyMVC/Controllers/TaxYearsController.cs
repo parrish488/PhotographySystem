@@ -192,17 +192,20 @@ namespace PhotgraphyMVC.Controllers
 
             foreach (Billing billing in db.Billing)
             {
-                if (billing.BillingType == "Payment")
+                if (billing.TaxYearID == taxYear.TaxYearID)
                 {
-                    billing.SalesTax = billing.GetSalesTax(billing, taxYear);
-                    billing.Subtotal = billing.Total - billing.SalesTax;
+                    if (billing.BillingType == "Payment")
+                    {
+                        billing.SalesTax = billing.GetSalesTax(billing, taxYear);
+                        billing.Subtotal = billing.Total - billing.SalesTax;
 
-                    taxYear.TotalTax += billing.SalesTax;
-                    taxYear.TotalGrossIncome += billing.Subtotal;
-                }
-                else if (billing.BillingType == "Expense")
-                {
-                    taxYear.TotalExpenses += billing.Total;
+                        taxYear.TotalTax += billing.SalesTax;
+                        taxYear.TotalGrossIncome += billing.Subtotal;
+                    }
+                    else if (billing.BillingType == "Expense")
+                    {
+                        taxYear.TotalExpenses += billing.Total;
+                    }
                 }
             }
 
