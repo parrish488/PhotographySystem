@@ -46,7 +46,7 @@ namespace PhotgraphyMVC.Controllers
             data.TotalSalesTax = taxYear.TotalTax;
             data.TotalExpenses = taxYear.TotalExpenses;
             data.TotalGrossIncome = taxYear.TotalGrossIncome;
-            data.TotalNetIncome = data.TotalGrossIncome - data.TotalExpenses;
+            data.TotalNetIncome = data.TotalGrossIncome - data.TotalSalesTax - data.TotalExpenses;
             data.MilesDriven = (int)taxYear.TotalMiles;
             data.UpcomingEvents =  data.UpcomingEvents.OrderBy(x => x.EventDate).ToList();
             data.TodoListItems = data.TodoListItems.OrderBy(x => x.DueDate).ToList();
