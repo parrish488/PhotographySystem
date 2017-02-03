@@ -183,40 +183,40 @@
                 draggable: true
             });
 
-            ////Add the double click event to map.
-            //google.maps.event.addListener(map, "dblclick", function (event) {
-            //    //Check if Avg Speed value is enter.
-            //    if ($("#txtAvgSpeed").val() == '') {
-            //        alert("Please enter the Average Speed (km/hr).");
-            //        $("#txtAvgSpeed").focus();
-            //        return false;
-            //    }
+            //Add the double click event to map.
+            google.maps.event.addListener(map, "dblclick", function (event) {
+                //Check if Avg Speed value is enter.
+                if ($("#txtAvgSpeed").val() == '') {
+                    alert("Please enter the Average Speed (km/hr).");
+                    $("#txtAvgSpeed").focus();
+                    return false;
+                }
 
-            //    var geocoder = new google.maps.Geocoder;
-            //    var input = event.latLng.lat() + "," + event.latLng.lng();
-            //    var latlngStr = input.split(',');
-            //    var latlng = { lat: parseFloat(latlngStr[0]), lng: parseFloat(latlngStr[1]) };
-            //    geocoder.geocode({ 'location': latlng }, function (results, status) {
-            //        if (status === google.maps.GeocoderStatus.OK) {
-            //            if (results[1]) {
-            //                if (_mapPoints.length == 1) {
-            //                    document.getElementById("startPoint").value = results[1].formatted_address;
-            //                    document.getElementById("startLabel").innerHTML = "Start Point";
-            //                    document.getElementById("destinationLabel").innerHTML = "Double Click or Enter Destination";
-            //                }
-            //                else {
-            //                    document.getElementById("destination").value = results[1].formatted_address;
-            //                    document.getElementById("startLabel").innerHTML = "Start Point";
-            //                    document.getElementById("destinationLabel").innerHTML = "Destination";
-            //                }
-            //            }
-            //        }
-            //    });
+                var geocoder = new google.maps.Geocoder;
+                var input = event.latLng.lat() + "," + event.latLng.lng();
+                var latlngStr = input.split(',');
+                var latlng = { lat: parseFloat(latlngStr[0]), lng: parseFloat(latlngStr[1]) };
+                geocoder.geocode({ 'location': latlng }, function (results, status) {
+                    if (status === google.maps.GeocoderStatus.OK) {
+                        if (results[1]) {
+                            if (_mapPoints.length == 1) {
+                                document.getElementById("startPoint").value = results[1].formatted_address;
+                                document.getElementById("startLabel").innerHTML = "Start Point";
+                                document.getElementById("destinationLabel").innerHTML = "Double Click or Enter Destination";
+                            }
+                            else {
+                                document.getElementById("destination").value = results[1].formatted_address;
+                                document.getElementById("startLabel").innerHTML = "Start Point";
+                                document.getElementById("destinationLabel").innerHTML = "Destination";
+                            }
+                        }
+                    }
+                });
 
-            //    var _currentPoints = event.latLng;
-            //    _mapPoints.push(_currentPoints);
-            //    getRoutePointsAndWaypoints();
-            //});
+                var _currentPoints = event.latLng;
+                _mapPoints.push(_currentPoints);
+                getRoutePointsAndWaypoints();
+            });
 
             ////Add an event to route direction. This will fire when the direction is changed.
             //google.maps.event.addListener(_directionsRenderer, 'directions_changed', function () {
