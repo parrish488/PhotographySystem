@@ -28,5 +28,8 @@ namespace PhotgraphyMVC.Models
         [ForeignKey("TaxYear")]
         public int TaxYearID { get; set; }
         public virtual TaxYear TaxYear { get; set; }
+
+        public List<TaxYear> TaxYearIDs { get; set; }
+        public List<Client> ClientIDs { get; set; }
     }
 }

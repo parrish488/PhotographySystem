@@ -111,14 +111,17 @@ namespace PhotgraphyMVC.Controllers
         {
             var clients = from c in db.Clients
                           where c.Username == User.Identity.Name
+                          orderby c.LastName ascending
                           select c;
 
             var taxYears = from t in db.TaxYears
                            where t.Username == User.Identity.Name
+                           orderby t.Year descending
                            select t;
 
             ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName");
             ViewBag.TaxYearID = new SelectList(taxYears, "TaxYearID", "Year");
+
             return View();
         }
 
@@ -145,16 +148,19 @@ namespace PhotgraphyMVC.Controllers
                 return RedirectToAction("Index");
             }
 
-            var clients = from c in db.Clients
-                          where c.Username == User.Identity.Name
-                          select c;
+            //var clients = from c in db.Clients
+            //              where c.Username == User.Identity.Name
+            //              orderby c.LastName ascending
+            //              select c;
 
-            var taxYears = from t in db.TaxYears
-                           where t.Username == User.Identity.Name
-                           select t;
+            //var taxYears = from t in db.TaxYears
+            //               where t.Username == User.Identity.Name
+            //               orderby t.Year ascending
+            //               select t;
 
-            ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName", mileage.ClientID);
-            ViewBag.TaxYearID = new SelectList(taxYears, "TaxYearID", "Year", mileage.TaxYearID);
+            //ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName", mileage.ClientID);
+            //ViewBag.TaxYearID = new SelectList(taxYears, "TaxYearID", "Year", mileage.TaxYearID);
+
             return View(mileage);
         }
 
@@ -173,14 +179,17 @@ namespace PhotgraphyMVC.Controllers
 
             var clients = from c in db.Clients
                           where c.Username == User.Identity.Name
+                          orderby c.LastName ascending
                           select c;
 
             var taxYears = from t in db.TaxYears
                            where t.Username == User.Identity.Name
+                           orderby t.Year descending
                            select t;
 
-            ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName", mileage.ClientID);
-            ViewBag.TaxYearID = new SelectList(taxYears, "TaxYearID", "Year", mileage.TaxYearID);
+            mileage.ClientIDs = clients.ToList();
+            mileage.TaxYearIDs = taxYears.ToList();
+
             return View(mileage);
         }
 
@@ -217,16 +226,16 @@ namespace PhotgraphyMVC.Controllers
                 return RedirectToAction("Index");
             }
 
-            var clients = from c in db.Clients
-                          where c.Username == User.Identity.Name
-                          select c;
+            //var clients = from c in db.Clients
+            //              where c.Username == User.Identity.Name
+            //              select c;
 
-            var taxYears = from t in db.TaxYears
-                           where t.Username == User.Identity.Name
-                           select t;
+            //var taxYears = from t in db.TaxYears
+            //               where t.Username == User.Identity.Name
+            //               select t;
 
-            ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName", mileage.ClientID);
-            ViewBag.TaxYearID = new SelectList(taxYears, "TaxYearID", "Year", mileage.TaxYearID);
+            //ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName", mileage.ClientID);
+            //ViewBag.TaxYearID = new SelectList(taxYears, "TaxYearID", "Year", mileage.TaxYearID);
             return View(mileage);
         }
 

@@ -30,5 +30,7 @@ namespace PhotgraphyMVC.Models
         [ForeignKey("Client")]
         public int ClientID { get; set; }
         public virtual Client Client { get; set; }
+
+        public List<Client> ClientIDs { get; set; }
     }
 }

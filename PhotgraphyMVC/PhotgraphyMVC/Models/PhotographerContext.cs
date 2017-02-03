@@ -14,6 +14,7 @@ namespace PhotgraphyMVC.Models
         public DbSet<Event> Events { get; set; }
         public DbSet<Mileage> Mileage { get; set; }
         public DbSet<TodoList> TodoList { get; set; }
+        public DbSet<TaxYear> TaxYears { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -21,11 +22,9 @@ namespace PhotgraphyMVC.Models
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
 
             modelBuilder.Entity<Billing>()
-                    .HasOptional<Client>(c => c.Client)
+                    .HasOptional(c => c.Client)
                     .WithMany(b => b.Billing)
                     .HasForeignKey(c => c.ClientID);
         }
-
-        public System.Data.Entity.DbSet<PhotgraphyMVC.Models.TaxYear> TaxYears { get; set; }
     }
 }

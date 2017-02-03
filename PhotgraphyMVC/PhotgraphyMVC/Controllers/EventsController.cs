@@ -110,9 +110,11 @@ namespace PhotgraphyMVC.Controllers
         {
             var clients = from c in db.Clients
                           where c.Username == User.Identity.Name
+                          orderby c.LastName ascending
                           select c;
-            
+
             ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName");
+
             return View();
         }
 
@@ -159,9 +161,10 @@ namespace PhotgraphyMVC.Controllers
 
             var clients = from c in db.Clients
                           where c.Username == User.Identity.Name
+                          orderby c.LastName ascending
                           select c;
 
-            ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName", @event.ClientID);
+            @event.ClientIDs = clients.ToList();
 
             return View(@event);
         }
@@ -185,11 +188,11 @@ namespace PhotgraphyMVC.Controllers
                 return RedirectToAction("Index");
             }
 
-            var clients = from c in db.Clients
-                          where c.Username == User.Identity.Name
-                          select c;
+            //var clients = from c in db.Clients
+            //              where c.Username == User.Identity.Name
+            //              select c;
 
-            ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName", @event.ClientID);
+            //ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName", @event.ClientID);
             return View(@event);
         }
 
