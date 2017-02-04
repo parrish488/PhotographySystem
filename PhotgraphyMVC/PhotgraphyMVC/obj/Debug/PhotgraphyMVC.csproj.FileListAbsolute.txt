@@ -67,7 +67,6 @@ c:\users\jason\documents\Repos\PhotgraphyMVC\PhotgraphyMVC\bin\Microsoft.Owin.Se
 c:\users\jason\documents\Repos\PhotgraphyMVC\PhotgraphyMVC\obj\Debug\PhotgraphyMVC.dll
 c:\users\jason\documents\Repos\PhotgraphyMVC\PhotgraphyMVC\obj\Debug\PhotgraphyMVC.pdb
 C:\Users\Jason\Documents\Repos\PhotgraphyMVC\PhotgraphyMVC\obj\Debug\PhotgraphyMVC.csprojResolveAssemblyReference.cache
-C:\Users\jparrish\Documents\Personal\PhotographySystem\PhotgraphyMVC\PhotgraphyMVC\obj\Debug\PhotgraphyMVC.csprojResolveAssemblyReference.cache
 C:\Users\jparrish\Documents\Personal\PhotographySystem\PhotgraphyMVC\PhotgraphyMVC\obj\Debug\PhotgraphyMVC.dll
 C:\Users\jparrish\Documents\Personal\PhotographySystem\PhotgraphyMVC\PhotgraphyMVC\obj\Debug\PhotgraphyMVC.pdb
 C:\Users\jparrish\Documents\Personal\PhotographySystem\PhotgraphyMVC\PhotgraphyMVC\bin\roslyn\csc.exe

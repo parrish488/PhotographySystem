@@ -26,16 +26,9 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.EventType, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.EventTypeID, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownListFor(model => model.EventType, new List<SelectListItem>
-                    {
-                        new SelectListItem { Text="Bridals", Value="Bridals" },
-                        new SelectListItem { Text="Engagements", Value="Engagements" },
-                        new SelectListItem { Text="Family Pictures", Value="Family Pictures" },
-                        new SelectListItem { Text="Portraits", Value="Portraits" },
-                        new SelectListItem { Text="Wedding", Value="Wedding" }
-                    }, htmlAttributes: new { @class = "form-control" })
+                @Html.DropDownListFor(model => model.EventTypeID, new SelectList(Model.EventTypeIDs, "ID", "EventTypeName"), htmlAttributes: new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.EventType, "", new { @class = "text-danger" })
             </div>
         </div>

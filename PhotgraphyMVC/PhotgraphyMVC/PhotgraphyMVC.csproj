@@ -191,6 +191,8 @@
     <Compile Include="Models\Billing.cs" />
     <Compile Include="Models\Client.cs" />
     <Compile Include="Models\Event.cs" />
+    <Compile Include="Models\EventTypes.cs" />
+    <Compile Include="Controllers\EventTypesController.cs" />
     <Compile Include="Models\HomeData.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
@@ -415,6 +417,11 @@
     <Content Include="Views\TaxYears\Edit.cshtml" />
     <Content Include="Views\TaxYears\Index.cshtml" />
     <Content Include="Views\Home\StateTaxInformation.cshtml" />
+    <Content Include="Views\EventTypes\Create.cshtml" />
+    <Content Include="Views\EventTypes\Delete.cshtml" />
+    <Content Include="Views\EventTypes\Details.cshtml" />
+    <Content Include="Views\EventTypes\Edit.cshtml" />
+    <Content Include="Views\EventTypes\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

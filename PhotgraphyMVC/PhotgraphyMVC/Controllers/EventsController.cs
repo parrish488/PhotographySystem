@@ -113,7 +113,13 @@ namespace PhotgraphyMVC.Controllers
                           orderby c.LastName ascending
                           select c;
 
+            var eventTypes = from e in db.EventTypes
+                          where e.Username == User.Identity.Name
+                          orderby e.EventTypeName ascending
+                          select e;
+
             ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName");
+            ViewBag.EventTypes = new SelectList(eventTypes, "ID", "EventTypeName");
 
             return View();
         }
@@ -123,12 +129,12 @@ namespace PhotgraphyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "EventID,EventDate,EventType,ContractCompleted,Username,ClientID")] Event @event)
+        public ActionResult Create([Bind(Include = "EventID,EventDate,EventType,ContractCompleted,Username,EventTypeID,ClientID")] Event @event)
         {
             if (ModelState.IsValid)
             {
                 @event.Username = User.Identity.Name;
-
+                @event.EventType = db.EventTypes.Find(@event.EventTypeID).EventTypeName;
                 db.Events.Add(@event);
                 db.SaveChanges();
 
@@ -137,11 +143,11 @@ namespace PhotgraphyMVC.Controllers
                 return RedirectToAction("Index");
             }
 
-            var clients = from c in db.Clients
-                          where c.Username == User.Identity.Name
-                          select c;
+            //var clients = from c in db.Clients
+            //              where c.Username == User.Identity.Name
+            //              select c;
 
-            ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName", @event.ClientID);
+            //ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName", @event.ClientID);
 
             return View(@event);
         }
@@ -164,7 +170,13 @@ namespace PhotgraphyMVC.Controllers
                           orderby c.LastName ascending
                           select c;
 
+            var eventTypes = from e in db.EventTypes
+                             where e.Username == User.Identity.Name
+                             orderby e.EventTypeName ascending
+                             select e;
+
             @event.ClientIDs = clients.ToList();
+            @event.EventTypeIDs = eventTypes.ToList();
 
             return View(@event);
         }
@@ -174,11 +186,12 @@ namespace PhotgraphyMVC.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "EventID,EventDate,EventType,ContractCompleted,Username,ClientID")] Event @event)
+        public ActionResult Edit([Bind(Include = "EventID,EventDate,EventType,ContractCompleted,Username,EventTypeID,ClientID")] Event @event)
         {
             if (ModelState.IsValid)
             {
                 @event.Username = User.Identity.Name;
+                @event.EventType = db.EventTypes.Find(@event.EventTypeID).EventTypeName;
 
                 db.Entry(@event).State = EntityState.Modified;
                 db.SaveChanges();

@@ -27,10 +27,16 @@ namespace PhotgraphyMVC.Models
             }
         }
 
+        [Display(Name = "Event Type")]
+        [ForeignKey("EventTypes")]
+        public int EventTypeID { get; set; }
+        public virtual EventTypes EventTypes { get; set; }
+
         [ForeignKey("Client")]
         public int ClientID { get; set; }
         public virtual Client Client { get; set; }
 
         public List<Client> ClientIDs { get; set; }
+        public List<EventTypes> EventTypeIDs { get; set; }
     }
 }
