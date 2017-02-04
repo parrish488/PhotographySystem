@@ -189,6 +189,7 @@ namespace PhotgraphyMVC.Controllers
             taxYear.TotalTax = 0;
             taxYear.TotalExpenses = 0;
             taxYear.TotalGrossIncome = 0;
+            taxYear.TotalMiles = 0;
 
             foreach (Billing billing in db.Billing)
             {
@@ -206,6 +207,14 @@ namespace PhotgraphyMVC.Controllers
                     {
                         taxYear.TotalExpenses += billing.Total;
                     }
+                }
+            }
+
+            foreach (Mileage mileage in db.Mileage)
+            {
+                if (mileage.TaxYearID == taxYear.TaxYearID)
+                {
+                    taxYear.TotalMiles += mileage.MilesDriven;
                 }
             }
 
