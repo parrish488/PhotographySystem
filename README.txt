@@ -5,6 +5,7 @@
 2/1/2017 - Change bootstrap library, fix tax calculation and dropdown lists
 2/2/2017 - Add google maps api autocomplete ability to mileage, add round trip checkbox
 2/3/2017 - Added dynamic event type list
+2/6/2017 - Fixed label for Event Types, made it so a user only gets their event types.
 
 #todo
 -Make TODO items checkable on the dashboard (so you can complete them)
