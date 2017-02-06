@@ -139,3 +139,4 @@ C:\Users\jparrish\Documents\Personal\PhotographySystem\PhotgraphyMVC\PhotgraphyM
 C:\Users\jparrish\Documents\Personal\PhotographySystem\PhotgraphyMVC\PhotgraphyMVC\bin\Microsoft.Owin.Security.Google.xml
 C:\Users\jparrish\Documents\Personal\PhotographySystem\PhotgraphyMVC\PhotgraphyMVC\bin\Microsoft.Owin.Security.Twitter.xml
 C:\Users\jparrish\Documents\Personal\PhotographySystem\PhotgraphyMVC\PhotgraphyMVC\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
+C:\Users\jparrish\Documents\Personal\PhotographySystem\PhotgraphyMVC\PhotgraphyMVC\obj\Debug\PhotgraphyMVC.csprojResolveAssemblyReference.cache

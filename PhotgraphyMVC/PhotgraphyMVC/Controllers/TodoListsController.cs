@@ -18,9 +18,7 @@ namespace PhotgraphyMVC.Controllers
         // GET: TodoLists
         public ActionResult Index()
         {
-            string user = Session["Username"].ToString();
-
-            return View(db.TodoList.Where(t => t.Username == user).ToList());
+            return View(db.TodoList.Where(t => t.Username == User.Identity.Name).ToList());
         }
 
         // GET: TodoLists/Details/5

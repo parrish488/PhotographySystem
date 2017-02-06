@@ -16,7 +16,7 @@ namespace PhotgraphyMVC.Models
         // GET: EventTypes
         public ActionResult Index()
         {
-            return View(db.EventTypes.ToList());
+            return View(db.EventTypes.Where(e => e.Username == User.Identity.Name).ToList());
         }
 
         // GET: EventTypes/Details/5
