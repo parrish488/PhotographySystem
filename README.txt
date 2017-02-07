@@ -7,6 +7,7 @@
 2/3/2017 - Added dynamic event type list
 2/6/2017 - Fixed label for Event Types, made it so a user only gets their event types.
 2/7/2017 - Made todo items completable from dashboard, optimize home page
+2/7/2017 - Add ability to only view incomplete todo items.
 
 #todo
 -Make TODO items checkable on the dashboard (so you can complete them)

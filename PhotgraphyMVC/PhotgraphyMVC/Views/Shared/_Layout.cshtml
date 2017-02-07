@@ -53,7 +53,7 @@
                             <li>@Html.ActionLink("Create New Mileage", "Create", "Mileages")</li>
                         </ul>
                     </li>
-                    <li>@Html.ActionLink("Todo List", "Index", "TodoLists")</li>
+                    <li>@Html.ActionLink("Todo List", "Index", "TodoLists", new { incompleteOnly = true }, null)</li>
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>

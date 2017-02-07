@@ -16,9 +16,18 @@ namespace PhotgraphyMVC.Controllers
         private PhotographerContext db = new PhotographerContext();
 
         // GET: TodoLists
-        public ActionResult Index()
+        public ActionResult Index(bool? incompleteOnly)
         {
-            return View(db.TodoList.Where(t => t.Username == User.Identity.Name).ToList());
+            if (incompleteOnly != null && incompleteOnly.Value)
+            {
+                ViewBag.Title = "Incomplete Todo Items";
+                return View(db.TodoList.Where(t => t.Username == User.Identity.Name).Where(t => t.IsCompleted == false).ToList());
+            }
+            else
+            {
+                ViewBag.Title = "All Todo Items";
+                return View(db.TodoList.Where(t => t.Username == User.Identity.Name).ToList());
+            }
         }
 
         // GET: TodoLists/Details/5
