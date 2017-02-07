@@ -6,6 +6,7 @@
 2/2/2017 - Add google maps api autocomplete ability to mileage, add round trip checkbox
 2/3/2017 - Added dynamic event type list
 2/6/2017 - Fixed label for Event Types, made it so a user only gets their event types.
+2/7/2017 - Made todo items completable from dashboard, optimize home page
 
 #todo
 -Make TODO items checkable on the dashboard (so you can complete them)

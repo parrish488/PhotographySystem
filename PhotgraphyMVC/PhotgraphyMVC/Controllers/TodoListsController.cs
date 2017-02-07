@@ -51,7 +51,7 @@ namespace PhotgraphyMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                todoList.Username = Session["Username"].ToString();
+                todoList.Username = User.Identity.Name;
 
                 db.TodoList.Add(todoList);
                 db.SaveChanges();
@@ -85,7 +85,7 @@ namespace PhotgraphyMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                todoList.Username = Session["Username"].ToString();
+                todoList.Username = User.Identity.Name;
 
                 db.Entry(todoList).State = EntityState.Modified;
                 db.SaveChanges();
@@ -118,6 +118,28 @@ namespace PhotgraphyMVC.Controllers
             db.TodoList.Remove(todoList);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        public ActionResult CompleteItem(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            TodoList todoList = db.TodoList.Find(id);
+
+            if (todoList == null)
+            {
+                return HttpNotFound();
+            }
+            else
+            {
+                todoList.IsCompleted = true;
+                db.SaveChanges();
+            }
+
+            return RedirectToAction("Index", "Home");
         }
 
         protected override void Dispose(bool disposing)

@@ -17,39 +17,71 @@ namespace PhotgraphyMVC.Controllers
         {
             HomeData data = new HomeData();
 
-            foreach (Event evnt in db.Events.Where(e => e.Username == User.Identity.Name))
-            {
-                if (evnt.EventDate >= DateTime.Now && evnt.EventDate < DateTime.Now.AddDays(30))
-                {
-                    data.UpcomingEvents.Add(evnt);
-                }
-            }
+            DateTime dateLimit = DateTime.Now.AddDays(30);
 
-            foreach (TodoList todo in db.TodoList.Where(e => e.Username == User.Identity.Name))
-            {
-                //if (!todo.IsCompleted)
-                //{
-                    data.TodoListItems.Add(todo);
-                //}
-            }
+            var events = from e in db.Events
+                         where e.Username == User.Identity.Name
+                         where e.EventDate < dateLimit
+                         where e.EventDate >= DateTime.Now
+                         orderby e.EventDate ascending
+                         select e;
 
+
+            data.UpcomingEvents = events.Take(5).ToList();
+
+            //data.UpcomingEvents = db.Events.Take(10).Where(e => e.Username == User.Identity.Name).Where(e => e.EventDate < dateLimit).OrderBy(e => e.EventDate).ToList();
+
+            //foreach (Event evnt in db.Events.Where(e => e.Username == User.Identity.Name))
+            //{
+            //    if (evnt.EventDate >= DateTime.Now && evnt.EventDate < DateTime.Now.AddDays(30))
+            //    {
+            //        data.UpcomingEvents.Add(evnt);
+            //    }
+            //}
+
+            var todoItems = from t in db.TodoList
+                         where t.Username == User.Identity.Name
+                         where t.IsCompleted == false
+                         orderby t.DueDate ascending
+                         select t;
+
+            data.TodoListItems = todoItems.Take(5).ToList();
+
+            //data.TodoListItems = db.TodoList.Take(10).Where(t => t.Username == User.Identity.Name).Where(t => t.IsCompleted == false).OrderBy(t => t.DueDate).ToList();
+
+            //foreach (TodoList todo in db.TodoList.Take(10).Where(t => t.Username == User.Identity.Name).OrderBy(t => t.DueDate))
+            //{
+            //    if (!todo.IsCompleted)
+            //    {
+            //        data.TodoListItems.Add(todo);
+            //    }
+            //}
+
+            List<TaxYear> years = db.TaxYears.Where(e => e.Username == User.Identity.Name).Where(t => t.Year == DateTime.Now.Year).ToList();
             TaxYear taxYear = new TaxYear();
 
-            foreach (TaxYear year in db.TaxYears.Where(e => e.Username == User.Identity.Name))
+            if (years.Count > 0)
             {
-                if (year.Year == DateTime.Now.Year)
-                {
-                    taxYear = year;
-                }
+                taxYear = years[0];
             }
+
+             //= db.TaxYears.Where(e => e.Username == User.Identity.Name).Where(t => t.Year == DateTime.Now.Year).ToList()[0];
+
+            //foreach (TaxYear year in db.TaxYears.Where(e => e.Username == User.Identity.Name).Where(t => t.Year == DateTime.Now.Year))
+            //{
+            //    if (year.Year == DateTime.Now.Year)
+            //    {
+            //        taxYear = year;
+            //    }
+            //}
 
             data.TotalSalesTax = taxYear.TotalTax;
             data.TotalExpenses = taxYear.TotalExpenses;
             data.TotalGrossIncome = taxYear.TotalGrossIncome;
             data.TotalNetIncome = data.TotalGrossIncome - data.TotalSalesTax - data.TotalExpenses;
             data.MilesDriven = (int)taxYear.TotalMiles;
-            data.UpcomingEvents =  data.UpcomingEvents.OrderBy(x => x.EventDate).ToList();
-            data.TodoListItems = data.TodoListItems.OrderBy(x => x.DueDate).ToList();
+            //data.UpcomingEvents =  data.UpcomingEvents.OrderBy(x => x.EventDate).ToList();
+            //data.TodoListItems = data.TodoListItems.OrderBy(x => x.DueDate).ToList();
 
             VerifyActiveStatus(db, User.Identity.Name);
 

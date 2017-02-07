@@ -9,6 +9,7 @@ using System.Web.Mvc;
 
 namespace PhotgraphyMVC.Models
 {
+    [Authorize]
     public class EventTypesController : Controller
     {
         private PhotographerContext db = new PhotographerContext();
