@@ -36,7 +36,14 @@
             @Html.DisplayFor(modelItem => item.DueDate)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.IsCompleted)
+            @if (item.IsCompleted)
+            {
+                @Html.DisplayFor(modelItem => item.IsCompleted)
+            }
+            else
+            {
+                @Html.ActionLink("Complete", "CompleteItem", "TodoLists", new { id = item.TodoListID, fromDashboard = false }, new { @class = "btn btn-sm btn-default" })
+            }
         </td>
         <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.TodoListID }) |

@@ -416,7 +416,7 @@
     <Content Include="Views\TaxYears\Details.cshtml" />
     <Content Include="Views\TaxYears\Edit.cshtml" />
     <Content Include="Views\TaxYears\Index.cshtml" />
-    <Content Include="Views\Home\StateTaxInformation.cshtml" />
+    <Content Include="Views\TaxYears\StateTaxInformation.cshtml" />
     <Content Include="Views\EventTypes\Create.cshtml" />
     <Content Include="Views\EventTypes\Delete.cshtml" />
     <Content Include="Views\EventTypes\Details.cshtml" />

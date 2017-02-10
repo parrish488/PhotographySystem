@@ -175,6 +175,11 @@ namespace PhotgraphyMVC.Controllers
             return RedirectToAction("Index");
         }
 
+        public ActionResult StateTaxInformation()
+        {
+            return View();
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

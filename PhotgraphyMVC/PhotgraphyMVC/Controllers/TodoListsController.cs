@@ -129,7 +129,7 @@ namespace PhotgraphyMVC.Controllers
             return RedirectToAction("Index");
         }
 
-        public ActionResult CompleteItem(int? id)
+        public ActionResult CompleteItem(int? id, bool fromDashboard = true)
         {
             if (id == null)
             {
@@ -148,7 +148,14 @@ namespace PhotgraphyMVC.Controllers
                 db.SaveChanges();
             }
 
-            return RedirectToAction("Index", "Home");
+            if (fromDashboard)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Index", "TodoLists");
+            }
         }
 
         protected override void Dispose(bool disposing)

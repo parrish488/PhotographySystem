@@ -8,7 +8,7 @@
 <h2>Tax Years</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    <span>@Html.ActionLink("Create New", "Create") | @Html.ActionLink("View State Tax Information", "StateTaxInformation")</span>
 </p>
 
 @using (Html.BeginForm("Index", "TaxYears", FormMethod.Get, new { @class = "form-inline" }))

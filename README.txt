@@ -8,8 +8,8 @@
 2/6/2017 - Fixed label for Event Types, made it so a user only gets their event types.
 2/7/2017 - Made todo items completable from dashboard, optimize home page
 2/7/2017 - Add ability to only view incomplete todo items.
+2/10/2017 - Added ability to complete todo items from todo index, Added link to state tax information.
 
 #todo
--Make TODO items checkable on the dashboard (so you can complete them)
 -Add ability to make TODO list items when adding a client
 -Add ability to email billing reciept.
