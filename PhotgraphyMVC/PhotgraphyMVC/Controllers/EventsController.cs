@@ -36,15 +36,14 @@ namespace PhotgraphyMVC.Controllers
 
             ViewBag.CurrentFilter = searchString;
 
+            var eventYears = (from e in db.Events
+                              where e.Username == User.Identity.Name
+                              select e.EventDate.Year).Distinct();
+
+            ViewBag.EventYears = eventYears.OrderByDescending(e => e).ToList();
+
             var events = from e in db.Events where e.Username == User.Identity.Name
                          select e;
-
-            HashSet<int> eventYears = new HashSet<int>();
-            foreach (var @event in events)
-            {
-                eventYears.Add(@event.EventDate.Year);
-            }
-            ViewBag.EventYears = eventYears;
 
             if (!string.IsNullOrEmpty(searchString))
             {
@@ -52,9 +51,15 @@ namespace PhotgraphyMVC.Controllers
                                        || e.Client.FirstName.Contains(searchString)
                                        || e.EventType.Contains(searchString));
             }
+
             if (eventYearSelection != null && eventYearSelection != 0)
             {
                 events = events.Where(e => e.EventDate.Year == eventYearSelection);
+            }
+            else if (eventYearSelection == null)
+            {
+                events = events.Where(e => e.EventDate.Year == DateTime.Now.Year);
+                ViewBag.EventYearSelection = DateTime.Now.Year;
             }
 
             switch (sortOrder)

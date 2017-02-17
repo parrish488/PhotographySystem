@@ -17,12 +17,13 @@ namespace PhotgraphyMVC.Controllers
         private PhotographerContext db = new PhotographerContext();
 
         // GET: Billings
-        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
+        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page, int? billingYearSelection)
         {
             ViewBag.LastNameSortParm = string.IsNullOrEmpty(sortOrder) ? "last_name_desc" : "";
             ViewBag.FirstNameSortParm = sortOrder == "first_name" ? "first_name_desc" : "first_name";
             ViewBag.DateSortParam = sortOrder == "billing_date" ? "billing_date_desc" : "billing_date";
             ViewBag.TotalParm = sortOrder == "total" ? "total_desc" : "total";
+            ViewBag.BillingYearSelection = billingYearSelection;
 
             if (searchString != null)
             {
@@ -35,6 +36,12 @@ namespace PhotgraphyMVC.Controllers
 
             ViewBag.CurrentFilter = searchString;
 
+            var billingYears = (from b in db.Billing
+                                where b.Username == User.Identity.Name
+                                select b.BillingDate.Year).Distinct();
+
+            ViewBag.BillingYears = billingYears.OrderByDescending(b => b).ToList();
+
             var bills = from b in db.Billing where b.Username == User.Identity.Name
                         select b;
 
@@ -43,6 +50,16 @@ namespace PhotgraphyMVC.Controllers
                 bills = bills.Where(b => b.Client.LastName.Contains(searchString)
                                        || b.Client.FirstName.Contains(searchString)
                                        || b.Total.ToString().Contains(searchString));
+            }
+
+            if (billingYearSelection != null && billingYearSelection != 0)
+            {
+                bills = bills.Where(e => e.BillingDate.Year == billingYearSelection);
+            }
+            else if (billingYearSelection == null)
+            {
+                bills = bills.Where(e => e.BillingDate.Year == DateTime.Now.Year);
+                ViewBag.BillingYearSelection = DateTime.Now.Year;
             }
 
             switch (sortOrder)

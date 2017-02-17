@@ -1,0 +1,41 @@
+﻿@model PhotgraphyMVC.Models.TodoTemplate
+
+@{
+    ViewBag.Title = "Template Details";
+}
+
+<h2>Template Details</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.TemplateDescription)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TemplateDescription)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.RangeUnits)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RangeUnits)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.RangeValue)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RangeValue)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.TodoTemplateID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

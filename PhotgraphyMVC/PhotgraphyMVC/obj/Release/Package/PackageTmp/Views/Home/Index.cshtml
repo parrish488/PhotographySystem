@@ -26,7 +26,7 @@
                 else
                 {
                     <span style="font-size:large">@todo.DueDate.ToShortDateString(): @todo.ItemDescription - </span>;
-                    @Html.ActionLink("Complete", "CompleteItem", "TodoLists", new { id = todo.TodoListID }, new { @class="btn btn-sm btn-default"})
+                    @Html.ActionLink("Complete", "CompleteItem", "TodoLists", new { id = todo.TodoListID, fromDashboard = true }, new { @class="btn btn-sm btn-default"})
                 }
 
                 @*<div class="editor-field">

@@ -17,7 +17,7 @@ namespace PhotgraphyMVC.Controllers
         private PhotographerContext db = new PhotographerContext();
 
         // GET: Mileages
-        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
+        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page, int? mileageYearSelection)
         {
             ViewBag.LastNameSortParam = String.IsNullOrEmpty(sortOrder) ? "last_name_desc" : "";
             ViewBag.FirstNameSortParam = sortOrder == "first_name" ? "first_name_desc" : "first_name";
@@ -25,6 +25,7 @@ namespace PhotgraphyMVC.Controllers
             ViewBag.YearSortParam = sortOrder == "year" ? "year_desc" : "year";
             ViewBag.MileageSortParam = sortOrder == "mileage" ? "mileage_desc" : "mileage";
             ViewBag.SourceSortParam = sortOrder == "source" ? "source_desc" : "source";
+            ViewBag.MileageYearSelection = mileageYearSelection;
 
             if (searchString != null)
             {
@@ -37,13 +38,30 @@ namespace PhotgraphyMVC.Controllers
 
             ViewBag.CurrentFilter = searchString;
 
+            var mileageYears = (from m in db.Mileage
+                              where m.Username == User.Identity.Name
+                              select m.MileageDate.Year).Distinct();
+
+            ViewBag.MileageYears = mileageYears.OrderByDescending(m => m).ToList();
+
             var mileages = from m in db.Mileage where m.Username == User.Identity.Name
                            select m;
+
             if (!string.IsNullOrEmpty(searchString))
             {
                 mileages = mileages.Where(m => m.Client.LastName.Contains(searchString)
                                        || m.Client.FirstName.Contains(searchString)
                                        || m.Source.Contains(searchString));
+            }
+
+            if (mileageYearSelection != null && mileageYearSelection != 0)
+            {
+                mileages = mileages.Where(e => e.MileageDate.Year == mileageYearSelection);
+            }
+            else if (mileageYearSelection == null)
+            {
+                mileages = mileages.Where(e => e.MileageDate.Year == DateTime.Now.Year);
+                ViewBag.MileageYearSelection = DateTime.Now.Year;
             }
 
             switch (sortOrder)

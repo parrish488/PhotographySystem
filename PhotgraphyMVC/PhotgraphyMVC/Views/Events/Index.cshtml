@@ -5,13 +5,20 @@
     ViewBag.Title = "Events";
 }
 
-<h2>@ViewBag.EventYearSelection Events</h2>
+@if (ViewBag.EventYearSelection == 0)
+{
+    <h2>All Events</h2>
+}
+else
+{
+    <h2>@ViewBag.EventYearSelection Events</h2>
+}
 
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
 <p>
-    <span>@Html.ActionLink("All", "Index", new { taxYear = "All" })</span>
+    <span>@Html.ActionLink("All", "Index", new { eventYearSelection = 0 })</span>
     @{
         foreach (int year in ViewBag.EventYears)
         {

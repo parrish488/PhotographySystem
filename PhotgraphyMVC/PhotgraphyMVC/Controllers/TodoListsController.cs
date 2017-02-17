@@ -129,6 +129,33 @@ namespace PhotgraphyMVC.Controllers
             return RedirectToAction("Index");
         }
 
+        public void CreateFromTemplate(string client, int templateId)
+        {
+            TodoTemplate template = db.TodoTemplates.Find(templateId);
+
+            TodoList todoList = new TodoList();
+            todoList.ItemDescription = client + " - " + template.TemplateDescription;
+
+            switch (template.RangeValue)
+            {
+                case "Days":
+                    todoList.DueDate = DateTime.Now.AddDays(template.RangeUnits);
+                    break;
+                case "Weeks":
+                    todoList.DueDate = DateTime.Now.AddDays(template.RangeUnits * 7);
+                    break;
+                case "Months":
+                    todoList.DueDate = DateTime.Now.AddMonths(template.RangeUnits);
+                    break;
+            }
+
+            todoList.IsCompleted = false;
+            todoList.Username = User.Identity.Name;
+
+            db.TodoList.Add(todoList);
+            db.SaveChanges();
+        }
+
         public ActionResult CompleteItem(int? id, bool fromDashboard = true)
         {
             if (id == null)

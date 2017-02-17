@@ -5,10 +5,26 @@
     ViewBag.Title = "Mileage";
 }
 
-<h2>Current Mileage</h2>
+@if (ViewBag.MileageYearSelection == 0)
+{
+    <h2>All Mileage</h2>
+}
+else
+{
+    <h2>@ViewBag.MileageYearSelection Mileage</h2>
+}
 
 <p>
     @Html.ActionLink("Create New", "Create")
+</p>
+<p>
+    <span>@Html.ActionLink("All", "Index", new { mileageYearSelection = 0 })</span>
+    @{
+        foreach (int year in ViewBag.MileageYears)
+        {
+            <span>  |  @Html.ActionLink(year.ToString(), "Index", new { mileageYearSelection = year })</span>
+        }
+    }
 </p>
 
 @using (Html.BeginForm("Index", "Mileages", FormMethod.Get, new { @class = "form-inline" }))

@@ -50,5 +50,7 @@ namespace PhotgraphyMVC.Models
         public virtual ICollection<Event> Events { get; set; }
         public virtual ICollection<Billing> Billing { get; set; }
         public virtual ICollection<Mileage> Mileage { get; set; }
+
+        public List<TodoTemplate> TodoTemplates { get; set; }
     }
 }

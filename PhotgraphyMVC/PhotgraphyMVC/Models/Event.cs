@@ -38,5 +38,6 @@ namespace PhotgraphyMVC.Models
 
         public List<Client> ClientIDs { get; set; }
         public List<EventTypes> EventTypeIDs { get; set; }
+        public List<TodoTemplate> TodoTemplates { get; set; }
     }
 }

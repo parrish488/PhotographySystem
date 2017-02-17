@@ -16,6 +16,7 @@ namespace PhotgraphyMVC.Models
         public DbSet<TodoList> TodoList { get; set; }
         public DbSet<TaxYear> TaxYears { get; set; }
         public DbSet<EventTypes> EventTypes { get; set; }
+        public DbSet<TodoTemplate> TodoTemplates { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
