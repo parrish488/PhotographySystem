@@ -9,7 +9,6 @@
 2/7/2017 - Made todo items completable from dashboard, optimize home page
 2/7/2017 - Add ability to only view incomplete todo items.
 2/10/2017 - Added ability to complete todo items from todo index, Added link to state tax information.
-2/17/2017 - Started adding todo templates.
 2/17/2017 - Added ability to view specific years in billing and mileage.  Adjusted event year viewing.
 
 #todo
