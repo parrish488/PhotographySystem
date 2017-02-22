@@ -8,6 +8,9 @@ using System.Web;
 using System.Web.Mvc;
 using PhotgraphyMVC.Models;
 using PagedList;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using Newtonsoft.Json;
 
 namespace PhotgraphyMVC.Controllers
 {
@@ -15,6 +18,8 @@ namespace PhotgraphyMVC.Controllers
     public class BillingsController : Controller
     {
         private PhotographerContext db = new PhotographerContext();
+
+        const string apiUrl = @"http://localhost:57669/";
 
         // GET: Billings
         public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page, int? billingYearSelection)
@@ -36,81 +41,99 @@ namespace PhotgraphyMVC.Controllers
 
             ViewBag.CurrentFilter = searchString;
 
-            var billingYears = (from b in db.Billing
-                                where b.Username == User.Identity.Name
-                                select b.BillingDate.Year).Distinct();
+            //var billingYears = (from b in db.Billing
+            //                    where b.Username == User.Identity.Name
+            //                    select b.BillingDate.Year).Distinct();
 
-            ViewBag.BillingYears = billingYears.OrderByDescending(b => b).ToList();
+            //ViewBag.BillingYears = billingYears.OrderByDescending(b => b).ToList();
 
-            var bills = from b in db.Billing where b.Username == User.Identity.Name
-                        select b;
+            //var bills = from b in db.Billing where b.Username == User.Identity.Name
+            //            select b;
 
-            if (!string.IsNullOrEmpty(searchString))
+            using (var client = new HttpClient())
             {
-                bills = bills.Where(b => b.Client.LastName.Contains(searchString)
-                                       || b.Client.FirstName.Contains(searchString)
-                                       || b.Total.ToString().Contains(searchString));
+                client.BaseAddress = new Uri(apiUrl);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Add("username", User.Identity.Name);
+                var response = client.GetAsync("api/Billings").Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = response.Content.ReadAsStringAsync().Result;
+                    var bills = JsonConvert.DeserializeObject<IQueryable<Billing>>(response.Content.ReadAsStringAsync().Result);
+
+                    if (!string.IsNullOrEmpty(searchString))
+                    {
+                        bills = bills.Where(b => b.Client.LastName.Contains(searchString)
+                                               || b.Client.FirstName.Contains(searchString)
+                                               || b.Total.ToString().Contains(searchString));
+                    }
+
+                    if (billingYearSelection != null && billingYearSelection != 0)
+                    {
+                        bills = bills.Where(e => e.BillingDate.Year == billingYearSelection);
+                    }
+                    else if (billingYearSelection == null)
+                    {
+                        bills = bills.Where(e => e.BillingDate.Year == DateTime.Now.Year);
+                        ViewBag.BillingYearSelection = DateTime.Now.Year;
+                    }
+
+                    switch (sortOrder)
+                    {
+                        case "total":
+                            bills = bills.OrderBy(c => c.Total).Include(b => b.Client).Include(b => b.TaxYear);
+                            break;
+                        case "total_desc":
+                            bills = bills.OrderByDescending(c => c.Total).Include(b => b.Client).Include(b => b.TaxYear);
+                            break;
+                        case "mileage_date":
+                            bills = bills.OrderBy(c => c.BillingDate).Include(m => m.Client).Include(m => m.TaxYear);
+                            break;
+                        case "mileage_date_desc":
+                            bills = bills.OrderByDescending(c => c.BillingDate).Include(m => m.Client).Include(m => m.TaxYear);
+                            break;
+                        case "first_name":
+                            bills = bills.OrderBy(c => c.Client.FirstName).Include(b => b.Client).Include(b => b.TaxYear);
+                            break;
+                        case "first_name_desc":
+                            bills = bills.OrderByDescending(c => c.Client.FirstName).Include(b => b.Client).Include(b => b.TaxYear);
+                            break;
+                        case "last_name_desc":
+                            bills = bills.OrderByDescending(c => c.Client.LastName).Include(b => b.Client).Include(b => b.TaxYear);
+                            break;
+                        default:
+                            bills = bills.OrderBy(c => c.Client.LastName).Include(b => b.Client).Include(b => b.TaxYear);
+                            break;
+                    }
+
+                    int pageSize = 10;
+                    int pageNumber = (page ?? 1);
+                    return View(bills.ToPagedList(pageNumber, pageSize));
+                }
             }
 
-            if (billingYearSelection != null && billingYearSelection != 0)
-            {
-                bills = bills.Where(e => e.BillingDate.Year == billingYearSelection);
-            }
-            else if (billingYearSelection == null)
-            {
-                bills = bills.Where(e => e.BillingDate.Year == DateTime.Now.Year);
-                ViewBag.BillingYearSelection = DateTime.Now.Year;
-            }
-
-            switch (sortOrder)
-            {
-                case "total":
-                    bills = bills.OrderBy(c => c.Total).Include(b => b.Client).Include(b => b.TaxYear);
-                    break;
-                case "total_desc":
-                    bills = bills.OrderByDescending(c => c.Total).Include(b => b.Client).Include(b => b.TaxYear);
-                    break;
-                case "mileage_date":
-                    bills = bills.OrderBy(c => c.BillingDate).Include(m => m.Client).Include(m => m.TaxYear);
-                    break;
-                case "mileage_date_desc":
-                    bills = bills.OrderByDescending(c => c.BillingDate).Include(m => m.Client).Include(m => m.TaxYear);
-                    break;
-                case "first_name":
-                    bills = bills.OrderBy(c => c.Client.FirstName).Include(b => b.Client).Include(b => b.TaxYear);
-                    break;
-                case "first_name_desc":
-                    bills = bills.OrderByDescending(c => c.Client.FirstName).Include(b => b.Client).Include(b => b.TaxYear);
-                    break;
-                case "last_name_desc":
-                    bills = bills.OrderByDescending(c => c.Client.LastName).Include(b => b.Client).Include(b => b.TaxYear);
-                    break;
-                default:
-                    bills = bills.OrderBy(c => c.Client.LastName).Include(b => b.Client).Include(b => b.TaxYear);
-                    break;
-            }
-
-            int pageSize = 10;
-            int pageNumber = (page ?? 1);
-            return View(bills.ToPagedList(pageNumber, pageSize));
+            return HttpNotFound();
         }
 
         // GET: Billings/Details/5
         public ActionResult Details(int? id)
         {
-            if (id == null)
+            using (var client = new HttpClient())
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                client.BaseAddress = new Uri(apiUrl);
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                var response = client.GetAsync("api/Billings/id").Result;
+                if (response.IsSuccessStatusCode)
+                {
+                    var bill = JsonConvert.DeserializeObject<Billing>(response.Content.ReadAsStringAsync().Result);
+
+                    return View(bill);
+                }
             }
 
-            Billing bill = db.Billing.Find(id);
-
-            if (bill == null)
-            {
-                return HttpNotFound();
-            }
-
-            return View(bill);
+            return HttpNotFound();
         }
 
         // GET: Billings/Create
