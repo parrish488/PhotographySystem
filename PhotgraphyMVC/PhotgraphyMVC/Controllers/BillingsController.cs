@@ -18,8 +18,6 @@ namespace PhotgraphyMVC.Controllers
     [Authorize]
     public class BillingsController : Controller
     {
-        private PhotographerContext db = new PhotographerContext();
-
         private const string apiUrl = "http://localhost:57669/";
 
         // GET: Billings
@@ -137,7 +135,6 @@ namespace PhotgraphyMVC.Controllers
             if (ModelState.IsValid)
             {
                 billing.Username = User.Identity.Name;
-
                 string responseString = Communication.PostRequest(apiUrl, "api/Billings", User.Identity.Name, JsonConvert.SerializeObject(billing));
 
                 return RedirectToAction("Index");
@@ -179,7 +176,6 @@ namespace PhotgraphyMVC.Controllers
             if (ModelState.IsValid)
             {
                 billing.Username = User.Identity.Name;
-
                 string responseString = Communication.PutRequest(apiUrl, "api/Billings/" + billing.BillingID, User.Identity.Name, JsonConvert.SerializeObject(billing));
 
                 return RedirectToAction("Index");
@@ -211,15 +207,6 @@ namespace PhotgraphyMVC.Controllers
             Billing bill = JsonConvert.DeserializeObject<Billing>(responseString);
 
             return RedirectToAction("Index");
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
         }
     }
 }
