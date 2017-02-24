@@ -8,6 +8,10 @@ using System.Web;
 using System.Web.Mvc;
 using PhotgraphyMVC.Models;
 using PagedList;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace PhotgraphyMVC.Controllers
 {
@@ -15,6 +19,8 @@ namespace PhotgraphyMVC.Controllers
     public class BillingsController : Controller
     {
         private PhotographerContext db = new PhotographerContext();
+
+        private const string apiUrl = "http://localhost:57669/";
 
         // GET: Billings
         public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page, int? billingYearSelection)
@@ -36,14 +42,11 @@ namespace PhotgraphyMVC.Controllers
 
             ViewBag.CurrentFilter = searchString;
 
-            var billingYears = (from b in db.Billing
-                                where b.Username == User.Identity.Name
-                                select b.BillingDate.Year).Distinct();
+            string responseString = Communication.GetRequest(apiUrl, "api/Billings/Years", User.Identity.Name);
+            ViewBag.BillingYears = JsonConvert.DeserializeObject<List<int>>(responseString);
 
-            ViewBag.BillingYears = billingYears.OrderByDescending(b => b).ToList();
-
-            var bills = from b in db.Billing where b.Username == User.Identity.Name
-                        select b;
+            responseString = Communication.GetRequest(apiUrl, "api/Billings", User.Identity.Name);
+            var bills = JsonConvert.DeserializeObject<IEnumerable<Billing>>(responseString);
 
             if (!string.IsNullOrEmpty(searchString))
             {
@@ -65,28 +68,28 @@ namespace PhotgraphyMVC.Controllers
             switch (sortOrder)
             {
                 case "total":
-                    bills = bills.OrderBy(c => c.Total).Include(b => b.Client).Include(b => b.TaxYear);
+                    bills = bills.OrderBy(c => c.Total);
                     break;
                 case "total_desc":
-                    bills = bills.OrderByDescending(c => c.Total).Include(b => b.Client).Include(b => b.TaxYear);
+                    bills = bills.OrderByDescending(c => c.Total);
                     break;
-                case "mileage_date":
-                    bills = bills.OrderBy(c => c.BillingDate).Include(m => m.Client).Include(m => m.TaxYear);
+                case "billing_date":
+                    bills = bills.OrderBy(c => c.BillingDate);
                     break;
-                case "mileage_date_desc":
-                    bills = bills.OrderByDescending(c => c.BillingDate).Include(m => m.Client).Include(m => m.TaxYear);
+                case "billing_date_desc":
+                    bills = bills.OrderByDescending(c => c.BillingDate);
                     break;
                 case "first_name":
-                    bills = bills.OrderBy(c => c.Client.FirstName).Include(b => b.Client).Include(b => b.TaxYear);
+                    bills = bills.OrderBy(c => c.Client.FirstName);
                     break;
                 case "first_name_desc":
-                    bills = bills.OrderByDescending(c => c.Client.FirstName).Include(b => b.Client).Include(b => b.TaxYear);
+                    bills = bills.OrderByDescending(c => c.Client.FirstName);
                     break;
                 case "last_name_desc":
-                    bills = bills.OrderByDescending(c => c.Client.LastName).Include(b => b.Client).Include(b => b.TaxYear);
+                    bills = bills.OrderByDescending(c => c.Client.LastName);
                     break;
                 default:
-                    bills = bills.OrderBy(c => c.Client.LastName).Include(b => b.Client).Include(b => b.TaxYear);
+                    bills = bills.OrderBy(c => c.Client.LastName);
                     break;
             }
 
@@ -103,12 +106,8 @@ namespace PhotgraphyMVC.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            Billing bill = db.Billing.Find(id);
-
-            if (bill == null)
-            {
-                return HttpNotFound();
-            }
+            string responseString = Communication.GetRequest(apiUrl, "api/Billings/" + id, User.Identity.Name);
+            Billing bill = JsonConvert.DeserializeObject<Billing>(responseString);
 
             return View(bill);
         }
@@ -116,15 +115,11 @@ namespace PhotgraphyMVC.Controllers
         // GET: Billings/Create
         public ActionResult Create()
         {
-            var clients = from c in db.Clients
-                          where c.Username == User.Identity.Name
-                          orderby c.LastName ascending
-                          select c;
+            string responseString = Communication.GetRequest(apiUrl, "api/Clients", User.Identity.Name);
+            var clients = JsonConvert.DeserializeObject<IEnumerable<Client>>(responseString);
 
-            var taxYears = from t in db.TaxYears
-                           where t.Username == User.Identity.Name
-                           orderby t.Year descending
-                           select t;
+            responseString = Communication.GetRequest(apiUrl, "api/TaxYears", User.Identity.Name);
+            var taxYears = JsonConvert.DeserializeObject<IEnumerable<TaxYear>>(responseString);
 
             ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName");
             ViewBag.TaxYearID = new SelectList(taxYears, "TaxYearID", "Year");
@@ -141,51 +136,13 @@ namespace PhotgraphyMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                TaxYear taxYear = db.TaxYears.Find(billing.TaxYearID);
-
-                // Calculate sales tax for payment
-                if (billing.BillingType == "Payment")
-                {
-                    decimal salesTax = billing.GetSalesTax(billing, taxYear);
-                    billing.Subtotal = billing.Total - salesTax;
-                    billing.SalesTax = salesTax;
-                }
-
                 billing.Username = User.Identity.Name;
 
-                db.Billing.Add(billing);
-                db.SaveChanges();
-
-                if (billing.BillingType == "Payment")
-                {
-                    taxYear.TotalTax += billing.SalesTax;
-                    taxYear.TotalGrossIncome += billing.Subtotal;
-                }
-                else if (billing.BillingType == "Expense")
-                {
-                    taxYear.TotalExpenses += billing.Total;
-                }
-
-                taxYear.TotalNetIncome = taxYear.TotalGrossIncome - taxYear.TotalExpenses;
-
-                db.Entry(taxYear).State = EntityState.Modified;
-                db.SaveChanges();
+                string responseString = Communication.PostRequest(apiUrl, "api/Billings", User.Identity.Name, JsonConvert.SerializeObject(billing));
 
                 return RedirectToAction("Index");
             }
 
-            //var clients = from c in db.Clients
-            //              where c.Username == User.Identity.Name
-            //              orderby c.LastName ascending
-            //              select c;
-
-            //var taxYears = from t in db.TaxYears
-            //               where t.Username == User.Identity.Name
-            //               orderby t.Year ascending
-            //               select t;
-
-            //ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName", billing.ClientID);
-            //ViewBag.TaxYearID = new SelectList(taxYears, "TaxYearID", "Year", billing.TaxYearID);
             return View(billing);
         }
 
@@ -197,22 +154,14 @@ namespace PhotgraphyMVC.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            Billing bill = db.Billing.Find(id);
+            string responseString = Communication.GetRequest(apiUrl, "api/Billings/" + id, User.Identity.Name);
+            Billing bill = JsonConvert.DeserializeObject<Billing>(responseString);
 
-            if (bill == null)
-            {
-                return HttpNotFound();
-            }
+            responseString = Communication.GetRequest(apiUrl, "api/Clients", User.Identity.Name);
+            var clients = JsonConvert.DeserializeObject<IEnumerable<Client>>(responseString);
 
-            var clients = from c in db.Clients
-                          where c.Username == User.Identity.Name
-                          orderby c.LastName ascending
-                          select c;
-
-            var taxYears = from t in db.TaxYears
-                           where t.Username == User.Identity.Name
-                           orderby t.Year descending
-                           select t;
+            responseString = Communication.GetRequest(apiUrl, "api/TaxYears", User.Identity.Name);
+            var taxYears = JsonConvert.DeserializeObject<IEnumerable<TaxYear>>(responseString);
 
             bill.ClientIDs = clients.ToList();
             bill.TaxYearIDs = taxYears.ToList();
@@ -229,61 +178,13 @@ namespace PhotgraphyMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                TaxYear taxYear = db.TaxYears.Find(billing.TaxYearID);
-
-                // Calculate sales tax for payment
-                if (billing.BillingType == "Payment")
-                {
-                    decimal salesTax = billing.GetSalesTax(billing, taxYear);
-                    billing.Subtotal = billing.Total - salesTax;
-                    billing.SalesTax = salesTax;
-                }
-
                 billing.Username = User.Identity.Name;
 
-                db.Entry(billing).State = EntityState.Modified;
-                db.SaveChanges();
+                string responseString = Communication.PutRequest(apiUrl, "api/Billings/" + billing.BillingID, User.Identity.Name, JsonConvert.SerializeObject(billing));
 
-                taxYear.TotalTax = 0;
-                taxYear.TotalExpenses = 0;
-                taxYear.TotalGrossIncome = 0;
-
-                foreach (Billing bill in db.Billing)
-                {
-                    if (bill.TaxYearID == billing.TaxYearID)
-                    {
-                        if (bill.BillingType == "Payment")
-                        {
-                            taxYear.TotalTax += bill.SalesTax;
-                            taxYear.TotalGrossIncome += bill.Subtotal;
-                        }
-                        else if (bill.BillingType == "Expense")
-                        {
-                            taxYear.TotalExpenses += bill.Total;
-                        }
-                    }
-                }
-
-                taxYear.TotalNetIncome = taxYear.TotalGrossIncome - taxYear.TotalExpenses;
-
-                db.Entry(taxYear).State = EntityState.Modified;
-
-                db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            //var clients = from c in db.Clients
-            //              where c.Username == User.Identity.Name
-            //              orderby c.LastName ascending
-            //              select c;
-
-            //var taxYears = from t in db.TaxYears
-            //               where t.Username == User.Identity.Name
-            //               orderby t.Year ascending
-            //               select t;
-
-            //ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName", billing.ClientID);
-            //ViewBag.TaxYearID = new SelectList(taxYears, "TaxYearID", "Year", billing.TaxYearID);
             return View(billing);
         }
 
@@ -295,12 +196,8 @@ namespace PhotgraphyMVC.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            Billing bill = db.Billing.Find(id);
-
-            if (bill == null)
-            {
-                return HttpNotFound();
-            }
+            string responseString = Communication.GetRequest(apiUrl, "api/Billings/" + id, User.Identity.Name);
+            Billing bill = JsonConvert.DeserializeObject<Billing>(responseString);
 
             return View(bill);
         }
@@ -310,36 +207,8 @@ namespace PhotgraphyMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Billing billing = db.Billing.Find(id);
-            db.Billing.Remove(billing);
-            db.SaveChanges();
-
-            TaxYear taxYear = db.TaxYears.Find(billing.TaxYearID);
-            taxYear.TotalTax = 0;
-            taxYear.TotalExpenses = 0;
-            taxYear.TotalGrossIncome = 0;
-
-            foreach (Billing bill in db.Billing)
-            {
-                if (bill.TaxYearID == billing.TaxYearID)
-                {
-                    if (bill.BillingType == "Payment")
-                    {
-                        taxYear.TotalTax += bill.SalesTax;
-                        taxYear.TotalGrossIncome += bill.Subtotal;
-                    }
-                    else if (bill.BillingType == "Expense")
-                    {
-                        taxYear.TotalExpenses += bill.Total;
-                    }
-                }
-            }
-
-            taxYear.TotalNetIncome = taxYear.TotalGrossIncome - taxYear.TotalExpenses;
-
-            db.Entry(taxYear).State = EntityState.Modified;
-
-            db.SaveChanges();
+            string responseString = Communication.DeleteRequest(apiUrl, "api/Billings/" + id, User.Identity.Name);
+            Billing bill = JsonConvert.DeserializeObject<Billing>(responseString);
 
             return RedirectToAction("Index");
         }
