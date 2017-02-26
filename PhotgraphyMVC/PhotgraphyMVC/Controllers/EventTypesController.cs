@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -12,12 +13,15 @@ namespace PhotgraphyMVC.Models
     [Authorize]
     public class EventTypesController : Controller
     {
-        private PhotographerContext db = new PhotographerContext();
+        private const string apiUrl = "http://localhost:57669/";
 
         // GET: EventTypes
         public ActionResult Index()
         {
-            return View(db.EventTypes.Where(e => e.Username == User.Identity.Name).ToList());
+            string responseString = Communication.GetRequest(apiUrl, "api/EventTypes", User.Identity.Name);
+            var eventTypes = JsonConvert.DeserializeObject<IEnumerable<EventTypes>>(responseString);
+
+            return View(eventTypes);
         }
 
         // GET: EventTypes/Details/5
@@ -27,11 +31,10 @@ namespace PhotgraphyMVC.Models
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            EventTypes eventTypes = db.EventTypes.Find(id);
-            if (eventTypes == null)
-            {
-                return HttpNotFound();
-            }
+
+            string responseString = Communication.GetRequest(apiUrl, "api/EventTypes/" + id, User.Identity.Name);
+            EventTypes eventTypes = JsonConvert.DeserializeObject<EventTypes>(responseString);
+
             return View(eventTypes);
         }
 
@@ -51,8 +54,8 @@ namespace PhotgraphyMVC.Models
             if (ModelState.IsValid)
             {
                 eventTypes.Username = User.Identity.Name;
-                db.EventTypes.Add(eventTypes);
-                db.SaveChanges();
+                string responseString = Communication.PostRequest(apiUrl, "api/EventTypes", User.Identity.Name, JsonConvert.SerializeObject(eventTypes));
+
                 return RedirectToAction("Index");
             }
 
@@ -66,11 +69,10 @@ namespace PhotgraphyMVC.Models
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            EventTypes eventTypes = db.EventTypes.Find(id);
-            if (eventTypes == null)
-            {
-                return HttpNotFound();
-            }
+
+            string responseString = Communication.GetRequest(apiUrl, "api/EventTypes/" + id, User.Identity.Name);
+            EventTypes eventTypes = JsonConvert.DeserializeObject<EventTypes>(responseString);
+
             return View(eventTypes);
         }
 
@@ -84,8 +86,8 @@ namespace PhotgraphyMVC.Models
             if (ModelState.IsValid)
             {
                 eventTypes.Username = User.Identity.Name;
-                db.Entry(eventTypes).State = EntityState.Modified;
-                db.SaveChanges();
+                string responseString = Communication.PutRequest(apiUrl, "api/EventTypes/" + eventTypes.ID, User.Identity.Name, JsonConvert.SerializeObject(eventTypes));
+
                 return RedirectToAction("Index");
             }
             return View(eventTypes);
@@ -98,11 +100,10 @@ namespace PhotgraphyMVC.Models
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            EventTypes eventTypes = db.EventTypes.Find(id);
-            if (eventTypes == null)
-            {
-                return HttpNotFound();
-            }
+
+            string responseString = Communication.GetRequest(apiUrl, "api/EventTypes/" + id, User.Identity.Name);
+            EventTypes eventTypes = JsonConvert.DeserializeObject<EventTypes>(responseString);
+
             return View(eventTypes);
         }
 
@@ -111,19 +112,10 @@ namespace PhotgraphyMVC.Models
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            EventTypes eventTypes = db.EventTypes.Find(id);
-            db.EventTypes.Remove(eventTypes);
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
+            string responseString = Communication.DeleteRequest(apiUrl, "api/EventTypes/" + id, User.Identity.Name);
+            EventTypes eventTypes = JsonConvert.DeserializeObject<EventTypes>(responseString);
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
+            return RedirectToAction("Index");
         }
     }
 }
