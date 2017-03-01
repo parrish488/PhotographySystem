@@ -8,19 +8,18 @@ using System.Web;
 using System.Web.Mvc;
 using PhotgraphyMVC.Models;
 using PagedList;
-using Newtonsoft.Json;
 
 namespace PhotgraphyMVC.Controllers
 {
     [Authorize]
     public class TaxYearsController : Controller
     {
-        private const string apiUrl = "http://localhost:57669/";
+        private PhotographerContext db = new PhotographerContext();
 
         // GET: TaxYears
         public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
-            ViewBag.YearSortParm = string.IsNullOrEmpty(sortOrder) ? "year_desc" : "";
+            ViewBag.YearSortParm = String.IsNullOrEmpty(sortOrder) ? "year_desc" : "";
             ViewBag.TotalTaxSortParm = sortOrder == "total_tax" ? "total_tax_desc" : "total_tax";
             ViewBag.TotalIncomeSortParm = sortOrder == "total_income" ? "total_income_desc" : "total_income";
             ViewBag.TotalMilesSortParm = sortOrder == "total_miles" ? "total_miles_desc" : "total_miles";
@@ -36,45 +35,45 @@ namespace PhotgraphyMVC.Controllers
 
             ViewBag.CurrentFilter = searchString;
 
-            string responseString = Communication.GetRequest(apiUrl, "api/TaxYears", User.Identity.Name);
-            var taxYears = JsonConvert.DeserializeObject<IEnumerable<TaxYear>>(responseString);
+            var taxYear = from t in db.TaxYears where t.Username == User.Identity.Name
+                          select t;
 
             if (!string.IsNullOrEmpty(searchString))
             {
-                taxYears = taxYears.Where(t => t.Year.ToString().Contains(searchString));
+                taxYear = taxYear.Where(t => t.Year.ToString().Contains(searchString));
             }
 
             switch (sortOrder)
             {
                 case "total_miles":
-                    taxYears = taxYears.OrderBy(c => c.TotalMiles);
+                    taxYear = taxYear.OrderBy(c => c.TotalMiles);
                     break;
                 case "total_miles_desc":
-                    taxYears = taxYears.OrderByDescending(c => c.TotalMiles);
+                    taxYear = taxYear.OrderByDescending(c => c.TotalMiles);
                     break;
                 case "total_income":
-                    taxYears = taxYears.OrderBy(c => c.TotalGrossIncome);
+                    taxYear = taxYear.OrderBy(c => c.TotalGrossIncome);
                     break;
                 case "total_income_desc":
-                    taxYears = taxYears.OrderByDescending(c => c.TotalGrossIncome);
+                    taxYear = taxYear.OrderByDescending(c => c.TotalGrossIncome);
                     break;
                 case "total_tax":
-                    taxYears = taxYears.OrderBy(c => c.TotalTax);
+                    taxYear = taxYear.OrderBy(c => c.TotalTax);
                     break;
                 case "total_tax_desc":
-                    taxYears = taxYears.OrderByDescending(c => c.TotalTax);
+                    taxYear = taxYear.OrderByDescending(c => c.TotalTax);
                     break;
                 case "year_desc":
-                    taxYears = taxYears.OrderBy(c => c.Year);
+                    taxYear = taxYear.OrderBy(c => c.Year);
                     break;
                 default:
-                    taxYears = taxYears.OrderByDescending(c => c.Year);
+                    taxYear = taxYear.OrderByDescending(c => c.Year);
                     break;
             }
 
             int pageSize = 10;
             int pageNumber = (page ?? 1);
-            return View(taxYears.ToPagedList(pageNumber, pageSize));
+            return View(taxYear.ToPagedList(pageNumber, pageSize));
         }
 
         // GET: TaxYears/Details/5
@@ -84,10 +83,11 @@ namespace PhotgraphyMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-
-            string responseString = Communication.GetRequest(apiUrl, "api/TaxYears/" + id, User.Identity.Name);
-            TaxYear taxYear = JsonConvert.DeserializeObject<TaxYear>(responseString);
-
+            TaxYear taxYear = db.TaxYears.Find(id);
+            if (taxYear == null)
+            {
+                return HttpNotFound();
+            }
             return View(taxYear);
         }
 
@@ -107,8 +107,9 @@ namespace PhotgraphyMVC.Controllers
             if (ModelState.IsValid)
             {
                 taxYear.Username = User.Identity.Name;
-                string responseString = Communication.PostRequest(apiUrl, "api/TaxYears", User.Identity.Name, JsonConvert.SerializeObject(taxYear));
 
+                db.TaxYears.Add(taxYear);
+                db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
@@ -122,10 +123,11 @@ namespace PhotgraphyMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-
-            string responseString = Communication.GetRequest(apiUrl, "api/TaxYears/" + id, User.Identity.Name);
-            TaxYear taxYear = JsonConvert.DeserializeObject<TaxYear>(responseString);
-
+            TaxYear taxYear = db.TaxYears.Find(id);
+            if (taxYear == null)
+            {
+                return HttpNotFound();
+            }
             return View(taxYear);
         }
 
@@ -138,9 +140,10 @@ namespace PhotgraphyMVC.Controllers
         {
             if (ModelState.IsValid)
             {
+                taxYear = RecalculateBilling(taxYear);
                 taxYear.Username = User.Identity.Name;
-                string responseString = Communication.PutRequest(apiUrl, "api/TaxYears/" + taxYear.TaxYearID, User.Identity.Name, JsonConvert.SerializeObject(taxYear));
-
+                db.Entry(taxYear).State = EntityState.Modified;
+                db.SaveChanges();
                 return RedirectToAction("Index");
             }
             return View(taxYear);
@@ -153,10 +156,11 @@ namespace PhotgraphyMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            
-            string responseString = Communication.GetRequest(apiUrl, "api/TaxYears/" + id, User.Identity.Name);
-            TaxYear taxYear = JsonConvert.DeserializeObject<TaxYear>(responseString);
-
+            TaxYear taxYear = db.TaxYears.Find(id);
+            if (taxYear == null)
+            {
+                return HttpNotFound();
+            }
             return View(taxYear);
         }
 
@@ -165,15 +169,63 @@ namespace PhotgraphyMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            string responseString = Communication.DeleteRequest(apiUrl, "api/TaxYears/" + id, User.Identity.Name);
-            TaxYear taxYear = JsonConvert.DeserializeObject<TaxYear>(responseString);
-
+            TaxYear taxYear = db.TaxYears.Find(id);
+            db.TaxYears.Remove(taxYear);
+            db.SaveChanges();
             return RedirectToAction("Index");
         }
 
         public ActionResult StateTaxInformation()
         {
             return View();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        private TaxYear RecalculateBilling(TaxYear taxYear)
+        {
+            taxYear.TotalTax = 0;
+            taxYear.TotalExpenses = 0;
+            taxYear.TotalGrossIncome = 0;
+            taxYear.TotalMiles = 0;
+
+            foreach (Billing billing in db.Billing)
+            {
+                if (billing.TaxYearID == taxYear.TaxYearID)
+                {
+                    if (billing.BillingType == "Payment")
+                    {
+                        billing.SalesTax = billing.GetSalesTax(billing, taxYear);
+                        billing.Subtotal = billing.Total - billing.SalesTax;
+
+                        taxYear.TotalTax += billing.SalesTax;
+                        taxYear.TotalGrossIncome += billing.Total;
+                    }
+                    else if (billing.BillingType == "Expense")
+                    {
+                        taxYear.TotalExpenses += billing.Total;
+                    }
+                }
+            }
+
+            foreach (Mileage mileage in db.Mileage)
+            {
+                if (mileage.TaxYearID == taxYear.TaxYearID)
+                {
+                    taxYear.TotalMiles += mileage.MilesDriven;
+                }
+            }
+
+            taxYear.TotalNetIncome = taxYear.TotalGrossIncome - taxYear.TotalTax - taxYear.TotalExpenses;
+
+            return taxYear;
         }
     }
 }

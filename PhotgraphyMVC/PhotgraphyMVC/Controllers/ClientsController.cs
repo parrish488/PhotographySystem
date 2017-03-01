@@ -8,14 +8,13 @@ using System.Web;
 using System.Web.Mvc;
 using PhotgraphyMVC.Models;
 using PagedList;
-using Newtonsoft.Json;
 
 namespace PhotgraphyMVC.Controllers
 {
     [Authorize]
     public class ClientsController : Controller
     {
-        private const string apiUrl = "http://localhost:57669/";
+        private PhotographerContext db = new PhotographerContext();
 
         // GET: Clients
         public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page, bool? activeOnly)
@@ -35,8 +34,8 @@ namespace PhotgraphyMVC.Controllers
 
             ViewBag.CurrentFilter = searchString;
 
-            string responseString = Communication.GetRequest(apiUrl, "api/Clients", User.Identity.Name);
-            var clientList = JsonConvert.DeserializeObject<IEnumerable<Client>>(responseString);
+            var clientList = from c in db.Clients where c.Username == User.Identity.Name
+                             select c;
 
             if (!string.IsNullOrEmpty(searchString))
             {
@@ -75,10 +74,11 @@ namespace PhotgraphyMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-
-            string responseString = Communication.GetRequest(apiUrl, "api/Clients/" + id, User.Identity.Name);
-            Client client = JsonConvert.DeserializeObject<Client>(responseString);
-
+            Client client = db.Clients.Find(id);
+            if (client == null)
+            {
+                return HttpNotFound();
+            }
             return View(client);
         }
 
@@ -98,7 +98,15 @@ namespace PhotgraphyMVC.Controllers
             if (ModelState.IsValid)
             {
                 client.Username = User.Identity.Name;
-                string responseString = Communication.PostRequest(apiUrl, "api/Clients", User.Identity.Name, JsonConvert.SerializeObject(client));
+                //List<TodoList> items = (List<TodoList>)Session["TodoItems"];
+
+                //foreach (TodoList item in items)
+                //{
+                //    db.TodoList.Add(item);
+                //}
+
+                db.Clients.Add(client);
+                db.SaveChanges();
 
                 return RedirectToAction("Index");
             }
@@ -113,10 +121,11 @@ namespace PhotgraphyMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-
-            string responseString = Communication.GetRequest(apiUrl, "api/Clients/" + id, User.Identity.Name);
-            Client client = JsonConvert.DeserializeObject<Client>(responseString);
-
+            Client client = db.Clients.Find(id);
+            if (client == null)
+            {
+                return HttpNotFound();
+            }
             return View(client);
         }
 
@@ -130,7 +139,11 @@ namespace PhotgraphyMVC.Controllers
             if (ModelState.IsValid)
             {
                 client.Username = User.Identity.Name;
-                string responseString = Communication.PutRequest(apiUrl, "api/Clients/" + client.ClientID, User.Identity.Name, JsonConvert.SerializeObject(client));
+
+                db.Entry(client).State = EntityState.Modified;
+                db.SaveChanges();
+
+                HomeController.VerifyActiveStatus(db, User.Identity.Name);
 
                 return RedirectToAction("Index");
             }
@@ -144,10 +157,11 @@ namespace PhotgraphyMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-
-            string responseString = Communication.GetRequest(apiUrl, "api/Clients/" + id, User.Identity.Name);
-            Client client = JsonConvert.DeserializeObject<Client>(responseString);
-
+            Client client = db.Clients.Find(id);
+            if (client == null)
+            {
+                return HttpNotFound();
+            }
             return View(client);
         }
 
@@ -156,10 +170,22 @@ namespace PhotgraphyMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            string responseString = Communication.DeleteRequest(apiUrl, "api/Clients/" + id, User.Identity.Name);
-            Client client = JsonConvert.DeserializeObject<Client>(responseString);
+            Client client = db.Clients.Find(id);
+            db.Clients.Remove(client);
+            db.SaveChanges();
+
+            HomeController.VerifyActiveStatus(db, User.Identity.Name);
 
             return RedirectToAction("Index");
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }

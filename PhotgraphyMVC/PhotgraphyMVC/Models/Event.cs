@@ -18,14 +18,14 @@ namespace PhotgraphyMVC.Models
         public string ContractCompleted { get; set; }
         public string Username { get; set; }
 
-        //[Display(Name = "Event")]
-        //public string EventLabel
-        //{
-        //    get
-        //    {
-        //        return string.Format("{0}, {1} - {2}", Client.FullName, EventType, EventDate.ToShortDateString());
-        //    }
-        //}
+        [Display(Name = "Event")]
+        public string EventLabel
+        {
+            get
+            {
+                return string.Format("{0}, {1} - {2}", Client.FullName, EventType, EventDate.ToShortDateString());
+            }
+        }
 
         [Display(Name = "Event Type")]
         [ForeignKey("EventTypes")]

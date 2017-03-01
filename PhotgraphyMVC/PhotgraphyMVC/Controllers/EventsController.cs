@@ -8,14 +8,13 @@ using System.Web;
 using System.Web.Mvc;
 using PhotgraphyMVC.Models;
 using PagedList;
-using Newtonsoft.Json;
 
 namespace PhotgraphyMVC.Controllers
 {
     [Authorize]
     public class EventsController : Controller
     {
-        private const string apiUrl = "http://localhost:57669/";
+        private PhotographerContext db = new PhotographerContext();
 
         // GET: Events
         public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page, int? eventYearSelection)
@@ -37,11 +36,14 @@ namespace PhotgraphyMVC.Controllers
 
             ViewBag.CurrentFilter = searchString;
 
-            string responseString = Communication.GetRequest(apiUrl, "api/Events/Years", User.Identity.Name);
-            ViewBag.EventYears = JsonConvert.DeserializeObject<List<int>>(responseString);
+            var eventYears = (from e in db.Events
+                              where e.Username == User.Identity.Name
+                              select e.EventDate.Year).Distinct();
 
-            responseString = Communication.GetRequest(apiUrl, "api/Events", User.Identity.Name);
-            var events = JsonConvert.DeserializeObject<IEnumerable<Event>>(responseString);
+            ViewBag.EventYears = eventYears.OrderByDescending(e => e).ToList();
+
+            var events = from e in db.Events where e.Username == User.Identity.Name
+                         select e;
 
             if (!string.IsNullOrEmpty(searchString))
             {
@@ -63,28 +65,28 @@ namespace PhotgraphyMVC.Controllers
             switch (sortOrder)
             {
                 case "event_type":
-                    events = events.OrderBy(c => c.EventType);
+                    events = events.Include(c => c.Client).OrderBy(c => c.EventType);
                     break;
                 case "event_type_desc":
-                    events = events.OrderByDescending(c => c.EventType);
+                    events = events.Include(c => c.Client).OrderByDescending(c => c.EventType);
                     break;                
                 case "first_name":
-                    events = events.OrderBy(c => c.Client.FirstName);
+                    events = events.Include(c => c.Client).OrderBy(c => c.Client.FirstName);
                     break;
                 case "first_name_desc":
-                    events = events.OrderByDescending(c => c.Client.FirstName);
+                    events = events.Include(c => c.Client).OrderByDescending(c => c.Client.FirstName);
                     break;
                 case "last_name_desc":
-                    events = events.OrderByDescending(c => c.Client.LastName);
+                    events = events.Include(c => c.Client).OrderByDescending(c => c.Client.LastName);
                     break;
                 case "last_name":
-                    events = events.OrderBy(c => c.Client.LastName);
+                    events = events.Include(c => c.Client).OrderBy(c => c.Client.LastName);
                     break;
                 case "date_desc":
-                    events = events.OrderByDescending(c => c.EventDate);
+                    events = events.Include(c => c.Client).OrderByDescending(c => c.EventDate);
                     break;
                 default:
-                    events = events.OrderBy(c => c.EventDate);
+                    events = events.Include(c => c.Client).OrderBy(c => c.EventDate);
                     break;
             }
 
@@ -100,21 +102,26 @@ namespace PhotgraphyMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-
-            string responseString = Communication.GetRequest(apiUrl, "api/Events/" + id, User.Identity.Name);
-            Event @event = JsonConvert.DeserializeObject<Event>(responseString);
-
+            Event @event = db.Events.Find(id);
+            if (@event == null)
+            {
+                return HttpNotFound();
+            }
             return View(@event);
         }
 
         // GET: Events/Create
         public ActionResult Create()
         {
-            string responseString = Communication.GetRequest(apiUrl, "api/Clients", User.Identity.Name);
-            var clients = JsonConvert.DeserializeObject<IEnumerable<Client>>(responseString);
+            var clients = from c in db.Clients
+                          where c.Username == User.Identity.Name
+                          orderby c.LastName ascending
+                          select c;
 
-            responseString = Communication.GetRequest(apiUrl, "api/EventTypes", User.Identity.Name);
-            var eventTypes = JsonConvert.DeserializeObject<IEnumerable<EventTypes>>(responseString);
+            var eventTypes = from e in db.EventTypes
+                          where e.Username == User.Identity.Name
+                          orderby e.EventTypeName ascending
+                          select e;
 
             ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName");
             ViewBag.EventTypes = new SelectList(eventTypes, "ID", "EventTypeName");
@@ -132,10 +139,20 @@ namespace PhotgraphyMVC.Controllers
             if (ModelState.IsValid)
             {
                 @event.Username = User.Identity.Name;
-                string responseString = Communication.PostRequest(apiUrl, "api/Events", User.Identity.Name, JsonConvert.SerializeObject(@event));
+                @event.EventType = db.EventTypes.Find(@event.EventTypeID).EventTypeName;
+                db.Events.Add(@event);
+                db.SaveChanges();
+
+                HomeController.VerifyActiveStatus(db, User.Identity.Name);
 
                 return RedirectToAction("Index");
             }
+
+            //var clients = from c in db.Clients
+            //              where c.Username == User.Identity.Name
+            //              select c;
+
+            //ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName", @event.ClientID);
 
             return View(@event);
         }
@@ -147,15 +164,21 @@ namespace PhotgraphyMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+            Event @event = db.Events.Find(id);
+            if (@event == null)
+            {
+                return HttpNotFound();
+            }
 
-            string responseString = Communication.GetRequest(apiUrl, "api/Events/" + id, User.Identity.Name);
-            Event @event = JsonConvert.DeserializeObject<Event>(responseString);
+            var clients = from c in db.Clients
+                          where c.Username == User.Identity.Name
+                          orderby c.LastName ascending
+                          select c;
 
-            responseString = Communication.GetRequest(apiUrl, "api/Clients", User.Identity.Name);
-            var clients = JsonConvert.DeserializeObject<IEnumerable<Client>>(responseString);
-
-            responseString = Communication.GetRequest(apiUrl, "api/EventTypes", User.Identity.Name);
-            var eventTypes = JsonConvert.DeserializeObject<IEnumerable<EventTypes>>(responseString);
+            var eventTypes = from e in db.EventTypes
+                             where e.Username == User.Identity.Name
+                             orderby e.EventTypeName ascending
+                             select e;
 
             @event.ClientIDs = clients.ToList();
             @event.EventTypeIDs = eventTypes.ToList();
@@ -173,11 +196,21 @@ namespace PhotgraphyMVC.Controllers
             if (ModelState.IsValid)
             {
                 @event.Username = User.Identity.Name;
-                string responseString = Communication.PutRequest(apiUrl, "api/Events/" + @event.EventID, User.Identity.Name, JsonConvert.SerializeObject(@event));
+                @event.EventType = db.EventTypes.Find(@event.EventTypeID).EventTypeName;
+
+                db.Entry(@event).State = EntityState.Modified;
+                db.SaveChanges();
+
+                HomeController.VerifyActiveStatus(db, User.Identity.Name);
 
                 return RedirectToAction("Index");
             }
 
+            //var clients = from c in db.Clients
+            //              where c.Username == User.Identity.Name
+            //              select c;
+
+            //ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName", @event.ClientID);
             return View(@event);
         }
 
@@ -188,10 +221,11 @@ namespace PhotgraphyMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-
-            string responseString = Communication.GetRequest(apiUrl, "api/Events/" + id, User.Identity.Name);
-            Event @event = JsonConvert.DeserializeObject<Event>(responseString);
-
+            Event @event = db.Events.Find(id);
+            if (@event == null)
+            {
+                return HttpNotFound();
+            }
             return View(@event);
         }
 
@@ -200,10 +234,22 @@ namespace PhotgraphyMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            string responseString = Communication.DeleteRequest(apiUrl, "api/Events/" + id, User.Identity.Name);
-            Event @event = JsonConvert.DeserializeObject<Event>(responseString);
+            Event @event = db.Events.Find(id);
+            db.Events.Remove(@event);
+            db.SaveChanges();
+
+            HomeController.VerifyActiveStatus(db, User.Identity.Name);
 
             return RedirectToAction("Index");
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }
