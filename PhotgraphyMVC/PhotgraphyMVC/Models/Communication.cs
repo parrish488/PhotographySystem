@@ -9,13 +9,15 @@ namespace PhotgraphyMVC.Models
 {
     public class Communication
     {
-        public static string GetRequest(string baseUrl, string api, string username)
+        private const string BaseApiUrl = "http://localhost:57669/";
+
+        public static string GetRequest(string api, string username)
         {
             string returnValue = string.Empty;
 
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(baseUrl);
+                client.BaseAddress = new Uri(BaseApiUrl);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 client.DefaultRequestHeaders.Add("username", username);
@@ -30,34 +32,34 @@ namespace PhotgraphyMVC.Models
             return returnValue;
         }
 
-        public static string PostRequest(string baseUrl, string api, string username, string content)
+        public static string PostRequest(string api, string username, string content)
         {
             string returnValue = string.Empty;
 
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(baseUrl);
+                client.BaseAddress = new Uri(BaseApiUrl);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 client.DefaultRequestHeaders.Add("username", username);
                 var response = client.PostAsync(api, new StringContent(content, System.Text.Encoding.UTF8, "application/json")).Result;
 
-                if (response.IsSuccessStatusCode)
-                {
+                //if (response.IsSuccessStatusCode)
+                //{
                     returnValue = response.Content.ReadAsStringAsync().Result;
-                }
+                //}
             }
 
             return returnValue;
         }
 
-        public static string PutRequest(string baseUrl, string api, string username, string content)
+        public static string PutRequest(string api, string username, string content)
         {
             string returnValue = string.Empty;
 
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(baseUrl);
+                client.BaseAddress = new Uri(BaseApiUrl);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 client.DefaultRequestHeaders.Add("username", username);
@@ -72,13 +74,13 @@ namespace PhotgraphyMVC.Models
             return returnValue;
         }
 
-        public static string DeleteRequest(string baseUrl, string api, string username)
+        public static string DeleteRequest(string api, string username)
         {
             string returnValue = string.Empty;
 
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri(baseUrl);
+                client.BaseAddress = new Uri(BaseApiUrl);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 client.DefaultRequestHeaders.Add("username", username);

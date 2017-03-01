@@ -18,8 +18,6 @@ namespace PhotgraphyMVC.Controllers
     [Authorize]
     public class BillingsController : Controller
     {
-        private const string apiUrl = "http://localhost:57669/";
-
         // GET: Billings
         public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page, int? billingYearSelection)
         {
@@ -40,10 +38,10 @@ namespace PhotgraphyMVC.Controllers
 
             ViewBag.CurrentFilter = searchString;
 
-            string responseString = Communication.GetRequest(apiUrl, "api/Billings/Years", User.Identity.Name);
+            string responseString = Communication.GetRequest("api/Billings/Years", User.Identity.Name);
             ViewBag.BillingYears = JsonConvert.DeserializeObject<List<int>>(responseString);
 
-            responseString = Communication.GetRequest(apiUrl, "api/Billings", User.Identity.Name);
+            responseString = Communication.GetRequest("api/Billings", User.Identity.Name);
             var bills = JsonConvert.DeserializeObject<IEnumerable<Billing>>(responseString);
 
             if (!string.IsNullOrEmpty(searchString))
@@ -104,7 +102,7 @@ namespace PhotgraphyMVC.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            string responseString = Communication.GetRequest(apiUrl, "api/Billings/" + id, User.Identity.Name);
+            string responseString = Communication.GetRequest("api/Billings/" + id, User.Identity.Name);
             Billing bill = JsonConvert.DeserializeObject<Billing>(responseString);
 
             return View(bill);
@@ -113,10 +111,10 @@ namespace PhotgraphyMVC.Controllers
         // GET: Billings/Create
         public ActionResult Create()
         {
-            string responseString = Communication.GetRequest(apiUrl, "api/Clients", User.Identity.Name);
+            string responseString = Communication.GetRequest("api/Clients", User.Identity.Name);
             var clients = JsonConvert.DeserializeObject<IEnumerable<Client>>(responseString);
 
-            responseString = Communication.GetRequest(apiUrl, "api/TaxYears", User.Identity.Name);
+            responseString = Communication.GetRequest("api/TaxYears", User.Identity.Name);
             var taxYears = JsonConvert.DeserializeObject<IEnumerable<TaxYear>>(responseString);
 
             ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName");
@@ -135,7 +133,7 @@ namespace PhotgraphyMVC.Controllers
             if (ModelState.IsValid)
             {
                 billing.Username = User.Identity.Name;
-                string responseString = Communication.PostRequest(apiUrl, "api/Billings", User.Identity.Name, JsonConvert.SerializeObject(billing));
+                string responseString = Communication.PostRequest("api/Billings", User.Identity.Name, JsonConvert.SerializeObject(billing));
 
                 return RedirectToAction("Index");
             }
@@ -151,13 +149,13 @@ namespace PhotgraphyMVC.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            string responseString = Communication.GetRequest(apiUrl, "api/Billings/" + id, User.Identity.Name);
+            string responseString = Communication.GetRequest("api/Billings/" + id, User.Identity.Name);
             Billing bill = JsonConvert.DeserializeObject<Billing>(responseString);
 
-            responseString = Communication.GetRequest(apiUrl, "api/Clients", User.Identity.Name);
+            responseString = Communication.GetRequest("api/Clients", User.Identity.Name);
             var clients = JsonConvert.DeserializeObject<IEnumerable<Client>>(responseString);
 
-            responseString = Communication.GetRequest(apiUrl, "api/TaxYears", User.Identity.Name);
+            responseString = Communication.GetRequest("api/TaxYears", User.Identity.Name);
             var taxYears = JsonConvert.DeserializeObject<IEnumerable<TaxYear>>(responseString);
 
             bill.ClientIDs = clients.ToList();
@@ -176,7 +174,7 @@ namespace PhotgraphyMVC.Controllers
             if (ModelState.IsValid)
             {
                 billing.Username = User.Identity.Name;
-                string responseString = Communication.PutRequest(apiUrl, "api/Billings/" + billing.BillingID, User.Identity.Name, JsonConvert.SerializeObject(billing));
+                string responseString = Communication.PutRequest("api/Billings/" + billing.BillingID, User.Identity.Name, JsonConvert.SerializeObject(billing));
 
                 return RedirectToAction("Index");
             }
@@ -192,7 +190,7 @@ namespace PhotgraphyMVC.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            string responseString = Communication.GetRequest(apiUrl, "api/Billings/" + id, User.Identity.Name);
+            string responseString = Communication.GetRequest("api/Billings/" + id, User.Identity.Name);
             Billing bill = JsonConvert.DeserializeObject<Billing>(responseString);
 
             return View(bill);
@@ -203,7 +201,7 @@ namespace PhotgraphyMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            string responseString = Communication.DeleteRequest(apiUrl, "api/Billings/" + id, User.Identity.Name);
+            string responseString = Communication.DeleteRequest("api/Billings/" + id, User.Identity.Name);
             Billing bill = JsonConvert.DeserializeObject<Billing>(responseString);
 
             return RedirectToAction("Index");

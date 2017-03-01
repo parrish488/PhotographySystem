@@ -15,8 +15,6 @@ namespace PhotgraphyMVC.Controllers
     [Authorize]
     public class TaxYearsController : Controller
     {
-        private const string apiUrl = "http://localhost:57669/";
-
         // GET: TaxYears
         public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
@@ -36,7 +34,7 @@ namespace PhotgraphyMVC.Controllers
 
             ViewBag.CurrentFilter = searchString;
 
-            string responseString = Communication.GetRequest(apiUrl, "api/TaxYears", User.Identity.Name);
+            string responseString = Communication.GetRequest("api/TaxYears", User.Identity.Name);
             var taxYears = JsonConvert.DeserializeObject<IEnumerable<TaxYear>>(responseString);
 
             if (!string.IsNullOrEmpty(searchString))
@@ -85,7 +83,7 @@ namespace PhotgraphyMVC.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            string responseString = Communication.GetRequest(apiUrl, "api/TaxYears/" + id, User.Identity.Name);
+            string responseString = Communication.GetRequest("api/TaxYears/" + id, User.Identity.Name);
             TaxYear taxYear = JsonConvert.DeserializeObject<TaxYear>(responseString);
 
             return View(taxYear);
@@ -107,7 +105,7 @@ namespace PhotgraphyMVC.Controllers
             if (ModelState.IsValid)
             {
                 taxYear.Username = User.Identity.Name;
-                string responseString = Communication.PostRequest(apiUrl, "api/TaxYears", User.Identity.Name, JsonConvert.SerializeObject(taxYear));
+                string responseString = Communication.PostRequest("api/TaxYears", User.Identity.Name, JsonConvert.SerializeObject(taxYear));
 
                 return RedirectToAction("Index");
             }
@@ -123,7 +121,7 @@ namespace PhotgraphyMVC.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            string responseString = Communication.GetRequest(apiUrl, "api/TaxYears/" + id, User.Identity.Name);
+            string responseString = Communication.GetRequest("api/TaxYears/" + id, User.Identity.Name);
             TaxYear taxYear = JsonConvert.DeserializeObject<TaxYear>(responseString);
 
             return View(taxYear);
@@ -139,7 +137,7 @@ namespace PhotgraphyMVC.Controllers
             if (ModelState.IsValid)
             {
                 taxYear.Username = User.Identity.Name;
-                string responseString = Communication.PutRequest(apiUrl, "api/TaxYears/" + taxYear.TaxYearID, User.Identity.Name, JsonConvert.SerializeObject(taxYear));
+                string responseString = Communication.PutRequest("api/TaxYears/" + taxYear.TaxYearID, User.Identity.Name, JsonConvert.SerializeObject(taxYear));
 
                 return RedirectToAction("Index");
             }
@@ -154,7 +152,7 @@ namespace PhotgraphyMVC.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             
-            string responseString = Communication.GetRequest(apiUrl, "api/TaxYears/" + id, User.Identity.Name);
+            string responseString = Communication.GetRequest("api/TaxYears/" + id, User.Identity.Name);
             TaxYear taxYear = JsonConvert.DeserializeObject<TaxYear>(responseString);
 
             return View(taxYear);
@@ -165,7 +163,7 @@ namespace PhotgraphyMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            string responseString = Communication.DeleteRequest(apiUrl, "api/TaxYears/" + id, User.Identity.Name);
+            string responseString = Communication.DeleteRequest("api/TaxYears/" + id, User.Identity.Name);
             TaxYear taxYear = JsonConvert.DeserializeObject<TaxYear>(responseString);
 
             return RedirectToAction("Index");

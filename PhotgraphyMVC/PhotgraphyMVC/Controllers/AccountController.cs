@@ -9,6 +9,9 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using PhotgraphyMVC.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 
 namespace PhotgraphyMVC.Controllers
 {
@@ -152,20 +155,34 @@ namespace PhotgraphyMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Username, Email = model.Username };
-                var result = await UserManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
-                {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
-                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                IdentityResult result;
+                string responseString = Communication.PostRequest("api/Account/Register", model.Username, JsonConvert.SerializeObject(model));
 
-                    return RedirectToAction("Index", "Home");
+                if (string.IsNullOrEmpty(responseString))
+                {
+                    result = new IdentityResult(new List<string>());
+                    var user = new LoginViewModel() { Username = model.Username, Password = model.Password };
+                    await Login(user, "Home");
+                    //await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
+                    //    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
+                    //    // Send an email with this link
+                    //    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                    //    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                    //    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+                    //return RedirectToAction("Index", "Home");
                 }
+                else
+                {
+                    JObject resultObject = JsonConvert.DeserializeObject<JObject>(responseString);
+                    JObject resultObjectDetails = JsonConvert.DeserializeObject<JObject>(resultObject["Message"].ToString());
+                    JArray resultErrors = JsonConvert.DeserializeObject<JArray>(resultObjectDetails["Errors"].ToString());
+                    result = new IdentityResult(resultErrors.ToObject<List<string>>());
+
+                    AddErrors(result);
+                }
+
                 AddErrors(result);
             }
 

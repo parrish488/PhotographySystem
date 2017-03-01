@@ -13,12 +13,10 @@ namespace PhotgraphyMVC.Models
     [Authorize]
     public class EventTypesController : Controller
     {
-        private const string apiUrl = "http://localhost:57669/";
-
         // GET: EventTypes
         public ActionResult Index()
         {
-            string responseString = Communication.GetRequest(apiUrl, "api/EventTypes", User.Identity.Name);
+            string responseString = Communication.GetRequest("api/EventTypes", User.Identity.Name);
             var eventTypes = JsonConvert.DeserializeObject<IEnumerable<EventTypes>>(responseString);
 
             return View(eventTypes);
@@ -32,7 +30,7 @@ namespace PhotgraphyMVC.Models
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            string responseString = Communication.GetRequest(apiUrl, "api/EventTypes/" + id, User.Identity.Name);
+            string responseString = Communication.GetRequest("api/EventTypes/" + id, User.Identity.Name);
             EventTypes eventTypes = JsonConvert.DeserializeObject<EventTypes>(responseString);
 
             return View(eventTypes);
@@ -54,7 +52,7 @@ namespace PhotgraphyMVC.Models
             if (ModelState.IsValid)
             {
                 eventTypes.Username = User.Identity.Name;
-                string responseString = Communication.PostRequest(apiUrl, "api/EventTypes", User.Identity.Name, JsonConvert.SerializeObject(eventTypes));
+                string responseString = Communication.PostRequest("api/EventTypes", User.Identity.Name, JsonConvert.SerializeObject(eventTypes));
 
                 return RedirectToAction("Index");
             }
@@ -70,7 +68,7 @@ namespace PhotgraphyMVC.Models
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            string responseString = Communication.GetRequest(apiUrl, "api/EventTypes/" + id, User.Identity.Name);
+            string responseString = Communication.GetRequest("api/EventTypes/" + id, User.Identity.Name);
             EventTypes eventTypes = JsonConvert.DeserializeObject<EventTypes>(responseString);
 
             return View(eventTypes);
@@ -86,7 +84,7 @@ namespace PhotgraphyMVC.Models
             if (ModelState.IsValid)
             {
                 eventTypes.Username = User.Identity.Name;
-                string responseString = Communication.PutRequest(apiUrl, "api/EventTypes/" + eventTypes.ID, User.Identity.Name, JsonConvert.SerializeObject(eventTypes));
+                string responseString = Communication.PutRequest("api/EventTypes/" + eventTypes.ID, User.Identity.Name, JsonConvert.SerializeObject(eventTypes));
 
                 return RedirectToAction("Index");
             }
@@ -101,7 +99,7 @@ namespace PhotgraphyMVC.Models
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            string responseString = Communication.GetRequest(apiUrl, "api/EventTypes/" + id, User.Identity.Name);
+            string responseString = Communication.GetRequest("api/EventTypes/" + id, User.Identity.Name);
             EventTypes eventTypes = JsonConvert.DeserializeObject<EventTypes>(responseString);
 
             return View(eventTypes);
@@ -112,7 +110,7 @@ namespace PhotgraphyMVC.Models
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            string responseString = Communication.DeleteRequest(apiUrl, "api/EventTypes/" + id, User.Identity.Name);
+            string responseString = Communication.DeleteRequest("api/EventTypes/" + id, User.Identity.Name);
             EventTypes eventTypes = JsonConvert.DeserializeObject<EventTypes>(responseString);
 
             return RedirectToAction("Index");

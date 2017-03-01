@@ -15,8 +15,6 @@ namespace PhotgraphyMVC.Controllers
     [Authorize]
     public class ClientsController : Controller
     {
-        private const string apiUrl = "http://localhost:57669/";
-
         // GET: Clients
         public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page, bool? activeOnly)
         {
@@ -35,7 +33,7 @@ namespace PhotgraphyMVC.Controllers
 
             ViewBag.CurrentFilter = searchString;
 
-            string responseString = Communication.GetRequest(apiUrl, "api/Clients", User.Identity.Name);
+            string responseString = Communication.GetRequest("api/Clients", User.Identity.Name);
             var clientList = JsonConvert.DeserializeObject<IEnumerable<Client>>(responseString);
 
             if (!string.IsNullOrEmpty(searchString))
@@ -76,7 +74,7 @@ namespace PhotgraphyMVC.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            string responseString = Communication.GetRequest(apiUrl, "api/Clients/" + id, User.Identity.Name);
+            string responseString = Communication.GetRequest("api/Clients/" + id, User.Identity.Name);
             Client client = JsonConvert.DeserializeObject<Client>(responseString);
 
             return View(client);
@@ -98,7 +96,7 @@ namespace PhotgraphyMVC.Controllers
             if (ModelState.IsValid)
             {
                 client.Username = User.Identity.Name;
-                string responseString = Communication.PostRequest(apiUrl, "api/Clients", User.Identity.Name, JsonConvert.SerializeObject(client));
+                string responseString = Communication.PostRequest("api/Clients", User.Identity.Name, JsonConvert.SerializeObject(client));
 
                 return RedirectToAction("Index");
             }
@@ -114,7 +112,7 @@ namespace PhotgraphyMVC.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            string responseString = Communication.GetRequest(apiUrl, "api/Clients/" + id, User.Identity.Name);
+            string responseString = Communication.GetRequest("api/Clients/" + id, User.Identity.Name);
             Client client = JsonConvert.DeserializeObject<Client>(responseString);
 
             return View(client);
@@ -130,7 +128,7 @@ namespace PhotgraphyMVC.Controllers
             if (ModelState.IsValid)
             {
                 client.Username = User.Identity.Name;
-                string responseString = Communication.PutRequest(apiUrl, "api/Clients/" + client.ClientID, User.Identity.Name, JsonConvert.SerializeObject(client));
+                string responseString = Communication.PutRequest("api/Clients/" + client.ClientID, User.Identity.Name, JsonConvert.SerializeObject(client));
 
                 return RedirectToAction("Index");
             }
@@ -145,7 +143,7 @@ namespace PhotgraphyMVC.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            string responseString = Communication.GetRequest(apiUrl, "api/Clients/" + id, User.Identity.Name);
+            string responseString = Communication.GetRequest("api/Clients/" + id, User.Identity.Name);
             Client client = JsonConvert.DeserializeObject<Client>(responseString);
 
             return View(client);
@@ -156,7 +154,7 @@ namespace PhotgraphyMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            string responseString = Communication.DeleteRequest(apiUrl, "api/Clients/" + id, User.Identity.Name);
+            string responseString = Communication.DeleteRequest("api/Clients/" + id, User.Identity.Name);
             Client client = JsonConvert.DeserializeObject<Client>(responseString);
 
             return RedirectToAction("Index");
