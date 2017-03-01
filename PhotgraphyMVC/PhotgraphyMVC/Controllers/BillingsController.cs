@@ -70,10 +70,10 @@ namespace PhotgraphyMVC.Controllers
                 case "total_desc":
                     bills = bills.OrderByDescending(c => c.Total).Include(b => b.Client).Include(b => b.TaxYear);
                     break;
-                case "mileage_date":
+                case "billing_date":
                     bills = bills.OrderBy(c => c.BillingDate).Include(m => m.Client).Include(m => m.TaxYear);
                     break;
-                case "mileage_date_desc":
+                case "billing_date_desc":
                     bills = bills.OrderByDescending(c => c.BillingDate).Include(m => m.Client).Include(m => m.TaxYear);
                     break;
                 case "first_name":
@@ -154,7 +154,6 @@ namespace PhotgraphyMVC.Controllers
                 billing.Username = User.Identity.Name;
 
                 db.Billing.Add(billing);
-                db.SaveChanges();
 
                 if (billing.BillingType == "Payment")
                 {
@@ -174,18 +173,6 @@ namespace PhotgraphyMVC.Controllers
                 return RedirectToAction("Index");
             }
 
-            //var clients = from c in db.Clients
-            //              where c.Username == User.Identity.Name
-            //              orderby c.LastName ascending
-            //              select c;
-
-            //var taxYears = from t in db.TaxYears
-            //               where t.Username == User.Identity.Name
-            //               orderby t.Year ascending
-            //               select t;
-
-            //ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName", billing.ClientID);
-            //ViewBag.TaxYearID = new SelectList(taxYears, "TaxYearID", "Year", billing.TaxYearID);
             return View(billing);
         }
 
@@ -242,25 +229,26 @@ namespace PhotgraphyMVC.Controllers
                 billing.Username = User.Identity.Name;
 
                 db.Entry(billing).State = EntityState.Modified;
-                db.SaveChanges();
 
                 taxYear.TotalTax = 0;
                 taxYear.TotalExpenses = 0;
                 taxYear.TotalGrossIncome = 0;
 
-                foreach (Billing bill in db.Billing)
+                var bills = from b in db.Billing
+                            where b.Username == User.Identity.Name
+                            where b.TaxYearID == taxYear.TaxYearID
+                            select b;
+
+                foreach (Billing bill in bills)
                 {
-                    if (bill.TaxYearID == billing.TaxYearID)
+                    if (bill.BillingType == "Payment")
                     {
-                        if (bill.BillingType == "Payment")
-                        {
-                            taxYear.TotalTax += bill.SalesTax;
-                            taxYear.TotalGrossIncome += bill.Subtotal;
-                        }
-                        else if (bill.BillingType == "Expense")
-                        {
-                            taxYear.TotalExpenses += bill.Total;
-                        }
+                        taxYear.TotalTax += bill.SalesTax;
+                        taxYear.TotalGrossIncome += bill.Subtotal;
+                    }
+                    else if (bill.BillingType == "Expense")
+                    {
+                        taxYear.TotalExpenses += bill.Total;
                     }
                 }
 
@@ -272,18 +260,6 @@ namespace PhotgraphyMVC.Controllers
                 return RedirectToAction("Index");
             }
 
-            //var clients = from c in db.Clients
-            //              where c.Username == User.Identity.Name
-            //              orderby c.LastName ascending
-            //              select c;
-
-            //var taxYears = from t in db.TaxYears
-            //               where t.Username == User.Identity.Name
-            //               orderby t.Year ascending
-            //               select t;
-
-            //ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName", billing.ClientID);
-            //ViewBag.TaxYearID = new SelectList(taxYears, "TaxYearID", "Year", billing.TaxYearID);
             return View(billing);
         }
 
@@ -312,33 +288,32 @@ namespace PhotgraphyMVC.Controllers
         {
             Billing billing = db.Billing.Find(id);
             db.Billing.Remove(billing);
-            db.SaveChanges();
 
             TaxYear taxYear = db.TaxYears.Find(billing.TaxYearID);
             taxYear.TotalTax = 0;
             taxYear.TotalExpenses = 0;
             taxYear.TotalGrossIncome = 0;
 
-            foreach (Billing bill in db.Billing)
+            var bills = from b in db.Billing
+                        where b.Username == User.Identity.Name
+                        where b.TaxYearID == taxYear.TaxYearID
+                        select b;
+
+            foreach (Billing bill in bills)
             {
-                if (bill.TaxYearID == billing.TaxYearID)
+                if (bill.BillingType == "Payment")
                 {
-                    if (bill.BillingType == "Payment")
-                    {
-                        taxYear.TotalTax += bill.SalesTax;
-                        taxYear.TotalGrossIncome += bill.Subtotal;
-                    }
-                    else if (bill.BillingType == "Expense")
-                    {
-                        taxYear.TotalExpenses += bill.Total;
-                    }
+                    taxYear.TotalTax += bill.SalesTax;
+                    taxYear.TotalGrossIncome += bill.Subtotal;
+                }
+                else if (bill.BillingType == "Expense")
+                {
+                    taxYear.TotalExpenses += bill.Total;
                 }
             }
 
             taxYear.TotalNetIncome = taxYear.TotalGrossIncome - taxYear.TotalExpenses;
-
             db.Entry(taxYear).State = EntityState.Modified;
-
             db.SaveChanges();
 
             return RedirectToAction("Index");
@@ -350,6 +325,7 @@ namespace PhotgraphyMVC.Controllers
             {
                 db.Dispose();
             }
+
             base.Dispose(disposing);
         }
     }

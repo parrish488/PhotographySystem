@@ -44,7 +44,8 @@ namespace PhotgraphyMVC.Controllers
 
             ViewBag.MileageYears = mileageYears.OrderByDescending(m => m).ToList();
 
-            var mileages = from m in db.Mileage where m.Username == User.Identity.Name
+            var mileages = from m in db.Mileage
+                           where m.Username == User.Identity.Name
                            select m;
 
             if (!string.IsNullOrEmpty(searchString))
@@ -106,6 +107,7 @@ namespace PhotgraphyMVC.Controllers
 
             int pageSize = 10;
             int pageNumber = (page ?? 1);
+
             return View(mileages.ToPagedList(pageNumber, pageSize));
         }
 
@@ -116,11 +118,14 @@ namespace PhotgraphyMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Mileage mileage = db.Mileage.Find(id);
+
             if (mileage == null)
             {
                 return HttpNotFound();
             }
+
             return View(mileage);
         }
 
@@ -166,19 +171,6 @@ namespace PhotgraphyMVC.Controllers
                 return RedirectToAction("Index");
             }
 
-            //var clients = from c in db.Clients
-            //              where c.Username == User.Identity.Name
-            //              orderby c.LastName ascending
-            //              select c;
-
-            //var taxYears = from t in db.TaxYears
-            //               where t.Username == User.Identity.Name
-            //               orderby t.Year ascending
-            //               select t;
-
-            //ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName", mileage.ClientID);
-            //ViewBag.TaxYearID = new SelectList(taxYears, "TaxYearID", "Year", mileage.TaxYearID);
-
             return View(mileage);
         }
 
@@ -189,7 +181,9 @@ namespace PhotgraphyMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Mileage mileage = db.Mileage.Find(id);
+
             if (mileage == null)
             {
                 return HttpNotFound();
@@ -223,17 +217,18 @@ namespace PhotgraphyMVC.Controllers
                 mileage.Username = User.Identity.Name;
 
                 db.Entry(mileage).State = EntityState.Modified;
-                //db.SaveChanges();
 
                 TaxYear taxYear = db.TaxYears.Find(mileage.TaxYearID);
                 taxYear.TotalMiles = 0;
 
-                foreach (Mileage miles in db.Mileage.Where(m => m.Username == mileage.Username))
+                var mileages = from m in db.Mileage
+                               where m.Username == User.Identity.Name
+                               where m.TaxYearID == taxYear.TaxYearID
+                               select m;
+
+                foreach (Mileage miles in mileages)
                 {
-                    if (miles.TaxYearID == mileage.TaxYearID)
-                    {
-                        taxYear.TotalMiles += miles.MilesDriven;
-                    }
+                    taxYear.TotalMiles += miles.MilesDriven;
                 }
 
                 taxYear.Username = User.Identity.Name;
@@ -244,16 +239,6 @@ namespace PhotgraphyMVC.Controllers
                 return RedirectToAction("Index");
             }
 
-            //var clients = from c in db.Clients
-            //              where c.Username == User.Identity.Name
-            //              select c;
-
-            //var taxYears = from t in db.TaxYears
-            //               where t.Username == User.Identity.Name
-            //               select t;
-
-            //ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName", mileage.ClientID);
-            //ViewBag.TaxYearID = new SelectList(taxYears, "TaxYearID", "Year", mileage.TaxYearID);
             return View(mileage);
         }
 
@@ -264,11 +249,14 @@ namespace PhotgraphyMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Mileage mileage = db.Mileage.Find(id);
+
             if (mileage == null)
             {
                 return HttpNotFound();
             }
+
             return View(mileage);
         }
 
@@ -279,17 +267,18 @@ namespace PhotgraphyMVC.Controllers
         {
             Mileage mileage = db.Mileage.Find(id);
             db.Mileage.Remove(mileage);
-            db.SaveChanges();
 
             TaxYear taxYear = db.TaxYears.Find(mileage.TaxYearID);
             taxYear.TotalMiles = 0;
 
-            foreach (Mileage miles in db.Mileage)
+            var mileages = from m in db.Mileage
+                           where m.Username == User.Identity.Name
+                           where m.TaxYearID == taxYear.TaxYearID
+                           select m;
+
+            foreach (Mileage miles in mileages)
             {
-                if (miles.TaxYearID == mileage.TaxYearID)
-                {
-                    taxYear.TotalMiles += miles.MilesDriven;
-                }
+                taxYear.TotalMiles += miles.MilesDriven;
             }
 
             taxYear.Username = User.Identity.Name;
@@ -306,6 +295,7 @@ namespace PhotgraphyMVC.Controllers
             {
                 db.Dispose();
             }
+
             base.Dispose(disposing);
         }
     }

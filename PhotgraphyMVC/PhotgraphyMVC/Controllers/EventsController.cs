@@ -42,7 +42,8 @@ namespace PhotgraphyMVC.Controllers
 
             ViewBag.EventYears = eventYears.OrderByDescending(e => e).ToList();
 
-            var events = from e in db.Events where e.Username == User.Identity.Name
+            var events = from e in db.Events
+                         where e.Username == User.Identity.Name
                          select e;
 
             if (!string.IsNullOrEmpty(searchString))
@@ -92,6 +93,7 @@ namespace PhotgraphyMVC.Controllers
 
             int pageSize = 10;
             int pageNumber = (page ?? 1);
+
             return View(events.ToPagedList(pageNumber, pageSize));
         }
 
@@ -102,11 +104,14 @@ namespace PhotgraphyMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Event @event = db.Events.Find(id);
+
             if (@event == null)
             {
                 return HttpNotFound();
             }
+
             return View(@event);
         }
 
@@ -141,18 +146,11 @@ namespace PhotgraphyMVC.Controllers
                 @event.Username = User.Identity.Name;
                 @event.EventType = db.EventTypes.Find(@event.EventTypeID).EventTypeName;
                 db.Events.Add(@event);
-                db.SaveChanges();
 
                 HomeController.VerifyActiveStatus(db, User.Identity.Name);
 
                 return RedirectToAction("Index");
             }
-
-            //var clients = from c in db.Clients
-            //              where c.Username == User.Identity.Name
-            //              select c;
-
-            //ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName", @event.ClientID);
 
             return View(@event);
         }
@@ -164,7 +162,9 @@ namespace PhotgraphyMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Event @event = db.Events.Find(id);
+
             if (@event == null)
             {
                 return HttpNotFound();
@@ -199,18 +199,12 @@ namespace PhotgraphyMVC.Controllers
                 @event.EventType = db.EventTypes.Find(@event.EventTypeID).EventTypeName;
 
                 db.Entry(@event).State = EntityState.Modified;
-                db.SaveChanges();
 
                 HomeController.VerifyActiveStatus(db, User.Identity.Name);
 
                 return RedirectToAction("Index");
             }
 
-            //var clients = from c in db.Clients
-            //              where c.Username == User.Identity.Name
-            //              select c;
-
-            //ViewBag.ClientID = new SelectList(clients, "ClientID", "FullName", @event.ClientID);
             return View(@event);
         }
 
@@ -221,11 +215,14 @@ namespace PhotgraphyMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Event @event = db.Events.Find(id);
+
             if (@event == null)
             {
                 return HttpNotFound();
             }
+
             return View(@event);
         }
 
@@ -236,7 +233,6 @@ namespace PhotgraphyMVC.Controllers
         {
             Event @event = db.Events.Find(id);
             db.Events.Remove(@event);
-            db.SaveChanges();
 
             HomeController.VerifyActiveStatus(db, User.Identity.Name);
 
@@ -249,6 +245,7 @@ namespace PhotgraphyMVC.Controllers
             {
                 db.Dispose();
             }
+
             base.Dispose(disposing);
         }
     }

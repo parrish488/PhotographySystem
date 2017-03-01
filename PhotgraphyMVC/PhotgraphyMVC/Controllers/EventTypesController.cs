@@ -27,11 +27,14 @@ namespace PhotgraphyMVC.Models
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             EventTypes eventTypes = db.EventTypes.Find(id);
+
             if (eventTypes == null)
             {
                 return HttpNotFound();
             }
+
             return View(eventTypes);
         }
 
@@ -53,6 +56,7 @@ namespace PhotgraphyMVC.Models
                 eventTypes.Username = User.Identity.Name;
                 db.EventTypes.Add(eventTypes);
                 db.SaveChanges();
+
                 return RedirectToAction("Index");
             }
 
@@ -66,11 +70,14 @@ namespace PhotgraphyMVC.Models
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             EventTypes eventTypes = db.EventTypes.Find(id);
+
             if (eventTypes == null)
             {
                 return HttpNotFound();
             }
+
             return View(eventTypes);
         }
 
@@ -86,6 +93,7 @@ namespace PhotgraphyMVC.Models
                 eventTypes.Username = User.Identity.Name;
                 db.Entry(eventTypes).State = EntityState.Modified;
                 db.SaveChanges();
+
                 return RedirectToAction("Index");
             }
             return View(eventTypes);
@@ -98,11 +106,14 @@ namespace PhotgraphyMVC.Models
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             EventTypes eventTypes = db.EventTypes.Find(id);
+
             if (eventTypes == null)
             {
                 return HttpNotFound();
             }
+
             return View(eventTypes);
         }
 
@@ -114,6 +125,7 @@ namespace PhotgraphyMVC.Models
             EventTypes eventTypes = db.EventTypes.Find(id);
             db.EventTypes.Remove(eventTypes);
             db.SaveChanges();
+
             return RedirectToAction("Index");
         }
 
@@ -123,6 +135,7 @@ namespace PhotgraphyMVC.Models
             {
                 db.Dispose();
             }
+
             base.Dispose(disposing);
         }
     }

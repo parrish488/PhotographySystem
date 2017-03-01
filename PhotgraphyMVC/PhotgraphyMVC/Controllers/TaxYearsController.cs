@@ -35,7 +35,8 @@ namespace PhotgraphyMVC.Controllers
 
             ViewBag.CurrentFilter = searchString;
 
-            var taxYear = from t in db.TaxYears where t.Username == User.Identity.Name
+            var taxYear = from t in db.TaxYears
+                          where t.Username == User.Identity.Name
                           select t;
 
             if (!string.IsNullOrEmpty(searchString))
@@ -73,6 +74,7 @@ namespace PhotgraphyMVC.Controllers
 
             int pageSize = 10;
             int pageNumber = (page ?? 1);
+
             return View(taxYear.ToPagedList(pageNumber, pageSize));
         }
 
@@ -83,11 +85,14 @@ namespace PhotgraphyMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             TaxYear taxYear = db.TaxYears.Find(id);
+
             if (taxYear == null)
             {
                 return HttpNotFound();
             }
+
             return View(taxYear);
         }
 
@@ -110,6 +115,7 @@ namespace PhotgraphyMVC.Controllers
 
                 db.TaxYears.Add(taxYear);
                 db.SaveChanges();
+
                 return RedirectToAction("Index");
             }
 
@@ -123,11 +129,14 @@ namespace PhotgraphyMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             TaxYear taxYear = db.TaxYears.Find(id);
+
             if (taxYear == null)
             {
                 return HttpNotFound();
             }
+
             return View(taxYear);
         }
 
@@ -144,6 +153,7 @@ namespace PhotgraphyMVC.Controllers
                 taxYear.Username = User.Identity.Name;
                 db.Entry(taxYear).State = EntityState.Modified;
                 db.SaveChanges();
+
                 return RedirectToAction("Index");
             }
             return View(taxYear);
@@ -156,11 +166,14 @@ namespace PhotgraphyMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             TaxYear taxYear = db.TaxYears.Find(id);
+
             if (taxYear == null)
             {
                 return HttpNotFound();
             }
+
             return View(taxYear);
         }
 
@@ -172,6 +185,7 @@ namespace PhotgraphyMVC.Controllers
             TaxYear taxYear = db.TaxYears.Find(id);
             db.TaxYears.Remove(taxYear);
             db.SaveChanges();
+
             return RedirectToAction("Index");
         }
 
@@ -186,6 +200,7 @@ namespace PhotgraphyMVC.Controllers
             {
                 db.Dispose();
             }
+
             base.Dispose(disposing);
         }
 
@@ -196,31 +211,35 @@ namespace PhotgraphyMVC.Controllers
             taxYear.TotalGrossIncome = 0;
             taxYear.TotalMiles = 0;
 
-            foreach (Billing billing in db.Billing)
-            {
-                if (billing.TaxYearID == taxYear.TaxYearID)
-                {
-                    if (billing.BillingType == "Payment")
-                    {
-                        billing.SalesTax = billing.GetSalesTax(billing, taxYear);
-                        billing.Subtotal = billing.Total - billing.SalesTax;
+            var bills = from b in db.Billing
+                        where b.Username == User.Identity.Name
+                        where b.TaxYearID == taxYear.TaxYearID
+                        select b;
 
-                        taxYear.TotalTax += billing.SalesTax;
-                        taxYear.TotalGrossIncome += billing.Total;
-                    }
-                    else if (billing.BillingType == "Expense")
-                    {
-                        taxYear.TotalExpenses += billing.Total;
-                    }
+            foreach (Billing billing in bills)
+            {
+                if (billing.BillingType == "Payment")
+                {
+                    billing.SalesTax = billing.GetSalesTax(billing, taxYear);
+                    billing.Subtotal = billing.Total - billing.SalesTax;
+
+                    taxYear.TotalTax += billing.SalesTax;
+                    taxYear.TotalGrossIncome += billing.Total;
+                }
+                else if (billing.BillingType == "Expense")
+                {
+                    taxYear.TotalExpenses += billing.Total;
                 }
             }
 
-            foreach (Mileage mileage in db.Mileage)
+            var mileages = from m in db.Mileage
+                           where m.Username == User.Identity.Name
+                           where m.TaxYearID == taxYear.TaxYearID
+                           select m;
+
+            foreach (Mileage mileage in mileages)
             {
-                if (mileage.TaxYearID == taxYear.TaxYearID)
-                {
-                    taxYear.TotalMiles += mileage.MilesDriven;
-                }
+                taxYear.TotalMiles += mileage.MilesDriven;
             }
 
             taxYear.TotalNetIncome = taxYear.TotalGrossIncome - taxYear.TotalTax - taxYear.TotalExpenses;

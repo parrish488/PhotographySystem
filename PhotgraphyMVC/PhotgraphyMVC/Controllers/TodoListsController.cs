@@ -21,12 +21,23 @@ namespace PhotgraphyMVC.Controllers
             if (incompleteOnly != null && incompleteOnly.Value)
             {
                 ViewBag.Title = "Incomplete Todo Items";
-                return View(db.TodoList.Where(t => t.Username == User.Identity.Name).Where(t => t.IsCompleted == false).ToList());
+
+                var todoList = from t in db.TodoList
+                              where t.Username == User.Identity.Name
+                              where t.IsCompleted == false
+                              select t;
+
+                return View(todoList.ToList());
             }
             else
             {
                 ViewBag.Title = "All Todo Items";
-                return View(db.TodoList.Where(t => t.Username == User.Identity.Name).ToList());
+
+                var todoList = from t in db.TodoList
+                               where t.Username == User.Identity.Name
+                               select t;
+
+                return View(todoList.ToList());
             }
         }
 
@@ -37,11 +48,14 @@ namespace PhotgraphyMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             TodoList todoList = db.TodoList.Find(id);
+
             if (todoList == null)
             {
                 return HttpNotFound();
             }
+
             return View(todoList);
         }
 
@@ -61,9 +75,9 @@ namespace PhotgraphyMVC.Controllers
             if (ModelState.IsValid)
             {
                 todoList.Username = User.Identity.Name;
-
                 db.TodoList.Add(todoList);
                 db.SaveChanges();
+
                 return RedirectToAction("Index");
             }
 
@@ -77,11 +91,14 @@ namespace PhotgraphyMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             TodoList todoList = db.TodoList.Find(id);
+
             if (todoList == null)
             {
                 return HttpNotFound();
             }
+
             return View(todoList);
         }
 
@@ -95,11 +112,12 @@ namespace PhotgraphyMVC.Controllers
             if (ModelState.IsValid)
             {
                 todoList.Username = User.Identity.Name;
-
                 db.Entry(todoList).State = EntityState.Modified;
                 db.SaveChanges();
+
                 return RedirectToAction("Index");
             }
+
             return View(todoList);
         }
 
@@ -110,11 +128,14 @@ namespace PhotgraphyMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             TodoList todoList = db.TodoList.Find(id);
+
             if (todoList == null)
             {
                 return HttpNotFound();
             }
+
             return View(todoList);
         }
 
@@ -126,10 +147,11 @@ namespace PhotgraphyMVC.Controllers
             TodoList todoList = db.TodoList.Find(id);
             db.TodoList.Remove(todoList);
             db.SaveChanges();
+
             return RedirectToAction("Index");
         }
 
-        public void CreateFromTemplate(string client, int templateId)
+        public static void CreateFromTemplate(PhotographerContext db, string client, int templateId, string user)
         {
             TodoTemplate template = db.TodoTemplates.Find(templateId);
 
@@ -150,7 +172,7 @@ namespace PhotgraphyMVC.Controllers
             }
 
             todoList.IsCompleted = false;
-            todoList.Username = User.Identity.Name;
+            todoList.Username = user;
 
             db.TodoList.Add(todoList);
             db.SaveChanges();

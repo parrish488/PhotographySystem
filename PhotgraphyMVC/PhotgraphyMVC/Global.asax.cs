@@ -9,11 +9,11 @@ using System.Web.Routing;
 
 namespace PhotgraphyMVC
 {
-    public class MvcApplication : System.Web.HttpApplication
+    public class MvcApplication : HttpApplication
     {
         protected void Application_Start()
         {
-            Database.SetInitializer<PhotgraphyMVC.Models.PhotographerContext>(new PhotgraphyMVC.Models.PhotographerInitializer());
+            Database.SetInitializer(new Models.PhotographerInitializer());
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);

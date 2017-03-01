@@ -64,6 +64,7 @@ namespace PhotgraphyMVC.Controllers
 
             int pageSize = 10;
             int pageNumber = (page ?? 1);
+
             return View(clientList.ToPagedList(pageNumber, pageSize));
         }
 
@@ -74,11 +75,14 @@ namespace PhotgraphyMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Client client = db.Clients.Find(id);
+
             if (client == null)
             {
                 return HttpNotFound();
             }
+
             return View(client);
         }
 
@@ -121,11 +125,14 @@ namespace PhotgraphyMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Client client = db.Clients.Find(id);
+
             if (client == null)
             {
                 return HttpNotFound();
             }
+
             return View(client);
         }
 
@@ -141,8 +148,6 @@ namespace PhotgraphyMVC.Controllers
                 client.Username = User.Identity.Name;
 
                 db.Entry(client).State = EntityState.Modified;
-                db.SaveChanges();
-
                 HomeController.VerifyActiveStatus(db, User.Identity.Name);
 
                 return RedirectToAction("Index");
@@ -157,11 +162,14 @@ namespace PhotgraphyMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Client client = db.Clients.Find(id);
+
             if (client == null)
             {
                 return HttpNotFound();
             }
+
             return View(client);
         }
 
@@ -172,7 +180,6 @@ namespace PhotgraphyMVC.Controllers
         {
             Client client = db.Clients.Find(id);
             db.Clients.Remove(client);
-            db.SaveChanges();
 
             HomeController.VerifyActiveStatus(db, User.Identity.Name);
 
@@ -185,6 +192,7 @@ namespace PhotgraphyMVC.Controllers
             {
                 db.Dispose();
             }
+
             base.Dispose(disposing);
         }
     }

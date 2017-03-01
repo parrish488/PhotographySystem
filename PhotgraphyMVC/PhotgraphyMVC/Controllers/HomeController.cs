@@ -17,15 +17,11 @@ namespace PhotgraphyMVC.Controllers
         {
             HomeData data = new HomeData();
 
-            DateTime dateLimit = DateTime.Now.AddDays(30);
-
             var events = from e in db.Events
                          where e.Username == User.Identity.Name
-                         where e.EventDate < dateLimit
                          where e.EventDate >= DateTime.Now
                          orderby e.EventDate ascending
                          select e;
-
 
             data.UpcomingEvents = events.Take(5).ToList();
 
@@ -74,7 +70,9 @@ namespace PhotgraphyMVC.Controllers
         {
             HashSet<int> activeClients = new HashSet<int>();
 
-            var eventList = db.Events.Where(e => e.Username == user);
+            var eventList = from e in db.Events
+                         where e.Username == user
+                         select e;
 
             foreach (Event clientEvent in eventList)
             {
@@ -84,7 +82,9 @@ namespace PhotgraphyMVC.Controllers
                 }
             }
 
-            var clientList = db.Clients;
+            var clientList = from c in db.Clients
+                            where c.Username == user
+                            select c;
 
             foreach (Client client in clientList)
             {

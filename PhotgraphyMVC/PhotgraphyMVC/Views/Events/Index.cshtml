@@ -42,16 +42,16 @@ else
 <table class="table">
     <tr>
         <th>
-            @Html.ActionLink("First Name", "Index", new { sortOrder = ViewBag.FirstNameSortParm, currentFilter = ViewBag.CurrentFilter })
+            @Html.ActionLink("First Name", "Index", new { sortOrder = ViewBag.FirstNameSortParm, currentFilter = ViewBag.CurrentFilter, eventYearSelection = ViewBag.EventYearSelection })
         </th>
         <th>
-            @Html.ActionLink("Last Name", "Index", new { sortOrder = ViewBag.LastNameSortParm, currentFilter = ViewBag.CurrentFilter })
+            @Html.ActionLink("Last Name", "Index", new { sortOrder = ViewBag.LastNameSortParm, currentFilter = ViewBag.CurrentFilter, eventYearSelection = ViewBag.EventYearSelection })
         </th>
         <th>
-            @Html.ActionLink("Event Date", "Index", new { sortOrder = ViewBag.DateSortParm, currentFilter = ViewBag.CurrentFilter })
+            @Html.ActionLink("Event Date", "Index", new { sortOrder = ViewBag.DateSortParm, currentFilter = ViewBag.CurrentFilter, eventYearSelection = ViewBag.EventYearSelection })
         </th>
         <th>
-            @Html.ActionLink("Event Type", "Index", new { sortOrder = ViewBag.EventTypeSortParm, currentFilter = ViewBag.CurrentFilter })
+            @Html.ActionLink("Event Type", "Index", new { sortOrder = ViewBag.EventTypeSortParm, currentFilter = ViewBag.CurrentFilter, eventYearSelection = ViewBag.EventYearSelection })
         </th>
         <th></th>
     </tr>

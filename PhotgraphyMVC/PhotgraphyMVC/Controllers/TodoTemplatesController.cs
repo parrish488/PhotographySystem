@@ -17,7 +17,11 @@ namespace PhotgraphyMVC.Controllers
         // GET: TodoTemplates
         public ActionResult Index()
         {
-            return View(db.TodoTemplates.Where(t => t.Username == User.Identity.Name).ToList());
+            var todoTemplate = from t in db.TodoTemplates
+                           where t.Username == User.Identity.Name
+                           select t;
+
+            return View(todoTemplate.ToList());
         }
 
         // GET: TodoTemplates/Details/5
@@ -27,11 +31,14 @@ namespace PhotgraphyMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             TodoTemplate todoTemplate = db.TodoTemplates.Find(id);
+
             if (todoTemplate == null)
             {
                 return HttpNotFound();
             }
+
             return View(todoTemplate);
         }
 
@@ -53,6 +60,7 @@ namespace PhotgraphyMVC.Controllers
                 todoTemplate.Username = User.Identity.Name;
                 db.TodoTemplates.Add(todoTemplate);
                 db.SaveChanges();
+
                 return RedirectToAction("Index");
             }
 
@@ -66,11 +74,14 @@ namespace PhotgraphyMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             TodoTemplate todoTemplate = db.TodoTemplates.Find(id);
+
             if (todoTemplate == null)
             {
                 return HttpNotFound();
             }
+
             return View(todoTemplate);
         }
 
@@ -86,8 +97,10 @@ namespace PhotgraphyMVC.Controllers
                 todoTemplate.Username = User.Identity.Name;
                 db.Entry(todoTemplate).State = EntityState.Modified;
                 db.SaveChanges();
+
                 return RedirectToAction("Index");
             }
+
             return View(todoTemplate);
         }
 
@@ -98,11 +111,14 @@ namespace PhotgraphyMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             TodoTemplate todoTemplate = db.TodoTemplates.Find(id);
+
             if (todoTemplate == null)
             {
                 return HttpNotFound();
             }
+
             return View(todoTemplate);
         }
 
@@ -114,6 +130,7 @@ namespace PhotgraphyMVC.Controllers
             TodoTemplate todoTemplate = db.TodoTemplates.Find(id);
             db.TodoTemplates.Remove(todoTemplate);
             db.SaveChanges();
+
             return RedirectToAction("Index");
         }
 
@@ -123,6 +140,7 @@ namespace PhotgraphyMVC.Controllers
             {
                 db.Dispose();
             }
+
             base.Dispose(disposing);
         }
     }
