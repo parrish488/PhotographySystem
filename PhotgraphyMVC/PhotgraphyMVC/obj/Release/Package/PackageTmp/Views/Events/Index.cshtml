@@ -5,13 +5,20 @@
     ViewBag.Title = "Events";
 }
 
-<h2>@ViewBag.EventYearSelection Events</h2>
+@if (ViewBag.EventYearSelection == 0)
+{
+    <h2>All Events</h2>
+}
+else
+{
+    <h2>@ViewBag.EventYearSelection Events</h2>
+}
 
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
 <p>
-    <span>@Html.ActionLink("All", "Index", new { taxYear = "All" })</span>
+    <span>@Html.ActionLink("All", "Index", new { eventYearSelection = 0 })</span>
     @{
         foreach (int year in ViewBag.EventYears)
         {
@@ -35,16 +42,16 @@
 <table class="table">
     <tr>
         <th>
-            @Html.ActionLink("First Name", "Index", new { sortOrder = ViewBag.FirstNameSortParm, currentFilter = ViewBag.CurrentFilter })
+            @Html.ActionLink("First Name", "Index", new { sortOrder = ViewBag.FirstNameSortParm, currentFilter = ViewBag.CurrentFilter, eventYearSelection = ViewBag.EventYearSelection })
         </th>
         <th>
-            @Html.ActionLink("Last Name", "Index", new { sortOrder = ViewBag.LastNameSortParm, currentFilter = ViewBag.CurrentFilter })
+            @Html.ActionLink("Last Name", "Index", new { sortOrder = ViewBag.LastNameSortParm, currentFilter = ViewBag.CurrentFilter, eventYearSelection = ViewBag.EventYearSelection })
         </th>
         <th>
-            @Html.ActionLink("Event Date", "Index", new { sortOrder = ViewBag.DateSortParm, currentFilter = ViewBag.CurrentFilter })
+            @Html.ActionLink("Event Date", "Index", new { sortOrder = ViewBag.DateSortParm, currentFilter = ViewBag.CurrentFilter, eventYearSelection = ViewBag.EventYearSelection })
         </th>
         <th>
-            @Html.ActionLink("Event Type", "Index", new { sortOrder = ViewBag.EventTypeSortParm, currentFilter = ViewBag.CurrentFilter })
+            @Html.ActionLink("Event Type", "Index", new { sortOrder = ViewBag.EventTypeSortParm, currentFilter = ViewBag.CurrentFilter, eventYearSelection = ViewBag.EventYearSelection })
         </th>
         <th></th>
     </tr>
@@ -78,4 +85,4 @@
 Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
 @Html.PagedListPager(Model, page => Url.Action("Index",
-new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter, ViewBag.EventYearSelection }))
+new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter, eventYearSelection = ViewBag.EventYearSelection }))

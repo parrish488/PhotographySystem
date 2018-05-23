@@ -175,7 +175,6 @@ namespace PhotgraphyMVC.Controllers
             todoList.Username = user;
 
             db.TodoList.Add(todoList);
-            db.SaveChanges();
         }
 
         public ActionResult CompleteItem(int? id, bool fromDashboard = true)

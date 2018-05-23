@@ -6,7 +6,7 @@ using System.Web;
 
 namespace PhotgraphyMVC.Models
 {
-    public class PhotographerInitializer : DropCreateDatabaseIfModelChanges<PhotographerContext>
+    public class PhotographerInitializer : CreateDatabaseIfNotExists<PhotographerContext>
     {
         protected override void Seed(PhotographerContext context)
         {

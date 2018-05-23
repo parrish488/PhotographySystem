@@ -1,6 +1,7 @@
 ﻿@model PhotgraphyMVC.Models.Client
 
 @{
+    List<int> template = new List<int>();
     ViewBag.Title = "Create Client";
 }
 
@@ -12,7 +13,7 @@
         <div class="row">
             <div class="col-md-4">
                 <h2>Client Info</h2>
-                <hr/>
+                <hr />
                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                 <div class="form-group">
                     @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-md-4" })
@@ -57,7 +58,7 @@
             </div>
             <div class="col-md-4">
                 <h2>Demographics</h2>
-                <hr/>
+                <hr />
                 <div class="form-group">
                     @Html.LabelFor(model => model.Street, htmlAttributes: new { @class = "control-label col-md-4" })
                     <div class="col-md-8">
@@ -93,7 +94,7 @@
 
             <div class="col-md-4">
                 <h2>Client Details</h2>
-                <hr/>
+                <hr />
                 <div class="form-group">
                     @Html.LabelFor(model => model.ClientNotes, htmlAttributes: new { @class = "control-label col-md-4" })
                     <div class="col-md-8">
@@ -115,7 +116,7 @@
                 </div>
 
                 <h2>Todo Items</h2>
-                <hr/>
+                <hr />
                 <div class="form-group">
                     <div class="col-md-8">
                     </div>
@@ -125,7 +126,7 @@
 
         <div class="form-group">
             <div class="col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <input type="submit" value="Create" class="btn btn-success" />
             </div>
         </div>
 

@@ -146,6 +146,7 @@ namespace PhotgraphyMVC.Controllers
                 @event.Username = User.Identity.Name;
                 @event.EventType = db.EventTypes.Find(@event.EventTypeID).EventTypeName;
                 db.Events.Add(@event);
+                db.SaveChanges();
 
                 HomeController.VerifyActiveStatus(db, User.Identity.Name);
 
@@ -197,8 +198,8 @@ namespace PhotgraphyMVC.Controllers
             {
                 @event.Username = User.Identity.Name;
                 @event.EventType = db.EventTypes.Find(@event.EventTypeID).EventTypeName;
-
                 db.Entry(@event).State = EntityState.Modified;
+                db.SaveChanges();
 
                 HomeController.VerifyActiveStatus(db, User.Identity.Name);
 
@@ -233,6 +234,7 @@ namespace PhotgraphyMVC.Controllers
         {
             Event @event = db.Events.Find(id);
             db.Events.Remove(@event);
+            db.SaveChanges();
 
             HomeController.VerifyActiveStatus(db, User.Identity.Name);
 

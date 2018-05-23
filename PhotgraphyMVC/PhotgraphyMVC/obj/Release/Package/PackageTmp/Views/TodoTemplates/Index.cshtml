@@ -1,0 +1,45 @@
+﻿@model IEnumerable<PhotgraphyMVC.Models.TodoTemplate>
+
+@{
+    ViewBag.Title = "Todo Templates";
+}
+
+<h2>Todo Templates</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.TemplateDescription)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RangeUnits)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RangeValue)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.TemplateDescription)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RangeUnits)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RangeValue)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.TodoTemplateID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.TodoTemplateID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.TodoTemplateID })
+        </td>
+    </tr>
+}
+
+</table>

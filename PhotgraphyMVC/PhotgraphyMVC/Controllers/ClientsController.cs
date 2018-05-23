@@ -102,12 +102,16 @@ namespace PhotgraphyMVC.Controllers
             if (ModelState.IsValid)
             {
                 client.Username = User.Identity.Name;
-                //List<TodoList> items = (List<TodoList>)Session["TodoItems"];
 
-                //foreach (TodoList item in items)
-                //{
-                //    db.TodoList.Add(item);
-                //}
+                if (Session["TodoItems"] != null)
+                {
+                    List<int> items = (List<int>)Session["TodoItems"];
+
+                    foreach (int item in items)
+                    {
+                        TodoListsController.CreateFromTemplate(db, client.FullName, 0, User.Identity.Name);
+                    }
+                }
 
                 db.Clients.Add(client);
                 db.SaveChanges();
@@ -148,6 +152,8 @@ namespace PhotgraphyMVC.Controllers
                 client.Username = User.Identity.Name;
 
                 db.Entry(client).State = EntityState.Modified;
+                db.SaveChanges();
+
                 HomeController.VerifyActiveStatus(db, User.Identity.Name);
 
                 return RedirectToAction("Index");
@@ -180,6 +186,7 @@ namespace PhotgraphyMVC.Controllers
         {
             Client client = db.Clients.Find(id);
             db.Clients.Remove(client);
+            db.SaveChanges();
 
             HomeController.VerifyActiveStatus(db, User.Identity.Name);
 

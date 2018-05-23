@@ -24,7 +24,7 @@ namespace PhotgraphyMVC.Models
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
 
             modelBuilder.Entity<Billing>()
-                    .HasOptional(c => c.Client)
+                    .HasOptional<Client>(c => c.Client)
                     .WithMany(b => b.Billing)
                     .HasForeignKey(c => c.ClientID);
         }
